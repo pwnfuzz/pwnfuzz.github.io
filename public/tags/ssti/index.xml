@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>SSTI on </title>
+    <link>http://localhost:1313/tags/ssti/</link>
+    <description>Recent content in SSTI on </description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 09 May 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/ssti/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>CVE 2024-4040 - CrushFTP Server-Side Template Injection Vulnerability Analysis</title>
+      <link>http://localhost:1313/posts/crushftp-cve-2024-4040/</link>
+      <pubDate>Thu, 09 May 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/crushftp-cve-2024-4040/</guid>
+      <description>&lt;p&gt;This blog post contains a thorough analysis of Server Side Template Injection vulnerability in a commercial Managed File Transfer product named CrushFTP. Exploit script is available &lt;a href=&#34;https://github.com/D4mianWayne/POCs/tree/main/CVE%202024-4040&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;&#xA;&lt;h1 id=&#34;cve-2024-4040---crushftp-server-side-template-injection-vulnerability&#34;&gt;CVE 2024-4040 - CrushFTP Server-Side Template Injection Vulnerability&lt;/h1&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;I am writing a blog post after a very long time. Finally the “hiatus” has ended and now I am back on track for analyzing real world vulnerabilities and how it has been exploited, more so I will try to uncover what exactly happens under the hood. For starter, I had many vulnerabilities listed and I was confused on what to pick up first but then I saw a news stating that a zero day vulnerability was identified in CrushFTP server. I worked on FTP server sometimes back as part of my work so I thought this would be better to pick for starter.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

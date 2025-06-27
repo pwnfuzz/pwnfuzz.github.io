@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Dstat, Sqlmap, Upstream_proxy, Websocket on </title>
+    <link>http://localhost:1313/tags/dstat-sqlmap-upstream_proxy-websocket/</link>
+    <description>Recent content in Dstat, Sqlmap, Upstream_proxy, Websocket on </description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 10 Jun 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/dstat-sqlmap-upstream_proxy-websocket/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>HackTheBox - Soccer</title>
+      <link>http://localhost:1313/posts/soccer-htb/</link>
+      <pubDate>Sat, 10 Jun 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/soccer-htb/</guid>
+      <description>&lt;p&gt;Writeup for HackTheBox&amp;rsquo;s Soccer.&lt;/p&gt;&#xA;&lt;!-- more --&gt;&#xA;&lt;p&gt;Starting off with the &lt;code&gt;nmap&lt;/code&gt; scan:&lt;/p&gt;&#xA;&#xA;&lt;p&gt;We have port 80 and 22 open, &lt;code&gt;nmap&lt;/code&gt; identified that the HTTP port is redirecting to the &lt;code&gt;soccer.htb&lt;/code&gt; , performing a directory busting on it revealed an endpoint &lt;code&gt;/tiny&lt;/code&gt;&lt;/p&gt;&#xA;&#xA;&lt;p&gt;It is a H3K File Manager, checking for any exploit for it revealed that we have PHP File Upload RCE:&lt;/p&gt;&#xA;&lt;p&gt;&lt;a href=&#34;https://github.com/febinrev/tinyfilemanager-2.4.3-exploit&#34;&gt;https://github.com/febinrev/tinyfilemanager-2.4.3-exploit&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;Exploitation requires an authenticated user, default credentials worked for the application:&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

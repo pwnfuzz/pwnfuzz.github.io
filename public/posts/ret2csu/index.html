@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>ret2csu - A Return Oriented Programming Technique - </title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+
+	<link rel="stylesheet" href="/css/style.css">
+	
+
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo logo--mixed">
+		<a class="logo__link" href="/" title="PwnFuzz Blog" rel="home">
+			<div class="logo__item logo__imagebox">
+					<img class="logo__img" src="/img/pwnfuzz.png">
+				</div><div class="logo__item logo__text">
+					<div class="logo__title">PwnFuzz Blog</div>
+					<div class="logo__tagline">Just another site</div>
+				</div>
+		</a>
+	</div>
+		
+<nav class="menu">
+	<button class="menu__btn" aria-haspopup="true" aria-expanded="false" tabindex="0">
+		<span class="menu__btn-title" tabindex="-1">Menu</span>
+	</button>
+	<ul class="menu__list">
+		<li class="menu__item">
+			<a class="menu__link" href="/">
+				
+				<span class="menu__text">Home</span>
+				
+			</a>
+		</li>
+		<li class="menu__item">
+			<a class="menu__link" href="/about/">
+				
+				<span class="menu__text">About</span>
+				
+			</a>
+		</li>
+		<li class="menu__item">
+			<a class="menu__link" href="/tags/">
+				
+				<span class="menu__text">Tags</span>
+				
+			</a>
+		</li>
+	</ul>
+</nav>
+
+	</div>
+</header>
+
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">ret2csu - A Return Oriented Programming Technique</h1>
+			
+		</header>
+		<div class="content post__content clearfix">
+			<p>This is an in-depth guide on <code>ret2csu</code> technique. I tried to make this article as much detailed as I could, including references and some binary to practice it with.</p>
+<!-- more -->
+<h1 id="what-is-ret2csu">What is ret2csu?</h1>
+<p>Well, as you already know this a sub-technique of Return Oriented Programming. As you already know that Return Oriented Programming is the technique of using the available gadgets from the binary to craft a payload. The <code>ret2csu</code> technique involves the utilization of the gadgets present in <code>__libc_csu_init</code> to fill in the gaps of unavailable gadgets. For example, what if we want to do an <code>execve</code> syscall, we would need a <code>rdi</code> to pass <code>/bin/sh</code>, <code>rsi</code> for passing <code>0</code> and same for <code>rdx</code> and while looking for gadgets in binary, we didn&rsquo;t  find any <code>pop rdx; ret;</code>, then we use gadgets from <code>__libc_csu_init</code> to craft a chain carefully which will load the contents we gave to the <code>rdx</code>.</p>
+<p>Confused? Don&rsquo;t worry, I&rsquo;m gonna explain it in a very detailed way :)</p>
+<h1 id="prerequisites">Prerequisites</h1>
+<p>This is included because, what if you&rsquo;re trying to understand it as a beginner, I included this section because this will help you recall the knowledge you need for performing a <code>ret2csu</code> attack. This includes the calling convention of <code>x86_64</code> bit binary and the assembly instructions we will deal with.</p>
+<h3 id="calling-convetion">Calling convetion</h3>
+<p>Calling convention refers to the way arguments are passed to a function, like how is the workflow of functions work at low level. Let&rsquo;s take an example program:-</p>
+
+<p>Let&rsquo;s compile it:-</p>
+
+<p>It works perfectly as it&rsquo;s supposed to Let&rsquo;s start gdb and start analyzing the binary workflow:-</p>
+
+<p>The <code>mov</code> lines are moving the variables from base pointers to registers. This is the basic instruction to move an address/value to other address/register.</p>
+<blockquote>
+<p>The line <code>0x000000000000064b &lt;+1&gt;:	mov    rbp,rsp</code>, this one moves the stack to the base pointer, this is because that way the program can easily retrieve the variables from the base pointer as they&rsquo;re stored at specific offsets.</p></blockquote>
+<p>Now, let&rsquo;s setup a breakpoint at <code>call printf</code> so that we can analyse how the arguments are being passed to it. GDB time:-</p>
+
+<p>The breakpoint has been set, now let&rsquo;s run the program and analyze:-</p>
+
+<p>Thanks to <code>gdb-gef</code>, we already know most of the things which we needed to know i.e. which register holds what value, but as we looking for the registers and we need to know what is happening since this is required for further learning.</p>
+<p>Using <code>gdb</code>&rsquo;s <code>x</code> command to analyze the memory and registers, we can see the following:-</p>
+
+<p>Breaking it down:-</p>
+<ul>
+<li><code>x555555554738:	&quot;String: %s\nInteger: %d\nDouble: %lf\n&quot;</code> : This is in register <code>rdi</code> which is passed as 1st argument to the <code>printf</code>.</li>
+<li><code>0x555555554728:	&quot;Hello World&quot;</code> : This is in register <code>rsi</code> which is passed as 2nd argument to <code>printf</code>.</li>
+<li><code>0x1:	&lt;error: Cannot access memory at address 0x1&gt;</code> : First, we got a <strong>Cannot access memory</strong> i.e. the <code>integer</code> which we printed has a value of <code>0x01</code>, hence a memory access error. This is passed to <code>rdx</code> register which is the 3rd argument to the <code>printf</code>.</li>
+<li><code>0x4059000000000000:	Cannot access memory at address 0x4059000000000000</code> : Again, that happened because the value doesn&rsquo;t point to a valid address. This is the 4th argument which is passed to <code>printf</code>.</li>
+</ul>
+<blockquote>
+<p>You might be wondering why we got a value like <code>0x4059000000000000</code> while we assigned <code>100</code> to the variable. That happened because the <code>x/f</code> printed an aligned value which doesn&rsquo;t print the double values normally. For checking double values we do <code>gef➤  p/f $rcx - $1 = 100</code>.</p></blockquote>
+<p>From this we know how calling conventions works:-</p>
+<ul>
+<li>1st argument goes to <code>rdi</code>.</li>
+<li>2nd argument goest to <code>rsi</code>.</li>
+<li>3rd argument goes to <code>rdx</code></li>
+<li>4th argument goes to <code>rcx</code>.</li>
+</ul>
+<blockquote>
+<p>This is constant for every function in 64 bit calling convention on Linux System.</p></blockquote>
+<h3 id="assembly-instructions">Assembly Instructions</h3>
+<p>Since we understood the calling conventions, it&rsquo;s time to take a look at the assembly instructions we will deal with to understand the workflow of the payload. As an example, let&rsquo;s take the exact same binary and analyse it&rsquo;s <code>__libc_csu_init</code>, starting with <code>gdb</code> again:-</p>
+
+<p>Now, we see quite a lot of instructions, I&rsquo;ll explain it in one line since they&rsquo;re easy enough to get.</p>
+<blockquote>
+<p>Note: I will only explain the instruction which we will need to understand.</p></blockquote>
+<ul>
+<li><code>lea</code> : This instruction <strong>load effective address</strong> to a register.</li>
+<li><code>mov</code> : This instruction is used to move an address/value to a register.</li>
+<li><code>je</code> : This is a conditional instruction which means <strong>jump if equals to</strong> executes depending on the result of previous instruction.</li>
+<li><code>jle</code>: This is also a conditional instruction which means <strong>jump if less than or equal to</strong> depending on the result of previous instruction.</li>
+<li><code>call</code> : This instruction calls a subroutine.</li>
+<li><code>cmp</code> : This compares register with a register or a register with a value.</li>
+<li><code>add</code> : This adds the value given at right operand to left operand and store in it.</li>
+<li><code>pop</code> : This pop the register which is given as an operand and wait for a value/address to be given.</li>
+<li><code>ret</code> : This shows that a subroutine or instruction has been completed.</li>
+</ul>
+<h1 id="pwning-time">Pwning time</h1>
+<hr>
+<h4 id="attachments-">Attachments:-</h4>
+<p>Binary: <a href="/files/binary/chall">chall</a></p>
+<p>Source File: <a href="/files/sources/chall.c">chall.c</a></p>
+<p>Exploit: <a href="/files/exploits/xpl_ret2csu.py">xpl.py</a></p>
+<hr>
+<p>Now, since we are way past the required knowledge section, it&rsquo;s time to understand stuff practically since Pwning is best explained practically. Let&rsquo;s take a piece of <strong>vulnerable code</strong> and compile it.</p>
+
+<p>Let&rsquo;s compile it by disabling the stack canary and PIE to make it more understandable. Using <code>gcc --no-stack-protector -no-pie chall.c -o chall</code>:-</p>
+
+<p>It works as it is supposed to, right?. But, our end goal is to get a shell or do something it is not supposed to. Let&rsquo;s fire up gdb and see what we have and start analyzing the binary :-</p>
+
+<p>As we have access to the source code, we pretty much know what exactly is going on. We need to find a way to get a shell and the <code>checksec</code> shows us we have a non-executable stack and <code>Partial Relro</code> which means GOT is overwritable but that&rsquo;s not the scope of this article, so we will keep it out.</p>
+<hr>
+<blockquote>
+<p>We are going to perform <code>ret2libc</code> but this time instead of doing <code>system(&quot;/bin/sh&quot;)</code> we are going to do <code>execve(&quot;/bin/sh&quot;, 0, 0)</code></p></blockquote>
+<hr>
+<p>Let&rsquo;s run <code>ropper</code> and see what gadgets we can control:-</p>
+
+<p>We have access to <code>rdi</code>, <code>rsi</code> but <strong>wait</strong> we don&rsquo;t have <code>rdx</code>, (only if I added a <code>pop rdx; ret</code> instruction as well), that&rsquo;s where <code>ret2csu</code> comes in. We have access to plenty of other registers like <code>r12</code>, <code>r13</code>, <code>r14</code> and <code>r15</code> which if you thought is useless, you gonna check the hidden power and access they have. Since <code>ret2csu</code> deals with <code>__libc_csu_init</code>, why don&rsquo;t we check it&rsquo;s code and know about that function itself? Let&rsquo;s get started:-</p>
+<p>Checking the disassembly of the <code>__libc_csu_init__</code> from the challenge binary:-</p>
+
+<p>It is not that long, so we can get this in a minute or two completely, though there&rsquo;s no point in understanding th whole workflow of the function so I&rsquo;m going to take a look  over the instructions which will be useful.
+Now, as you see the following lines:-</p>
+
+<p>This seems interesting, the contents of <code>r13</code>, <code>r14</code> and <code>r15</code> are going in <code>edi</code>, <code>rsi</code> and <code>rdx</code> respectively. Remember, we had access to <code>r15</code> but not to <code>rdx</code> and the instruction at <code>__libc_csu_init + 64</code> can move the content of <code>r15</code> to <code>rdx</code>, that is the one we were looking for. But before start using these gadgets we need to understand what exactly is <code>__libc_csu_init</code> and it&rsquo;s usage.</p>
+<hr>
+<h3 id="__libc_csu_init">__libc_csu_init</h3>
+<p>The <code>__libc_csu_init</code> is found in every binary, the purpose of this function is for initialization of functions and variables such that our binary is ready to use. From the libc source code, we can see:-</p>
+
+<p>In a nutshell, it calculates the difference between the <code>__init_array</code>&rsquo;s start and end address which contains the functions, constructors, destructors, objects etc. which called at the time of initialization and hence, initialize them accordingly. I&rsquo;m not covering much since the <strong>journey of how main is called from a binary</strong> would take it&rsquo;s own post, for now this is the knowledge we need.</p>
+<hr>
+<p>Now, let&rsquo;s break down the process of creating an exploit and cover it one by one. Let&rsquo;s get started:-</p>
+<h3 id="finding-offset-to-rip">Finding offset to RIP</h3>
+<p>As usual, we need to know that exact how much bytes we need to give to the input in order to get the control of instruction pointer. Since we already used <code>gets</code>, we know that this program is vulnerable to buffer overflow, time to use <code>gdb-gef</code>&rsquo;s <code>pattern</code> which will help us.</p>
+
+<p>Now, since we control over the RIP, time to use a <code>.bss</code> address to read string <code>/bin/sh</code> which we will be passed to first argument of <code>execve</code> later on.</p>
+<h3 id="storing-binsh-at-a-bss-address">Storing <code>/bin/sh</code> at a <code>.bss</code> address</h3>
+<p>Since, we want to do <code>execve(&quot;/bin/sh&quot;, 0, 0)</code> but we don&rsquo;t have any memory which already have <code>/bin/sh</code> address, so what we gonna do is pick an address from <code>.bss</code> section and store the string at that particular address. Now, let&rsquo;s make a <code>pwntools</code> script to interact with binary and work with it, but firstly let&rsquo;s pick a <code>.bss</code> address with the help of <code>gdb</code>.</p>
+
+<p>Now, since we know that this binary contains a <code>rw-</code> data section, we will use it to store the <code>/bin/sh</code> at it. Let&rsquo;s start interacting with binary and send payload:-</p>
+
+<blockquote>
+<p>Payload: The <code>pop rdi; ret</code> will pop the <code>rdi</code> register and we gave the <code>.bss</code> address right after it, after that we added the PLT address of <code>gets</code>, that means we are just doing <code>gets(write_addr)</code>.</p></blockquote>
+<p>Let&rsquo;s run this script, after that we will attach it to <code>gdb</code> and check if the <code>/bin/sh</code> has been stored at that <code>.bss</code> address or not:-</p>
+
+<p>Let&rsquo;s <code>attach</code> this process to <code>gdb</code>:-</p>
+
+<p>Continuing the process, let&rsquo;s enter the <code>/bin/sh</code> string:-</p>
+
+<p>Well, back to <code>gdb</code>:-</p>
+
+<p>Great, we stored the string <code>&quot;/bin/sh&quot;</code> at the <code>0x601150</code>.</p>
+<h3 id="the-ret2csu-technique">The <code>ret2csu</code> technique</h3>
+<p>We are finally at the main part of this blog post, this is where I will explain the technique very thoroughly, so be sure to pay attention. But, it is time for some code analysis of the gadgets we are going to use:-</p>
+
+<p>These are the instructions we are going to use, we have to break these gadgets in two parts so that we first fill up the registers like <code>r12</code>, <code>r13</code> and others and after that the <code>mov</code> instructions will move the contents to the register we want it to. Let&rsquo;s break the gadgets in <strong>2</strong> parts:-</p>
+
+<p>This would be the first gadgets, first let&rsquo;s work on using these and we will move to the other gadgets:-</p>
+<p>Since, <code>r15</code>&rsquo;s content is going in <code>rdx</code>, <code>r14</code>&rsquo;s content is going to <code>rsi</code> and <code>r13d</code>&rsquo;s content is going to <code>rdi</code>. This means, we have to set the contents of these registers to <code>/bin/sh</code>, <code>0</code> and <code>0</code> respectively. Let&rsquo;s work on:-</p>
+<blockquote>
+<p>Note: The <code>d</code> in <code>r13d</code> means the <code>dword</code>.</p></blockquote>
+<p>The second ROP gadget:-</p>
+
+<p>For the second part, the one which will transfer the contents of <code>r15</code>, <code>r14</code> and <code>r13</code> to <code>rdx</code>, <code>r14</code> to <code>rsi</code> and <code>r13</code> to <code>edi</code>. But there are some problems, the instructions after those <code>mov</code> instructions need to be handled carefully such that if any one of the values in register,  if wrong, would just discard everything. So, this is the important part, so focus on the explaination and work carefully.</p>
+<p>Let&rsquo;s see how we will handle it, line by line:-</p>
+<h5 id="call---qword-ptr-r12rbx8"><code>call   QWORD PTR [r12+rbx*8]</code></h5>
+<p>This instruction calls a subroutine, now for this we may have to give up something which points to a function which is present in the binary and do not reference to an invalid address. To handle this, we will provide an address from Dynamic section of ELF such that the calling that function won&rsquo;t do any change to the register content, as it should preserve the state of these registers, it also should not point to any an arbitrary address which will cause a breakthrough in the binary workflow. To meet this requirements, we will need either a <code>_init</code> or <code>_fini</code> to preserve the state of register:-</p>
+
+<h5 id="0x000000000040067d-77add----rbx0x1"><code>0x000000000040067d &lt;+77&gt;:	add    rbx,0x1</code></h5>
+<p>This will increment the value of value of <code>rbx</code> by <code>1</code>.</p>
+<h5 id="0x0000000000400681-81cmp----rbprbx"><code>0x0000000000400681 &lt;+81&gt;:	cmp    rbp,rbx</code></h5>
+<p>This will compare the value of <code>rbp</code> with <code>rbx</code>.</p>
+<h5 id="0x0000000000400684-84jne----0x400670-__libc_csu_init64"><code>0x0000000000400684 &lt;+84&gt;:	jne    0x400670 &lt;__libc_csu_init+64&gt;</code></h5>
+<p>This is a conditional jump, if the value of the <code>cmp rbp, rbx</code> is not equal, this means it&rsquo;ll jump to the instruction stored at <code>__libc_csu_init + 64</code>.</p>
+<h5 id="0x0000000000400686-86add----rsp0x8"><code>0x0000000000400686 &lt;+86&gt;:	add    rsp,0x8</code></h5>
+<p>This will add the <code>0x8</code> bytes and increase the size of the <code>rsp</code> by it.</p>
+<h3 id="the-rop-chain-explanation">The ROP Chain: Explanation</h3>
+<p>Now, let&rsquo;s see exactly what is happening with the chain:-</p>
+
+<p>Firstly, the lines with <code>mov</code> instruction are transferring the values of the registers of left operand to right operand. Then the <code>call</code> keyword is calling the subroutine calculated by at offset <code>r12 + rbx * 8</code>, and with the square brackets around them means the indirect addressing, this will make the <code>call</code> instruction to jump at that subroutine at the given address. Now, the <code>add rbx, 1</code> will increment the value of <code>rbx</code> by <code>1</code>. Then the value of <code>rbp</code> and <code>rbx</code> is compared, if they are not equal the RIP will be set to  <code>__libc_csu_init + 64</code>. If it is equal, then the stack size will be increased by 8 and the registers <code>rbx</code>, <code>rbp</code>, <code>r13</code>, <code>r14</code> and <code>r14</code> will be popped.</p>
+<hr>
+<h1 id="payload-part-1">Payload: Part 1</h1>
+<p>Now, since we are done with theoretical aspects of this technique, it&rsquo;s time to try it practically. What we gonna do here is, chain the ROP chain from which we were able to input <code>&quot;/bin/sh&quot;</code>, and we are going to leak a GOT address in order to calculate the LIBC base address, then we will call main again.</p>
+<p>Let&rsquo;s build a ROP chain:-</p>
+<p>Some prologue and predefined variables:-</p>
+
+<p>Enter the <code>/bin/sh</code> string to the wriitable address.</p>
+
+<p>You know about what is happening here from earlier. Let&rsquo;s move to other:-</p>
+
+<p>This part is doing a bit of what is happening with the above part, the differnce is <code>puts</code> will print the value provided as first argument, here the <code>GOT</code> address will point to the LIBC address of the function which means it&rsquo;ll print the address of <code>puts</code> from the LIBC.</p>
+<p>Now, let&rsquo;s send the payload and parse the leaked LIBC address:-</p>
+
+<p>Let&rsquo;s run the script and check it in <code>gdb</code> if we are on the right way or not:-</p>
+
+<p>Now, attach it to <code>gdb</code>:-</p>
+
+<p>Let&rsquo;s continue the process with <code>continue</code>:-</p>
+
+<p>Now, resuming the script:-</p>
+
+<hr>
+
+<p>This is printed because we called the <code>main</code> again.</p>
+<hr>
+<p>Now, we will Interrupt the execution of program inside gdb to check if the address are correct:-</p>
+
+<p>Awesome! Everything seems to be right. Now, we will go through second payload:-</p>
+<h1 id="payload-part-2">Payload: Part 2</h1>
+<p>Now, this payload is crucial since this is where the actual <code>ret2csu</code> is, I&rsquo;ll try to explain as much as I can:-</p>
+
+<p>So, as you remember the following instructions:-</p>
+
+<p>That&rsquo;s why we provided the value we wanted in <code>rdx</code>, <code>rsi</code> and <code>rdi</code> to <code>r15</code>, <code>r14</code> and <code>r13</code> respectively. The values passed to <code>rbx</code> and <code>rbp</code> have their importance when we call next chain. But first, let&rsquo;s run the script and attach it to gdb such that we can check content registers:-</p>
+
+<p>Since, you already know the drill of attaching and continuing the process in <code>gdb</code>, I&rsquo;ll show the contents of registers:-</p>
+
+<p>The registers values:-</p>
+
+<p>Now, it&rsquo;s time to check the second ROP chain:-</p>
+
+<p>Well, kind of a long chain to deal with but it&rsquo;s very simple, as I already explained it but this time we are giving the input, so this is a crucial part. The explanations would be done line by line:-</p>
+
+<p>Now, the <code>mov</code> instructions will transfer the contents to registers. Previously, we gave <code>r12</code> : <code>0x600e38</code> which is an address to the <code>_init</code> pointer, here, apparently, <code>rbx</code> was <code>0</code> which means <code>[r12 + rbx * 8]</code> will be equal to <code>[0x600e38 + 0 * 8]</code> which will be <code>[0x600e38]</code>.  After that <code>rbx</code> is incremented by <code>0x1</code> which will make the <code>rbx</code> value <code>0x1</code>. Then the <code>cmp    rbp,rbx</code>, as you remember from the first chain, we provided <code>0x1</code> to <code>rbp</code> value, then it will evaluate equally since <code>rbp</code> and <code>rbx</code> both have the value of <code>0x1</code>, skipping the <code>jne</code> line. After that we have, <code>add rsp, 0x8</code>, we have to pad this instruction by giving <code>0x0</code>, after that we can give <code>0x0</code> to the popped registers as the control flow of program would take care of this.</p>
+<h1 id="pwned">Pwned</h1>
+<p>As we are done understanding the payload, it&rsquo;s time to run the final script:-</p>
+<hr>
+<blockquote>
+<p>Note: I put a breakpoint at <code>execve</code>. This will help us to check the arguments provided to it.</p></blockquote>
+
+<hr>
+
+<p>Now, we will attach the process, and continue:-</p>
+
+<p>Cool, now let&rsquo;s continue the execution:-</p>
+
+<p>It seems like we spawned a shell, let&rsquo;s get back to the script:-</p>
+
+<p>Awesome, we did it. Congratulations, you finally made it to end which means you learned the <code>ret2csu</code> to some extent. I&rsquo;d recommend you try it on yourself and mess around with <code>gdb</code>.</p>
+
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M4 0h8s2 0 4 2l15 15s2 2 0 4L21 31s-2 2-4 0L2 16s-2-2-2-4V3s0-3 4-3m3 10a3 3 0 0 0 0-6 3 3 0 0 0 0 6"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/rop-bof-ret2csu-ctf/" rel="tag">rop, bof, ret2csu, ctf</a>
+		</li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+
+
+
+			</div>
+			<aside class="sidebar"><div class="widget-search widget">
+	<form class="widget-search__form" role="search" method="get" action="https://google.com/search">
+		<input class="widget-search__field" type="search" placeholder="Search…" value="" name="q" aria-label="Search…">
+		<input class="widget-search__submit" type="submit" value="Search">
+		<input type="hidden" name="sitesearch" value="http://localhost:1313/">
+	</form>
+</div>
+<div class="widget-recent widget">
+	<h4 class="widget__title">Recent Posts</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/posts/crushftp-cve-2025-2825/">CVE 2025-2825 - CrushFTP Authentication Bypass Analysis</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/hpe-irs-cve-deep-dive/">Exploring Recent CVEs in HPE Insight Remote Support</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/ivanti-endpoint-manager-xxe-cve-2024-37397/">CVE 2024-37397 - Ivanti Endpoint Manager XXE Vulnerability</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/crushftp-cve-2024-4040/">CVE 2024-4040 - CrushFTP Server-Side Template Injection Vulnerability Analysis</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/soccer-htb/">HackTheBox - Soccer</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-categories widget">
+	<h4 class="widget__title">Categories</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/cve-analysis/">CVE Analysis</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/hackthebox/">HackTheBox</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/pwning/">Pwning</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/vulnhub/">Vulnhub</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-taglist widget">
+	<h4 class="widget__title">Tags</h4>
+	<div class="widget__content">
+		<a class="widget-taglist__link widget__link btn" href="/tags/nmap-ctf-vulnhub/" title="Nmap, Ctf, Vulnhub">Nmap, Ctf, Vulnhub (4)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/java/" title="Java">Java (3)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rce/" title="RCE">RCE (2)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/xxe/" title="XXE">XXE (2)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/.net/" title=".NET">.NET (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/auth-bypass/" title="Auth-Bypass">Auth-Bypass (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-37297/" title="CVE-2024-37297">CVE-2024-37297 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-4040/" title="Cve-2024-4040">Cve-2024-4040 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-53675/" title="CVE-2024-53675">CVE-2024-53675 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-53676/" title="CVE-2024-53676">CVE-2024-53676 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2025-2825/" title="CVE-2025-2825">CVE-2025-2825 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/dstat-sqlmap-upstream_proxy-websocket/" title="Dstat, Sqlmap, Upstream_proxy, Websocket">Dstat, Sqlmap, Upstream_proxy, Websocket (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/logic-flaw/" title="Logic-Flaw">Logic-Flaw (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/oob-xxe/" title="OOB-XXE">OOB-XXE (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/path-traversal/" title="Path Traversal">Path Traversal (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/pwn-hackthebox-v8-kernel-heap-tcache-libc-2.29/" title="Pwn, Hackthebox, V8, Kernel, Heap, Tcache, Libc-2.29">Pwn, Hackthebox, V8, Kernel, Heap, Tcache, Libc-2.29 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/pwn-tcache-libc-2.27-hackthebox/" title="Pwn, Tcache, Libc-2.27, Hackthebox">Pwn, Tcache, Libc-2.27, Hackthebox (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rop-bof-ret2csu-ctf/" title="Rop, Bof, Ret2csu, Ctf">Rop, Bof, Ret2csu, Ctf (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rop-pwn-bof/" title="Rop, Pwn, Bof">Rop, Pwn, Bof (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rop-pwn-radare2-pwntools/" title="Rop, Pwn, Radare2, Pwntools">Rop, Pwn, Radare2, Pwntools (1)</a>
+		<a class="widget-taglist__link widget__link btn widget-taglist__link--all" href="/tags/">View all tags →</a>
+	</div>
+</div>
+
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2025 .
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+</body>
+</html>

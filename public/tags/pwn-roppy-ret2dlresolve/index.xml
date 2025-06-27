@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Pwn, Roppy, Ret2dlresolve on Pwnfuzz Blog</title>
+    <link>http://localhost:1313/tags/pwn-roppy-ret2dlresolve/</link>
+    <description>Recent content in Pwn, Roppy, Ret2dlresolve on Pwnfuzz Blog</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 01 Aug 2020 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/pwn-roppy-ret2dlresolve/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Hacktivitycon - Pwn challenges</title>
+      <link>http://localhost:1313/posts/hacktivitycon-pwn/</link>
+      <pubDate>Sat, 01 Aug 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/hacktivitycon-pwn/</guid>
+      <description>&lt;p&gt;I played this CTF mainly because I was chilling out and wanted to try out some challenges from the CTF. I managed to do the every pwn challenge except space one which was heap and the exploitation mechanism of it belongs to GLIBC 2.27 and I am only familiar with GLIBC 2.24 at the moment, but I know what to do this week,&lt;/p&gt;&#xA;&lt;!-- more --&gt;&#xA;&lt;h1 id=&#34;pancake&#34;&gt;Pancake&lt;/h1&gt;&#xA;&lt;p&gt;Pancake challenge was very simple as the buffer overflow was very suspectible as the binary used the &lt;code&gt;gets&lt;/code&gt; function which is a vulnerable function as it&amp;rsquo;ll keep taking the input a new line &lt;code&gt;\n&lt;/code&gt; is encountered. To our luck, the binary has a function named &lt;code&gt;secret&lt;/code&gt; which spawns a shell for us. This was basically a &lt;strong&gt;ret2win&lt;/strong&gt; technique.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

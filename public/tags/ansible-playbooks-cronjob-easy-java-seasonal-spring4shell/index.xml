@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ansible-Playbooks, Cronjob, Easy, Java, Seasonal, Spring4shell on Pwnfuzz Blog</title>
+    <link>http://localhost:1313/tags/ansible-playbooks-cronjob-easy-java-seasonal-spring4shell/</link>
+    <description>Recent content in Ansible-Playbooks, Cronjob, Easy, Java, Seasonal, Spring4shell on Pwnfuzz Blog</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 08 Jul 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/ansible-playbooks-cronjob-easy-java-seasonal-spring4shell/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>HackTheBox - Inject</title>
+      <link>http://localhost:1313/posts/inject-htb/</link>
+      <pubDate>Sat, 08 Jul 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/inject-htb/</guid>
+      <description>&lt;p&gt;Writeup for HackTheBox&amp;rsquo;s Inject machine.&lt;/p&gt;&#xA;&lt;!-- more --&gt;&#xA;&lt;p&gt;We have an upload functionality in the web app and it accepts PNG files, although there are some bypasses but they didn’t lead anywhere.&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;http://localhost:1313/img/Inject_-_Seasonal_9e3607466f6a4ad49fada783b796669f/Untitled_1.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;&#xA;&lt;p&gt;Once you upload a valid PNG/Image file, you can view it by going to &lt;code&gt;show_image&lt;/code&gt; and the filename is specified by the &lt;code&gt;img&lt;/code&gt; parameter&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;http://localhost:1313/img/Inject_-_Seasonal_9e3607466f6a4ad49fada783b796669f/Untitled_2.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;&#xA;&lt;p&gt;It is vulnerable to LFI vulnerability, we can access any arbitrary file with the known location.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

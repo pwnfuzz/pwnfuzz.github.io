@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Pwn, Tcache, Libc-2.27, Hackthebox on </title>
+    <link>http://localhost:1313/tags/pwn-tcache-libc-2.27-hackthebox/</link>
+    <description>Recent content in Pwn, Tcache, Libc-2.27, Hackthebox on </description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 13 Feb 2021 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/pwn-tcache-libc-2.27-hackthebox/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>HackTheBox Pwn: Toxin</title>
+      <link>http://localhost:1313/posts/toxin/</link>
+      <pubDate>Sat, 13 Feb 2021 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/toxin/</guid>
+      <description>&lt;p&gt;This challenge on the HackTheBox was released recently, the archive attachment contains the following files:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;code&gt;toxin&lt;/code&gt;: The binary&lt;/li&gt;&#xA;&lt;li&gt;&lt;code&gt;ld-2.27.so&lt;/code&gt; and the &lt;code&gt;libc-2.27&lt;/code&gt; file.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;The given LIBC files hinted towards the binary running on the Ubuntu 18.04 aka Bionic Beaver.&lt;/p&gt;&#xA;&lt;h1 id=&#34;reverse-engineering&#34;&gt;Reverse Engineering&lt;/h1&gt;&#xA;&lt;p&gt;Using the IDA, here&amp;rsquo;s the pseudocode equivalence of the function:-&lt;/p&gt;&#xA;&lt;h5 id=&#34;add-function&#34;&gt;&lt;code&gt;add&lt;/code&gt; function&lt;/h5&gt;&#xA;&lt;p&gt;The &lt;code&gt;add&lt;/code&gt; function was as follows:-&lt;/p&gt;&#xA;&#xA;&lt;p&gt;This function was responsible for taking the &lt;code&gt;size&lt;/code&gt; and allocate a chunk via &lt;code&gt;malloc&lt;/code&gt; with the given &lt;code&gt;size&lt;/code&gt; and add it to the gloabl pointer &lt;code&gt;toxins&lt;/code&gt;, The takeaways from this function was the &lt;code&gt;size&lt;/code&gt; restriction was that we can allocate chunks upto 0x70 &lt;code&gt;size&lt;/code&gt; and since the &lt;code&gt;index&lt;/code&gt; given must be in within &lt;code&gt;index &amp;lt; 0  || index &amp;gt; 2&lt;/code&gt; it&amp;rsquo;ll throw an error, same as for if the chunk is occupied in the global array, it&amp;rsquo;ll just throw the error.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

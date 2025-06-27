@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>HTB Pwn - Dream Diary Chapter: 1 - Pwnfuzz Blog</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+
+	<link rel="stylesheet" href="/css/style.css">
+	
+
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo">
+		<a class="logo__link" href="/" title="Pwnfuzz Blog" rel="home">
+			<div class="logo__item logo__text">
+					<div class="logo__title">Pwnfuzz Blog</div>
+					
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">HTB Pwn - Dream Diary Chapter: 1</h1>
+			
+		</header>
+		<div class="content post__content clearfix">
+			<p>This is a writeup of a retired Pwn challenge on HackTheBox, although I wanted to do it earlier but couldn&rsquo;t get time for this writeup, so I will write it here.</p>
+<!-- more -->
+<h1 id="attachment">Attachment</h1>
+<p>Binary: <a href="https://github.com/D4mianWayne/PwnLand/blob/master/Heap/Unsafe%20Unlink/chapter1">Get Here</a>
+Exploit: <a href="https://github.com/D4mianWayne/PwnLand/blob/master/Heap/Unsafe%20Unlink/chapter1.py">Get Here</a></p>
+<h1 id="initial-analysis">Initial Analysis</h1>
+<p>First of, all we will see the binary and the security mechanisms on the binary and see the workflow of it. Let&rsquo;s identify the file:-</p>
+
+<p>So, this is a 64 bit binary and on top of that it is stripped, which means reverse engineering it&rsquo;ll take quite sometime, let&rsquo;s check the security mechanisms:-</p>
+
+<p><code>Canary</code> and <code>NX Enabled</code> means that overflow is not gonna happen easily considering <strong>iff</strong> any kind of overflow exists, and it has <code>Partial RELRO</code> which <code>Global Offset Table</code> would be in <code>r/w</code> section which means we can overwrite the GOT entries.</p>
+<p>All things, aside let&rsquo;s run the binary:-</p>
+
+<p>So, it seems like it allocates a specific amount of size in memory and then let us store the data at allocated region. On top of that it allow us to delete the allocated region and even edit an allocated chunk. Since we want to pwn it, we need to reverse engineer it, let&rsquo;s go.</p>
+<h1 id="reverse-engineering">Reverse Engineering</h1>
+<p>First off, we will load the binary in IDA and let it do the work, then we will analyze the functions. First, we will check the <code>main</code> function:-</p>
+
+<p>Quite simple, it calls <code>print_menu</code> and then read the integer and depending on what option we choose, it calls the function, the only function which stands out for the interest here is <code>allocate</code>, <code>edit</code> and <code>delete</code> as this is the core functions of the binary, let&rsquo;s check those out.</p>
+<blockquote>
+<p>NOTE: I have named the functions to more readable names, so it&rsquo;ll help in understanding rest of the code.</p></blockquote>
+<p>Let&rsquo;s check the <code>allocate</code>:-</p>
+
+<p>So, first of it checks if the total number of allocated notes is not more than 15, if it is not then it reads the size and then it allocates a chunk of <code>size</code> given, with the index of the note stored in the gloabl variable named <code>ptr</code>. For example, if none of the note has been allocated and given size is <code>0x40</code>, the <code>allocate </code>function will do <code>malloc(0x40)</code> then it address of the allocated chunk will be stored at <code>ptr[0] = &amp;allocated_chunk</code>.</p>
+<p>Now, it doesn&rsquo;t do much stuff which seems to be of interest, so let&rsquo;s move on the <code>delete</code> function:-</p>
+
+<p>It reads the the index of the chunk smartly since it checks for the negative and OOB index and then it checks if there is a chunk which is not NULL&rsquo;d already, if it&rsquo;s not then it <code>free</code>&rsquo;s the allocated chunk and makes the <code>ptr[index] = 0</code> making the UAF out of option. But clearly, it didn&rsquo;t NULL&rsquo;d the <code>free</code>&rsquo;d region, so maybe it&rsquo;ll be useful later.</p>
+<p>Lastly, we will check the <code>edit</code> function:-</p>
+
+<p>There&rsquo;s something fishy here, first the length for the <code>read_string</code> is calculated by <code>strlen</code> and then it is reading the data into the allocated memory. So, what is the catch here? To be more subtle, we have to know that <code>strlen</code> decided the length of a string when a NULL byte is recognized, for example if we have a string <code>HELLO\x00</code>, here it has a NULL Byte in the end, so when <code>strlen(&quot;HELLO\x00&quot;)</code> would be done, the returning value will be 5. but what if the string is not terminated by NULL byte, now since we know that in the <code>edit</code> the length for the <code>read_string</code>, since the string is not terminated by the NULL byte as we see in the <code>read_string</code> below:-</p>
+
+<p>Now, it&rsquo;ll calculate the data only if when the NULL byte will be encountered, there&rsquo;s a off by one(kind of) vulnerability we can use. Without further ado, let&rsquo;s move on.</p>
+<h1 id="unsafe-unlink">Unsafe Unlink</h1>
+<p>To get along with this, since the given hint was <code>Xenial Xerus</code> which is the name of the <code>Ubuntu 16.04</code> which uses the LIBC-2.23 which, i back then had many low security checks for the heap internals, taking advantage of one of these loose checks within the <code>malloc.c</code>, we will be seeing it soon enough, the technique we will use here would be <code>Unsafe Unlink</code>, first of we will see what it is and how we will use it. To be precise, it is used when we have the global pointer address is known, in this case it&rsquo;d be <code>ptr</code>, to understand it more, we will be seeing it in practice in next section, this is more of just an introduction to unlink. So, first of all, we see the following example of the <code>Unsafe Unlink</code> from <code>how2heap</code> repository:-</p>
+<blockquote>
+<p>NOTE: This technique is not applicable on fastbin chunks.</p></blockquote>
+
+<p>The binary speak for itself, but let&rsquo;s see, first of all we have a global array which contains the pointers to the allocated memory regions stored in the heap. Here, we have the global pointer stored at <code>0x602070</code> stored in the BSS region, now according to the example, it is pointing to the <code>0x12ee010</code> which is the first allocated chunk, next the victim chunk here is <code>0x12ee0a0</code>, when the example says it creates a fake chunk withing the <code>chunk0</code> it means we are creating a fake <code>free</code>&rsquo;d chunk, which looks like:-</p>
+
+<p>We create a fake chunk where the <code>fd</code> pointer points to the <code>0x602058</code> and the <code>bk</code> pointer points to the <code>0x602060</code>, as mentioned the example assumes we have overflow to manipulate the metadata of chunk i.e. <code>prev_size</code> and <code>size</code> or even <code>fd</code> or <code>bk</code>, in the example it clears out the <code>PREV_IN_USE</code> which is responsible for indicating if the chunk is in use or not by the program in one way or another. So, after that when we free the chunk we clear the <code>PREV_IN_USE</code> bit off, since we added a fake in the chunk before that, the heap manager will try to unlink the free&rsquo;d chunk to make the heap more efficient for the next allocation. In the GLIBC-2.23 has the unlink mechanism as follows:-</p>
+
+<p>What we would be doing is the same as backward consolidation, going over this piece of the code we see that the it first checks if the <code>prev_inuse</code> is not 0, then it gets the <code>prev_size</code> from the chunk header, next it gets the  chunk offset and then calls the <code>unlink</code>, let&rsquo;s see the <code>unlink</code> snippet.</p>
+
+<p>To be precise, we need to get through the 2 checks to call unlink for our exploit, those checks include:-</p>
+<ul>
+<li>The <code>prev_size</code> should not be equal to the size of the next chunk.</li>
+<li>Then the other check is <code>FD</code> here is the <code>fd</code> address pointed by our chunk and vice versa should point to the chunk itself.</li>
+</ul>
+<h1 id="exploitation">Exploitation</h1>
+<p>Theories aside, it&rsquo;s time to go into the exploitation phase, let&rsquo;s create a exploit template to interact with the service:-</p>
+
+<p>So, next up, we will allocate chunks, five chunks would be good, of same size:-</p>
+
+<p>Now, we will run the exploit and see the chunks in gdb:-</p>
+
+<p>Here, we have 5 chunks on the heap with the size <code>0x90</code> and then we have a global array having the pointers of the allocated chunk. Our target is to get control of the <code>0x6020c0</code> global array, so that we can manipulate the pointers stored within to it to get r/w primitive.</p>
+<p>The plan here is to forge a fake chunk, such that we can point the <code>fd</code> and <code>bk</code> to the global array, this will be done with:-</p>
+
+<p>The fake chunk, if seen visually looks like:-</p>
+
+<p>Now, running the exploit:-</p>
+
+<p>Here, the our forged chunk is within the 3rd chunk, our <code>fd</code> points to the <code>0x6020c0</code> and the <code>bk</code> to the <code>0x6020c8</code>, this aside, then we modified the <code>prev_size</code> of the chunk <code>0x230a1c0</code> to the <code>0x80</code> as it was <code>0x90</code> before, we did this because, our forged chunk must be considered from the <code>0x230a1c0</code> as from the we have an actual free&rsquo;d chunk structure, then we made <code>prev_inuse</code> bit of the chunk <code>0x230a250</code> equal to the <code>0</code> to consider the chunk as a free&rsquo;d chunk, so when we try to do <code>free(chunk4)</code> it&rsquo;ll consolidate the adjacent chunks, hence doing an unsafe unlink, resulting in the <code>fd</code> of the free&rsquo;d chunk pointing to the <code>0x6020c0</code>.</p>
+<p>Let&rsquo;s free the chunk 4 and see the memory content to make this more clear.</p>
+
+<p>Now as we see the global array having a pointer to itself on index 3, this means that the chunk 3 is now pointing to the global array itself, let&rsquo;s see what happened under the hood when we did <code>free(4)</code>, I will break it down in following steps:-</p>
+<ul>
+<li>There was a forged free&rsquo;d chunk with the <code>fd</code> and <code>bk</code> pointing to the global array.</li>
+<li>When the <code>free(4)</code> is called and the chunk <code>4</code> was initally freed and the forged chunk was coalesced with the chunk <code>4</code>.</li>
+<li>Once coalesced, the unlink is triggered resulting in the 3rd chunk pointer in the global array being overwritten with the address we wanted it to.</li>
+</ul>
+<p>Now, we have the control over the chunk <code>3</code>, we can edit it and get the other pointer overwritten too, if we could overwrite one of the entry with any GOT address, we can get the control over the binary.</p>
+
+<p>So, from the code above you can see, first we overwrite the pointer returned by the chunk <code>3</code> which would be the global array itself, then we request for the first chunk via the <code>edit</code> function and since the 0th chunk address point to the <code>free@got</code>, we get the pointer of <code>free@GOT</code> and then it is being overwritten with the <code>printf@plt</code>.</p>
+
+<p>As you can see, we successfully overwritten the <code>free@got</code> with the PLT address of the <code>printf</code>. Now, we have the <code>printf</code>, as from the reverse engineering, we know that the free is done like <code>free(ptr[index])</code>, as the <code>free</code> is now <code>printf</code>, now it&rsquo;ll do the <code>printf(ptr(index])</code>, as obvious it should be we have a format string vulnerability now, we can leak a LIBC address to defeat ASLR.</p>
+
+<p>Running the exploit now, we will have the LIBC leak:-</p>
+
+<p>Now, all left is to calculate the <code>system</code> address and then overwrite another GOT entry with the <code>system</code> address and enjoy the shell:-</p>
+
+<p>Now, running the final exploit:-</p>
+
+<p>And that was it, congratulations, now you learned the Unsafe Unlink, as my blog was silent for a while, this was in draft so here it is now.</p>
+
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M4 0h8s2 0 4 2l15 15s2 2 0 4L21 31s-2 2-4 0L2 16s-2-2-2-4V3s0-3 4-3m3 10a3 3 0 0 0 0-6 3 3 0 0 0 0 6"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/unlink-htb-pwn-heap/" rel="tag">unlink, htb, pwn, heap</a>
+		</li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+
+
+
+			</div>
+			<aside class="sidebar"><div class="widget-search widget">
+	<form class="widget-search__form" role="search" method="get" action="https://google.com/search">
+		<input class="widget-search__field" type="search" placeholder="Search…" value="" name="q" aria-label="Search…">
+		<input class="widget-search__submit" type="submit" value="Search">
+		<input type="hidden" name="sitesearch" value="http://localhost:1313/">
+	</form>
+</div>
+<div class="widget-recent widget">
+	<h4 class="widget__title">Recent Posts</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/posts/crushftp-cve-2025-2825/">CVE 2025-2825 - CrushFTP Authentication Bypass Analysis</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/hpe-irs-cve-deep-dive/">Exploring Recent CVEs in HPE Insight Remote Support</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/ivanti-endpoint-manager-xxe-cve-2024-37397/">CVE 2024-37397 - Ivanti Endpoint Manager XXE Vulnerability</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/crushftp-cve-2024-4040/">CVE 2024-4040 - CrushFTP Server-Side Template Injection Vulnerability Analysis</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/exploit-dev-egghunting/">Exploit Dev: EggHunting Explained</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-categories widget">
+	<h4 class="widget__title">Categories</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/ctfs/">CTFs</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/cve-analysis/">CVE Analysis</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/exploit/">Exploit</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/hackthebox/">HackTheBox</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/pwning/">Pwning</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/vulnhub/">Vulnhub</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-taglist widget">
+	<h4 class="widget__title">Tags</h4>
+	<div class="widget__content">
+		<a class="widget-taglist__link widget__link btn" href="/tags/.net/" title=".NET">.NET (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/ansible-playbooks-cronjob-easy-java-seasonal-spring4shell/" title="Ansible-Playbooks, Cronjob, Easy, Java, Seasonal, Spring4shell">Ansible-Playbooks, Cronjob, Easy, Java, Seasonal, Spring4shell (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/auth-bypass/" title="Auth-Bypass">Auth-Bypass (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/bash-easy-eval-python-code-injection-relative-path-exploit/" title="Bash, Easy, Eval, Python-Code-Injection, Relative-Path-Exploit">Bash, Easy, Eval, Python-Code-Injection, Relative-Path-Exploit (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/blindsqlinjection-nosql-xss-pspy64/" title="BlindSQLInjection, NoSQL, XSS, Pspy64">BlindSQLInjection, NoSQL, XSS, Pspy64 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/ctf-pwn-v8-browser-pwn/" title="Ctf, Pwn, V8, Browser Pwn">Ctf, Pwn, V8, Browser Pwn (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-37297/" title="CVE-2024-37297">CVE-2024-37297 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-4040/" title="Cve-2024-4040">Cve-2024-4040 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-53675/" title="CVE-2024-53675">CVE-2024-53675 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-53676/" title="CVE-2024-53676">CVE-2024-53676 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2025-2825/" title="CVE-2025-2825">CVE-2025-2825 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/dependencies-easy-pdfkit-ruby/" title="Dependencies, Easy, Pdfkit, Ruby">Dependencies, Easy, Pdfkit, Ruby (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/deserialisation/" title="Deserialisation">Deserialisation (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/dll/" title="DLL">DLL (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/dotnet/" title="Dotnet">Dotnet (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/dstat-sqlmap-upstream_proxy-websocket/" title="Dstat, Sqlmap, Upstream_proxy, Websocket">Dstat, Sqlmap, Upstream_proxy, Websocket (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/exploit-dev-egghunting/" title="Exploit-Dev, Egghunting">Exploit-Dev, Egghunting (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/java/" title="Java">Java (3)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/libc-2.27-heap-pwn-ctf-hitcon-tcache-roppy/" title="Libc-2.27, Heap, Pwn, Ctf, Hitcon, Tcache, Roppy">Libc-2.27, Heap, Pwn, Ctf, Hitcon, Tcache, Roppy (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/logic-flaw/" title="Logic-Flaw">Logic-Flaw (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/newtonsoft/" title="NewtonSoft">NewtonSoft (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/nmap-ctf-hackthebox-htb/" title="Nmap, Ctf, HacktheBox, Htb">Nmap, Ctf, HacktheBox, Htb (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/nmap-ctf-vulnhub/" title="Nmap, Ctf, Vulnhub">Nmap, Ctf, Vulnhub (8)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/oob-xxe/" title="OOB-XXE">OOB-XXE (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/path-traversal/" title="Path Traversal">Path Traversal (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/pwn-ctf-__malloc_hook-rop-pwntools/" title="Pwn, Ctf, __Malloc_hook, Rop, Pwntools">Pwn, Ctf, __Malloc_hook, Rop, Pwntools (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/pwn-fmtstr-bof-pwntools-canary/" title="Pwn, Fmtstr, Bof, Pwntools, Canary">Pwn, Fmtstr, Bof, Pwntools, Canary (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/pwn-hackthebox-v8-kernel-heap-tcache-libc-2.29/" title="Pwn, Hackthebox, V8, Kernel, Heap, Tcache, Libc-2.29">Pwn, Hackthebox, V8, Kernel, Heap, Tcache, Libc-2.29 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/pwn-roppy-ret2dlresolve/" title="Pwn, Roppy, Ret2dlresolve">Pwn, Roppy, Ret2dlresolve (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/pwn-shellcode-egghunting-hackthebox/" title="Pwn, Shellcode, Egghunting, Hackthebox">Pwn, Shellcode, Egghunting, Hackthebox (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/pwn-tcache-libc-2.27-hackthebox/" title="Pwn, Tcache, Libc-2.27, Hackthebox">Pwn, Tcache, Libc-2.27, Hackthebox (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/python/" title="Python">Python (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/python-flask-lfi-chisel-jtr-pip3/" title="Python-Flask, LFI, Chisel, Jtr, Pip3">Python-Flask, LFI, Chisel, Jtr, Pip3 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rce/" title="RCE">RCE (2)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rop-bof-ret2csu-ctf/" title="Rop, Bof, Ret2csu, Ctf">Rop, Bof, Ret2csu, Ctf (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rop-pwn-bof/" title="Rop, Pwn, Bof">Rop, Pwn, Bof (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rop-pwn-bof-syscall-zer0ctf/" title="Rop, Pwn, Bof, Syscall, Zer0ctf">Rop, Pwn, Bof, Syscall, Zer0ctf (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rop-pwn-radare2-pwntools/" title="Rop, Pwn, Radare2, Pwntools">Rop, Pwn, Radare2, Pwntools (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rop-pwn-ret2libc-bof/" title="Rop, Pwn, Ret2libc, Bof">Rop, Pwn, Ret2libc, Bof (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/smb-windows-mssql-server-hashcat-evil-winrm-responder.py/" title="Smb, Windows, Mssql-Server, Hashcat, Evil-Winrm, Responder.py">Smb, Windows, Mssql-Server, Hashcat, Evil-Winrm, Responder.py (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/sqlmap/" title="Sqlmap">Sqlmap (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/ssti/" title="SSTI">SSTI (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/unlink-htb-pwn-heap/" title="Unlink, Htb, Pwn, Heap">Unlink, Htb, Pwn, Heap (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/web-app/" title="Web-App">Web-App (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/websocket/" title="Websocket">Websocket (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/windows-htb/" title="Windows, Htb">Windows, Htb (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/xxe/" title="XXE">XXE (2)</a>
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2025 Pwnfuzz Blog.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+</body>
+</html>

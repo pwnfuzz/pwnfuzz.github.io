@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>HackTheBox - Soccer - Pwnfuzz Blog</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+
+	<link rel="stylesheet" href="/css/style.css">
+	
+
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo">
+		<a class="logo__link" href="/" title="Pwnfuzz Blog" rel="home">
+			<div class="logo__item logo__text">
+					<div class="logo__title">Pwnfuzz Blog</div>
+					
+				</div>
+		</a>
+	</div>
+		
+<nav class="menu">
+	<button class="menu__btn" aria-haspopup="true" aria-expanded="false" tabindex="0">
+		<span class="menu__btn-title" tabindex="-1">Menu</span>
+	</button>
+	<ul class="menu__list">
+		<li class="menu__item">
+			<a class="menu__link" href="/">
+				
+				<span class="menu__text">Home</span>
+				
+			</a>
+		</li>
+		<li class="menu__item">
+			<a class="menu__link" href="/tags/">
+				
+				<span class="menu__text">Tags</span>
+				
+			</a>
+		</li>
+		<li class="menu__item">
+			<a class="menu__link" href="/about/">
+				
+				<span class="menu__text">About</span>
+				
+			</a>
+		</li>
+	</ul>
+</nav>
+
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+    <article class="post">
+        <header class="post__header">
+            <h1 class="post__title">HackTheBox - Soccer</h1>
+            <p class="post__subtitle">Write-Up</p>
+            <div class="post__meta">
+                <span class="post__author">
+                    <i class="fas fa-user"></i> D4mianwayne
+                </span>
+                <span class="post__date">
+                    <i class="far fa-calendar-alt"></i> June 10, 2023
+                </span>
+                
+                <span class="post__categories">
+                    <i class="fas fa-folder"></i>
+                    
+                        
+                        <a href="/categories/hackthebox">HackTheBox</a>
+                    
+                </span>
+                
+                <span class="post__reading-time">
+                    <i class="far fa-clock"></i> 3 min read
+                </span>
+            </div>
+        </header>
+
+        
+
+        <div class="post__content clearfix">
+            <p>Writeup for HackTheBox&rsquo;s Soccer.</p>
+<!-- more -->
+<p>Starting off with the <code>nmap</code> scan:</p>
+
+<p>We have port 80 and 22 open, <code>nmap</code> identified that the HTTP port is redirecting to the <code>soccer.htb</code> , performing a directory busting on it revealed an endpoint <code>/tiny</code></p>
+
+<p>It is a H3K File Manager, checking for any exploit for it revealed that we have PHP File Upload RCE:</p>
+<p><a href="https://github.com/febinrev/tinyfilemanager-2.4.3-exploit">https://github.com/febinrev/tinyfilemanager-2.4.3-exploit</a></p>
+<p>Exploitation requires an authenticated user, default credentials worked for the application:</p>
+
+<p>Once uploaded, we can go the <code>uploads</code> folder and then upload a web shell and execute commands from there:</p>
+<p><img src="/img/Soccer_1b9739f8fee5449c921268c1b05aead0/Untitled.png" alt=""></p>
+<p>Next, we can get a reverse shell from the web shell:</p>
+<p><img src="/img/Soccer_1b9739f8fee5449c921268c1b05aead0/Untitled_1.png" alt=""></p>
+<p>The user did not have any privilege to read flags or anything, performing extensive enumeration did not reveal any credentials that could be used, checking for the running services, we had port 3000 and 9091, checking <code>/etc/hosts</code> , we can see that it has <code>soc-player.soccer.htb</code> vhost and checking the <code>nginx</code> configuration, it is the application running on port 3000.</p>
+<p>Next up, adding the <code>soc-player.soccer.htb</code> to the <code>hosts</code> file and then registering for the new user on the website, we can see that it has ticket checking functionality, the request is made over websocket and it has following data</p>
+
+<p>Most probable attack in this case could be the SQL injection, but we cannot check it directly from burp. To tackle this, we can set up an upstream proxy and then use it for sending the payload to the websockert, following blog have a snippet which can be modified to be used:</p>
+<p><a href="https://rayhan0x01.github.io/ctf/2021/04/02/blind-sqli-over-websocket-automation.html">https://rayhan0x01.github.io/ctf/2021/04/02/blind-sqli-over-websocket-automation.html</a></p>
+<p>Modified script which will be hosting apython server at 8081 acting as an upstream proxy:</p>
+
+<p>Using <code>sqlmap</code> we can identify that there is a TIME based SQL Injection:</p>
+<p><img src="/img/Soccer_1b9739f8fee5449c921268c1b05aead0/Untitled_2.png" alt=""></p>
+<p>We can dump the database using <code>sqlmap</code> :</p>
+
+
+<p>We got a user’s password i.e. <code>player</code> , next up we can directly SSH into the machine as the <code>player</code> user, checking for any SUID binaries, we can see that <code>doas</code> can be ran as SUID, checking the <code>doas.conf</code> file to see how it is configured:</p>
+
+<p>We can see that <code>dstat</code> can be ran as <code>root</code> using <code>doas</code> , to exploit this we can add a <code>dstat</code> plugin with specified format of any existing plugin, following blog shows how to perform the steps clearly:</p>
+<aside>
+💡 In this particular case, you need to specify a class `dstat_plugin` class in the plugin script i.e. the malicious python script, in order to make it work and comply with the `dstat`
+</aside>
+<p><a href="https://exploit-notes.hdks.org/exploit/linux/privilege-escalation/sudo/sudo-dstat-privilege-escalation/">https://exploit-notes.hdks.org/exploit/linux/privilege-escalation/sudo/sudo-dstat-privilege-escalation/</a></p>
+<p>Just adding a <code>os.system</code> function call which will execute the payload, making the <code>/usr/bin/bash</code> as a SUID binary:</p>
+
+<p>Once executed, we can see that <code>/usr/bin/bash</code> has now became an SUID, we can spawn the <code>bash</code> in a privileged mode with <code>-p</code> and continue as root user in the machine:</p>
+<p><img src="/img/Soccer_1b9739f8fee5449c921268c1b05aead0/Untitled_3.png" alt=""></p>
+<p>Get the flag:</p>
+
+
+        </div>
+
+        
+        <footer class="post__footer">
+            <div class="post-tags">
+                <i class="fas fa-tags"></i>
+                
+                    <a href="/tags/dstat-sqlmap-upstream_proxy-websocket" class="tag">dstat, sqlmap, upstream_proxy, websocket</a>
+                
+            </div>
+        </footer>
+        
+    </article>
+
+    <div class="post-navigation">
+        
+            <a href="/2021/02/hackthebox-pwn-toxin/" class="post-navigation__prev">
+                <i class="fas fa-arrow-left"></i>
+                <span>HackTheBox Pwn: Toxin</span>
+            </a>
+        
+        
+            <a href="/2024/05/cve-2024-4040-crushftp-server-side-template-injection-vulnerability-analysis/" class="post-navigation__next">
+                <span>CVE 2024-4040 - CrushFTP Server-Side Template Injection Vulnerability Analysis</span>
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        
+    </div>
+</main>
+
+			</div>
+			<aside class="sidebar"><div class="widget-search widget">
+	<form class="widget-search__form" role="search" method="get" action="https://google.com/search">
+		<input class="widget-search__field" type="search" placeholder="Search…" value="" name="q" aria-label="Search…">
+		<input class="widget-search__submit" type="submit" value="Search">
+		<input type="hidden" name="sitesearch" value="http://localhost:1313/">
+	</form>
+</div>
+<div class="widget-recent widget">
+	<h4 class="widget__title">Recent Posts</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/2025/03/cve-2025-2825-crushftp-authentication-bypass-analysis/">CVE 2025-2825 - CrushFTP Authentication Bypass Analysis</a></li>
+			<li class="widget__item"><a class="widget__link" href="/2025/01/exploring-recent-cves-in-hpe-insight-remote-support/">Exploring Recent CVEs in HPE Insight Remote Support</a></li>
+			<li class="widget__item"><a class="widget__link" href="/2024/11/cve-2024-37397-ivanti-endpoint-manager-xxe-vulnerability/">CVE 2024-37397 - Ivanti Endpoint Manager XXE Vulnerability</a></li>
+			<li class="widget__item"><a class="widget__link" href="/2024/05/cve-2024-4040-crushftp-server-side-template-injection-vulnerability-analysis/">CVE 2024-4040 - CrushFTP Server-Side Template Injection Vulnerability Analysis</a></li>
+			<li class="widget__item"><a class="widget__link" href="/2023/06/hackthebox-soccer/">HackTheBox - Soccer</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-categories widget">
+	<h4 class="widget__title">Categories</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/cve-analysis/">CVE Analysis</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/hackthebox/">HackTheBox</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/pwning/">Pwning</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/vulnhub/">Vulnhub</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-taglist widget">
+	<h4 class="widget__title">Tags</h4>
+	<div class="widget__content">
+		<a class="widget-taglist__link widget__link btn" href="/tags/.net/" title=".NET">.NET (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/auth-bypass/" title="Auth-Bypass">Auth-Bypass (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-37297/" title="CVE-2024-37297">CVE-2024-37297 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-4040/" title="Cve-2024-4040">Cve-2024-4040 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-53675/" title="CVE-2024-53675">CVE-2024-53675 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-53676/" title="CVE-2024-53676">CVE-2024-53676 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2025-2825/" title="CVE-2025-2825">CVE-2025-2825 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/dstat-sqlmap-upstream_proxy-websocket/" title="Dstat, Sqlmap, Upstream_proxy, Websocket">Dstat, Sqlmap, Upstream_proxy, Websocket (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/java/" title="Java">Java (3)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/logic-flaw/" title="Logic-Flaw">Logic-Flaw (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/nmap-ctf-vulnhub/" title="Nmap, Ctf, Vulnhub">Nmap, Ctf, Vulnhub (4)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/oob-xxe/" title="OOB-XXE">OOB-XXE (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/path-traversal/" title="Path Traversal">Path Traversal (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/pwn-hackthebox-v8-kernel-heap-tcache-libc-2.29/" title="Pwn, Hackthebox, V8, Kernel, Heap, Tcache, Libc-2.29">Pwn, Hackthebox, V8, Kernel, Heap, Tcache, Libc-2.29 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/pwn-tcache-libc-2.27-hackthebox/" title="Pwn, Tcache, Libc-2.27, Hackthebox">Pwn, Tcache, Libc-2.27, Hackthebox (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rce/" title="RCE">RCE (2)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rop-bof-ret2csu-ctf/" title="Rop, Bof, Ret2csu, Ctf">Rop, Bof, Ret2csu, Ctf (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rop-pwn-bof/" title="Rop, Pwn, Bof">Rop, Pwn, Bof (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rop-pwn-radare2-pwntools/" title="Rop, Pwn, Radare2, Pwntools">Rop, Pwn, Radare2, Pwntools (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rop-pwn-ret2libc-bof/" title="Rop, Pwn, Ret2libc, Bof">Rop, Pwn, Ret2libc, Bof (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/ssti/" title="SSTI">SSTI (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/xxe/" title="XXE">XXE (2)</a>
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2025 Pwnfuzz Blog.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+</body>
+</html>

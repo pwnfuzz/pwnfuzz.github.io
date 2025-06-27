@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>BlindSQLInjection, NoSQL, XSS, Pspy64 - Pwnfuzz Blog</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+
+	<link rel="stylesheet" href="/css/style.css">
+	
+	<link rel="alternate" type="application/rss+xml" href="/tags/blindsqlinjection-nosql-xss-pspy64/index.xml" title="Pwnfuzz Blog">
+
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo">
+		<a class="logo__link" href="/" title="Pwnfuzz Blog" rel="home">
+			<div class="logo__item logo__text">
+					<div class="logo__title">Pwnfuzz Blog</div>
+					
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main list" role="main">
+	<header class="main__header">
+		<h1 class="main__title">BlindSQLInjection, NoSQL, XSS, Pspy64</h1>
+	</header>
+<article class="list__item post">
+    <header class="list__header">
+        <h2 class="list__title post__title">
+            <a href="/posts/mailroom-htb/" rel="bookmark">
+                HackTheBox - Mailroom
+            </a>
+        </h2>
+        
+        <div class="post-meta">
+            
+                <span class="post-author">
+                    <i class="fas fa-user"></i> D4mianwayne
+                </span>
+                <span class="meta-separator">•</span>
+            
+            
+            <time class="post-date" datetime="2023-08-19T00:00:00Z">
+                <i class="far fa-calendar-alt"></i> August 19, 2023
+            </time>
+            
+            
+                <span class="meta-separator">•</span>
+                <span class="post-categories">
+                    <i class="far fa-folder"></i>
+                    
+                        
+                        <a href="/categories/hackthebox">HackTheBox</a>
+                    
+                </span>
+            
+            
+            
+        </div>
+        
+        
+        <div class="post-tags">
+            
+                <a href="/tags/blindsqlinjection-nosql-xss-pspy64" class="tag">BlindSQLInjection, NoSQL, XSS, pspy64</a>
+            
+        </div>
+        
+    </header>
+    
+    <div class="content list__excerpt post__content clearfix">
+        <div class="post-summary">
+        
+        
+        
+        
+        
+        
+        
+            
+            
+            
+            
+            
+            
+            
+                <div class="post-summary">
+                    Writeup for HackTheBox&rsquo;s Mailroom machine.
+Starting off with the nmap scan, we can see that port 80 and 22 is open:
+Performing a directory busting on the HTTP port, we see that it has multiple php files but none of them are of much interest beside contact.php
+The contact page accepts the a feedback message, we can try to include a XSS payload and see if it hit back to our HTTP Server:
+
+                </div>
+            
+        
+        </div>
+    </div>
+    
+    
+    <div class="list__footer clearfix">
+        <a class="list__footer-readmore btn" href="/posts/mailroom-htb/">
+            Read more…
+        </a>
+    </div>
+    
+    
+    
+</article>
+
+</main>
+
+
+			</div>
+			
+<aside class="sidebar"><div class="widget-search widget">
+	<form class="widget-search__form" role="search" method="get" action="https://google.com/search">
+		<input class="widget-search__field" type="search" placeholder="Search…" value="" name="q" aria-label="Search…">
+		<input class="widget-search__submit" type="submit" value="Search">
+		<input type="hidden" name="sitesearch" value="http://localhost:1313/">
+	</form>
+</div>
+<div class="widget-recent widget">
+	<h4 class="widget__title">Recent Posts</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/posts/test-post/">Test Post for Summary</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/crushftp-cve-2025-2825/">CVE 2025-2825 - CrushFTP Authentication Bypass Analysis</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/hpe-irs-cve-deep-dive/">Exploring Recent CVEs in HPE Insight Remote Support</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/ivanti-endpoint-manager-xxe-cve-2024-37397/">CVE 2024-37397 - Ivanti Endpoint Manager XXE Vulnerability</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/crushftp-cve-2024-4040/">CVE 2024-4040 - CrushFTP Server-Side Template Injection Vulnerability Analysis</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-categories widget">
+	<h4 class="widget__title">Categories</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/ctfs/">CTFs</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/cve-analysis/">CVE Analysis</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/exploit/">Exploit</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/hackthebox/">HackTheBox</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/pwning/">Pwning</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/testing/">Testing</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/vulnhub/">Vulnhub</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-taglist widget">
+	<h4 class="widget__title">Tags</h4>
+	<div class="widget__content">
+		<a class="widget-taglist__link widget__link btn" href="/tags/.net/" title=".NET">.NET (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/ansible-playbooks-cronjob-easy-java-seasonal-spring4shell/" title="Ansible-Playbooks, Cronjob, Easy, Java, Seasonal, Spring4shell">Ansible-Playbooks, Cronjob, Easy, Java, Seasonal, Spring4shell (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/auth-bypass/" title="Auth-Bypass">Auth-Bypass (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/bash-easy-eval-python-code-injection-relative-path-exploit/" title="Bash, Easy, Eval, Python-Code-Injection, Relative-Path-Exploit">Bash, Easy, Eval, Python-Code-Injection, Relative-Path-Exploit (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/blindsqlinjection-nosql-xss-pspy64/" title="BlindSQLInjection, NoSQL, XSS, Pspy64">BlindSQLInjection, NoSQL, XSS, Pspy64 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/ctf-pwn-v8-browser-pwn/" title="Ctf, Pwn, V8, Browser Pwn">Ctf, Pwn, V8, Browser Pwn (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-37297/" title="CVE-2024-37297">CVE-2024-37297 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-4040/" title="Cve-2024-4040">Cve-2024-4040 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-53675/" title="CVE-2024-53675">CVE-2024-53675 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-53676/" title="CVE-2024-53676">CVE-2024-53676 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2025-2825/" title="CVE-2025-2825">CVE-2025-2825 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/debug/" title="Debug">Debug (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/dependencies-easy-pdfkit-ruby/" title="Dependencies, Easy, Pdfkit, Ruby">Dependencies, Easy, Pdfkit, Ruby (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/deserialisation/" title="Deserialisation">Deserialisation (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/dll/" title="DLL">DLL (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/dotnet/" title="Dotnet">Dotnet (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/dstat-sqlmap-upstream_proxy-websocket/" title="Dstat, Sqlmap, Upstream_proxy, Websocket">Dstat, Sqlmap, Upstream_proxy, Websocket (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/exploit-dev-egghunting/" title="Exploit-Dev, Egghunting">Exploit-Dev, Egghunting (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/java/" title="Java">Java (3)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/libc-2.27-heap-pwn-ctf-hitcon-tcache-roppy/" title="Libc-2.27, Heap, Pwn, Ctf, Hitcon, Tcache, Roppy">Libc-2.27, Heap, Pwn, Ctf, Hitcon, Tcache, Roppy (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/logic-flaw/" title="Logic-Flaw">Logic-Flaw (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/newtonsoft/" title="NewtonSoft">NewtonSoft (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/nmap-ctf-hackthebox-htb/" title="Nmap, Ctf, HacktheBox, Htb">Nmap, Ctf, HacktheBox, Htb (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/nmap-ctf-vulnhub/" title="Nmap, Ctf, Vulnhub">Nmap, Ctf, Vulnhub (8)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/oob-xxe/" title="OOB-XXE">OOB-XXE (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/path-traversal/" title="Path Traversal">Path Traversal (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/pwn-ctf-__malloc_hook-rop-pwntools/" title="Pwn, Ctf, __Malloc_hook, Rop, Pwntools">Pwn, Ctf, __Malloc_hook, Rop, Pwntools (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/pwn-fmtstr-bof-pwntools-canary/" title="Pwn, Fmtstr, Bof, Pwntools, Canary">Pwn, Fmtstr, Bof, Pwntools, Canary (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/pwn-hackthebox-v8-kernel-heap-tcache-libc-2.29/" title="Pwn, Hackthebox, V8, Kernel, Heap, Tcache, Libc-2.29">Pwn, Hackthebox, V8, Kernel, Heap, Tcache, Libc-2.29 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/pwn-roppy-ret2dlresolve/" title="Pwn, Roppy, Ret2dlresolve">Pwn, Roppy, Ret2dlresolve (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/pwn-shellcode-egghunting-hackthebox/" title="Pwn, Shellcode, Egghunting, Hackthebox">Pwn, Shellcode, Egghunting, Hackthebox (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/pwn-tcache-libc-2.27-hackthebox/" title="Pwn, Tcache, Libc-2.27, Hackthebox">Pwn, Tcache, Libc-2.27, Hackthebox (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/python/" title="Python">Python (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/python-flask-lfi-chisel-jtr-pip3/" title="Python-Flask, LFI, Chisel, Jtr, Pip3">Python-Flask, LFI, Chisel, Jtr, Pip3 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rce/" title="RCE">RCE (2)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rop-bof-ret2csu-ctf/" title="Rop, Bof, Ret2csu, Ctf">Rop, Bof, Ret2csu, Ctf (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rop-pwn-bof/" title="Rop, Pwn, Bof">Rop, Pwn, Bof (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rop-pwn-bof-syscall-zer0ctf/" title="Rop, Pwn, Bof, Syscall, Zer0ctf">Rop, Pwn, Bof, Syscall, Zer0ctf (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rop-pwn-radare2-pwntools/" title="Rop, Pwn, Radare2, Pwntools">Rop, Pwn, Radare2, Pwntools (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rop-pwn-ret2libc-bof/" title="Rop, Pwn, Ret2libc, Bof">Rop, Pwn, Ret2libc, Bof (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/smb-windows-mssql-server-hashcat-evil-winrm-responder.py/" title="Smb, Windows, Mssql-Server, Hashcat, Evil-Winrm, Responder.py">Smb, Windows, Mssql-Server, Hashcat, Evil-Winrm, Responder.py (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/sqlmap/" title="Sqlmap">Sqlmap (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/ssti/" title="SSTI">SSTI (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/test/" title="Test">Test (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/unlink-htb-pwn-heap/" title="Unlink, Htb, Pwn, Heap">Unlink, Htb, Pwn, Heap (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/web-app/" title="Web-App">Web-App (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/websocket/" title="Websocket">Websocket (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/windows-htb/" title="Windows, Htb">Windows, Htb (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/xxe/" title="XXE">XXE (2)</a>
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2025 Pwnfuzz Blog.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+</body>
+</html>

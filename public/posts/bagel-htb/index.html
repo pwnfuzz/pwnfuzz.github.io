@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>HackTheBox - Bagel - Pwnfuzz Blog</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+
+	<link rel="stylesheet" href="/css/style.css">
+	
+
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo">
+		<a class="logo__link" href="/" title="Pwnfuzz Blog" rel="home">
+			<div class="logo__item logo__text">
+					<div class="logo__title">Pwnfuzz Blog</div>
+					
+				</div>
+		</a>
+	</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">HackTheBox - Bagel</h1>
+			
+		</header>
+		<div class="content post__content clearfix">
+			<p>WriteUp for HackTheBox Bagel machine.</p>
+<!-- more -->
+<p>Starting off with the <code>nmap</code> scan, we can it has 3 ports open (it missed one more port which was open due to some issue):</p>
+<p>Checking the HTTP port, we see it is more of a static site, one thing that caught my eye was the <code>page</code> parameter in the URI:</p>
+<p><img src="/img/Bagel_299b40e8bc344ae7904cea7a0b1ed5cf/Untitled.png" alt=""></p>
+<p>Capturing the request and checking in the burp suite for LFI resulted in success and we could see the <code>/etc/passwd</code> file contents ini the response:</p>
+<p><img src="/img/Bagel_299b40e8bc344ae7904cea7a0b1ed5cf/Untitled_1.png" alt=""></p>
+<p>Checking for the current process, we see that it is running from the <code>developer</code> user’s directory and it is probably a <code>flask</code> application:</p>
+<p><img src="/img/Bagel_299b40e8bc344ae7904cea7a0b1ed5cf/Untitled_2.png" alt=""></p>
+<p>We can retrieve the contents of the <code>[app.py](http://app.py)</code> :</p>
+<p><img src="/img/Bagel_299b40e8bc344ae7904cea7a0b1ed5cf/Untitled_3.png" alt=""></p>
+<p>Checking the <code>[app.py](http://app.py)</code> code, we see that it has an endpoint <code>orders</code> which connects to the websocket running on the port <code>5000</code> and sends a JSON body as a part of the request, we also notice that there is a comment mentioning another file which is responsible for handling the websocket request and it is build with <code>dotnet</code></p>
+
+<p>Since there is no filename or path which was disclosed, given the LFI the best bet we have on this is to run a PID bruteforce with a script and get the <code>cmdline</code> information, following script does the work:</p>
+
+<p>Running the script I see that there is a <code>bagel.dll</code> running with <code>dotnet</code> , since we have the absolute path of the file, we can download it via the LFI</p>
+<p><img src="/img/Bagel_299b40e8bc344ae7904cea7a0b1ed5cf/Untitled_4.png" alt=""></p>
+
+<p>Now, it is time to analyze the DLL file using <code>dnSpy</code></p>
+<h3 id="analysing-the-bageldll">Analysing the <code>bagel.dll</code></h3>
+<p>Checking the <code>bagel.dll</code> , it wasn’t big file so had limited number of classes and methods, one of the class was named as <code>DB</code>, it contained the SQL credentials for the <code>dev</code> user</p>
+<p><img src="/img/Bagel_299b40e8bc344ae7904cea7a0b1ed5cf/Untitled_5.png" alt=""></p>
+
+<p>Since we already identified that there was a user named as <code>developer</code> , we might be able to SSH to the machine but it wasn’t working as the SSH server does not seem to accept the password from the remote user:</p>
+
+<p>During the process dumping, I identified that <code>gssproxy</code> is running as well, a little bit insight into the GSSAPI:</p>
+<ul>
+<li><strong>Gssapi-keyex</strong>: This authentication method uses the Generic Security Services Application Program Interface (GSSAPI) to authenticate the client. It negotiates a secure key exchange protocol to create a shared secret between the client and server.</li>
+<li><strong>Gssapi-with-mic</strong>: This authentication method uses GSSAPI to authenticate the client, but it also includes a message integrity check (MIC) to ensure the authenticity of the message.</li>
+</ul>
+<aside>
+💡
+<p>GSSAPI is a generic security API used to authenticate client/server applications. GSSProxy is a service that allows users to obtain GSSAPI credentials on behalf of a service without having direct access to the user&rsquo;s keytab.</p>
+<p>The GSSProxy service is commonly used in environments where centralized authentication and authorization mechanisms are required, such as in large-scale enterprise networks. By acting as a proxy between a client application and the Kerberos authentication system, GSSProxy provides a secure and efficient way to obtain Kerberos credentials for a particular service.</p>
+<p>GSSProxy is implemented as a daemon process that runs on the client machine and communicates with the Kerberos authentication system. When a client application needs to authenticate with a service, it sends a request to GSSProxy, which then acquires the necessary credentials on behalf of the client and returns them to the application.</p>
+<p>In summary, GSSProxy is a service that provides a secure and efficient way to obtain GSSAPI credentials for a particular service, without requiring direct access to the user&rsquo;s keytab.</p>
+</aside>
+<p>It seems that we won’t be able to authenticate to the SSH without any key or any GSSAPI key, digging deeper into the DLL file, we see that it accepts the JSON data and pass it to <code>handler.Deserialise</code> method to parse the JSON data:</p>
+<p><img src="/img/Bagel_299b40e8bc344ae7904cea7a0b1ed5cf/Untitled_6.png" alt=""></p>
+<p>Checking the <code>handler</code> class and the <code>deserialise</code> method is making use of the <code>Newtonsoft.Json</code> class, since there is no explicit <code>TypeHandling</code> was defined i.e. <code>4</code> is not a valid constant value for the <code>TypeHandling</code> , this is vulnerable to Deserialisation attack, check the Source Code Analysis note for better insight:</p>
+<p><img src="/img/Bagel_299b40e8bc344ae7904cea7a0b1ed5cf/Untitled_7.png" alt=""></p>
+<p>As we can interact with the websocket, what we can do is, due to insecure deserialisation, we can craft a payload for performing deserialisation attack. We can interact to the service using following script:</p>
+
+<p>Running the script with different inputs for the <code>data</code> , it works quite well:</p>
+
+<p>There is a method called <code>RemoveOrder</code> which does not have any objects defined in it like other methods</p>
+<p><img src="/img/Bagel_299b40e8bc344ae7904cea7a0b1ed5cf/Untitled_8.png" alt=""></p>
+<p>There was another class named as <code>File</code> containing a method called <code>ReadFile</code> which could be the perfect target for the attack as we can retrieve any arbitrary file:</p>
+<p><img src="/img/Bagel_299b40e8bc344ae7904cea7a0b1ed5cf/Untitled_9.png" alt=""></p>
+<p>Now, we can craft the payload as follows:</p>
+
+<p><code>RemoveOrder</code> is one of the methods we can call, using the <code>$type</code> , we can specify <code>bagel_server.File, bagel</code> such as we will be calling a method from that specific location i.e. <code>ReadFile</code> , lastly the <code>data</code> is the argument for the <code>ReadFile</code></p>
+
+<p>Checking it with the <code>/etc/passwd</code> , it worked like a charm</p>
+
+<p>Next, we can get the private key of the <code>phil</code> user which we can use for SSH:</p>
+
+<p>Now, we can successfully login to the machine as <code>phil</code></p>
+<p><img src="/img/Bagel_299b40e8bc344ae7904cea7a0b1ed5cf/Untitled_10.png" alt=""></p>
+<p>Now using the <code>dev</code> user’s password we got from the <code>DB</code> class of the <code>bagel.dll</code> , we can escalate to the <code>developer</code> user</p>
+<p><img src="/img/Bagel_299b40e8bc344ae7904cea7a0b1ed5cf/Untitled_11.png" alt=""></p>
+<p>Doing <code>sudo -l</code> , we can see that we are allowed to run <code>/usr/bin/donet</code> as user <code>root</code></p>
+
+<p>Checking GTFO bins, we can see spawn an interactive shell and then use <code>System.Diagnostic.Process.Start</code> method spawn any child process, now since <code>donet</code> was running as root, we were able to get the shell as <code>root</code></p>
+<p><a href="https://gtfobins.github.io/gtfobins/dotnet/">https://gtfobins.github.io/gtfobins/dotnet/</a></p>
+<p><img src="/img/Bagel_299b40e8bc344ae7904cea7a0b1ed5cf/Untitled_12.png" alt=""></p>
+
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M4 0h8s2 0 4 2l15 15s2 2 0 4L21 31s-2 2-4 0L2 16s-2-2-2-4V3s0-3 4-3m3 10a3 3 0 0 0 0-6 3 3 0 0 0 0 6"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/python/" rel="tag">python</a>
+		</li>
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/sqlmap/" rel="tag">sqlmap</a>
+		</li>
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/web-app/" rel="tag">web-app</a>
+		</li>
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/dotnet/" rel="tag">dotnet</a>
+		</li>
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/dll/" rel="tag">DLL</a>
+		</li>
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/deserialisation/" rel="tag">deserialisation</a>
+		</li>
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/newtonsoft/" rel="tag">NewtonSoft</a>
+		</li>
+		<li class="tags__item">
+			<a class="tags__link btn" href="/tags/websocket/" rel="tag">websocket</a>
+		</li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+
+
+
+			</div>
+			<aside class="sidebar"><div class="widget-search widget">
+	<form class="widget-search__form" role="search" method="get" action="https://google.com/search">
+		<input class="widget-search__field" type="search" placeholder="Search…" value="" name="q" aria-label="Search…">
+		<input class="widget-search__submit" type="submit" value="Search">
+		<input type="hidden" name="sitesearch" value="http://localhost:1313/">
+	</form>
+</div>
+<div class="widget-recent widget">
+	<h4 class="widget__title">Recent Posts</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/posts/crushftp-cve-2025-2825/">CVE 2025-2825 - CrushFTP Authentication Bypass Analysis</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/hpe-irs-cve-deep-dive/">Exploring Recent CVEs in HPE Insight Remote Support</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/ivanti-endpoint-manager-xxe-cve-2024-37397/">CVE 2024-37397 - Ivanti Endpoint Manager XXE Vulnerability</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/crushftp-cve-2024-4040/">CVE 2024-4040 - CrushFTP Server-Side Template Injection Vulnerability Analysis</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/exploit-dev-egghunting/">Exploit Dev: EggHunting Explained</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-categories widget">
+	<h4 class="widget__title">Categories</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/ctfs/">CTFs</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/cve-analysis/">CVE Analysis</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/exploit/">Exploit</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/hackthebox/">HackTheBox</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/pwning/">Pwning</a></li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/vulnhub/">Vulnhub</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-taglist widget">
+	<h4 class="widget__title">Tags</h4>
+	<div class="widget__content">
+		<a class="widget-taglist__link widget__link btn" href="/tags/.net/" title=".NET">.NET (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/ansible-playbooks-cronjob-easy-java-seasonal-spring4shell/" title="Ansible-Playbooks, Cronjob, Easy, Java, Seasonal, Spring4shell">Ansible-Playbooks, Cronjob, Easy, Java, Seasonal, Spring4shell (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/auth-bypass/" title="Auth-Bypass">Auth-Bypass (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/bash-easy-eval-python-code-injection-relative-path-exploit/" title="Bash, Easy, Eval, Python-Code-Injection, Relative-Path-Exploit">Bash, Easy, Eval, Python-Code-Injection, Relative-Path-Exploit (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/blindsqlinjection-nosql-xss-pspy64/" title="BlindSQLInjection, NoSQL, XSS, Pspy64">BlindSQLInjection, NoSQL, XSS, Pspy64 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/ctf-pwn-v8-browser-pwn/" title="Ctf, Pwn, V8, Browser Pwn">Ctf, Pwn, V8, Browser Pwn (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-37297/" title="CVE-2024-37297">CVE-2024-37297 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-4040/" title="Cve-2024-4040">Cve-2024-4040 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-53675/" title="CVE-2024-53675">CVE-2024-53675 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-53676/" title="CVE-2024-53676">CVE-2024-53676 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2025-2825/" title="CVE-2025-2825">CVE-2025-2825 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/dependencies-easy-pdfkit-ruby/" title="Dependencies, Easy, Pdfkit, Ruby">Dependencies, Easy, Pdfkit, Ruby (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/deserialisation/" title="Deserialisation">Deserialisation (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/dll/" title="DLL">DLL (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/dotnet/" title="Dotnet">Dotnet (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/dstat-sqlmap-upstream_proxy-websocket/" title="Dstat, Sqlmap, Upstream_proxy, Websocket">Dstat, Sqlmap, Upstream_proxy, Websocket (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/exploit-dev-egghunting/" title="Exploit-Dev, Egghunting">Exploit-Dev, Egghunting (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/java/" title="Java">Java (3)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/libc-2.27-heap-pwn-ctf-hitcon-tcache-roppy/" title="Libc-2.27, Heap, Pwn, Ctf, Hitcon, Tcache, Roppy">Libc-2.27, Heap, Pwn, Ctf, Hitcon, Tcache, Roppy (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/logic-flaw/" title="Logic-Flaw">Logic-Flaw (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/newtonsoft/" title="NewtonSoft">NewtonSoft (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/nmap-ctf-hackthebox-htb/" title="Nmap, Ctf, HacktheBox, Htb">Nmap, Ctf, HacktheBox, Htb (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/nmap-ctf-vulnhub/" title="Nmap, Ctf, Vulnhub">Nmap, Ctf, Vulnhub (8)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/oob-xxe/" title="OOB-XXE">OOB-XXE (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/path-traversal/" title="Path Traversal">Path Traversal (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/pwn-ctf-__malloc_hook-rop-pwntools/" title="Pwn, Ctf, __Malloc_hook, Rop, Pwntools">Pwn, Ctf, __Malloc_hook, Rop, Pwntools (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/pwn-fmtstr-bof-pwntools-canary/" title="Pwn, Fmtstr, Bof, Pwntools, Canary">Pwn, Fmtstr, Bof, Pwntools, Canary (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/pwn-hackthebox-v8-kernel-heap-tcache-libc-2.29/" title="Pwn, Hackthebox, V8, Kernel, Heap, Tcache, Libc-2.29">Pwn, Hackthebox, V8, Kernel, Heap, Tcache, Libc-2.29 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/pwn-roppy-ret2dlresolve/" title="Pwn, Roppy, Ret2dlresolve">Pwn, Roppy, Ret2dlresolve (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/pwn-shellcode-egghunting-hackthebox/" title="Pwn, Shellcode, Egghunting, Hackthebox">Pwn, Shellcode, Egghunting, Hackthebox (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/pwn-tcache-libc-2.27-hackthebox/" title="Pwn, Tcache, Libc-2.27, Hackthebox">Pwn, Tcache, Libc-2.27, Hackthebox (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/python/" title="Python">Python (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/python-flask-lfi-chisel-jtr-pip3/" title="Python-Flask, LFI, Chisel, Jtr, Pip3">Python-Flask, LFI, Chisel, Jtr, Pip3 (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rce/" title="RCE">RCE (2)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rop-bof-ret2csu-ctf/" title="Rop, Bof, Ret2csu, Ctf">Rop, Bof, Ret2csu, Ctf (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rop-pwn-bof/" title="Rop, Pwn, Bof">Rop, Pwn, Bof (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rop-pwn-bof-syscall-zer0ctf/" title="Rop, Pwn, Bof, Syscall, Zer0ctf">Rop, Pwn, Bof, Syscall, Zer0ctf (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rop-pwn-radare2-pwntools/" title="Rop, Pwn, Radare2, Pwntools">Rop, Pwn, Radare2, Pwntools (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/rop-pwn-ret2libc-bof/" title="Rop, Pwn, Ret2libc, Bof">Rop, Pwn, Ret2libc, Bof (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/smb-windows-mssql-server-hashcat-evil-winrm-responder.py/" title="Smb, Windows, Mssql-Server, Hashcat, Evil-Winrm, Responder.py">Smb, Windows, Mssql-Server, Hashcat, Evil-Winrm, Responder.py (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/sqlmap/" title="Sqlmap">Sqlmap (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/ssti/" title="SSTI">SSTI (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/unlink-htb-pwn-heap/" title="Unlink, Htb, Pwn, Heap">Unlink, Htb, Pwn, Heap (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/web-app/" title="Web-App">Web-App (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/websocket/" title="Websocket">Websocket (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/windows-htb/" title="Windows, Htb">Windows, Htb (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/xxe/" title="XXE">XXE (2)</a>
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2025 Pwnfuzz Blog.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+</body>
+</html>

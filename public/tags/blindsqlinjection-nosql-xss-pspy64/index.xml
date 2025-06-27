@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>BlindSQLInjection, NoSQL, XSS, Pspy64 on Pwnfuzz Blog</title>
+    <link>http://localhost:1313/tags/blindsqlinjection-nosql-xss-pspy64/</link>
+    <description>Recent content in BlindSQLInjection, NoSQL, XSS, Pspy64 on Pwnfuzz Blog</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 19 Aug 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/blindsqlinjection-nosql-xss-pspy64/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>HackTheBox - Mailroom</title>
+      <link>http://localhost:1313/posts/mailroom-htb/</link>
+      <pubDate>Sat, 19 Aug 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/mailroom-htb/</guid>
+      <description>&lt;p&gt;Writeup for HackTheBox&amp;rsquo;s Mailroom machine.&lt;/p&gt;&#xA;&lt;!-- more --&gt;&#xA;&lt;p&gt;Starting off with the &lt;code&gt;nmap&lt;/code&gt; scan,  we can see that port 80 and 22 is open:&lt;/p&gt;&#xA;&#xA;&lt;p&gt;Performing a directory busting on the HTTP port, we see that it has multiple php files but none of them are of much interest beside &lt;code&gt;contact.php&lt;/code&gt;&lt;/p&gt;&#xA;&#xA;&lt;p&gt;The contact page accepts the a feedback message, we can try to include a XSS payload and see if it hit back to our HTTP Server:&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

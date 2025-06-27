@@ -1,0 +1,69 @@
+baseURL = 'https://pwnfuzz.com/'
+languageCode = 'en-us'
+theme = 'mainroad'
+
+
+[Params.logo]
+  image = "img/pwnfuzz.png" # Logo image. Path relative to "static"
+  title = "PwnFuzz" # Logo title, otherwise will use site title
+  subtitle = "Fuzz. Pwn. Repeat." # Logo subtitle
+
+[pagination]
+  pagerSize = 5
+
+
+[build]
+  writeStats = true
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+  [markup.highlight]
+    codeFences = true
+    guessSyntax = true
+    lineNos = true
+    lineNumbersInTable = true
+    noClasses = false
+
+[params]
+  readMore = true  # Always show read more link
+  summaryLength = 200
+  description = "PwnFuzz Blog" # Site description. Used in meta description
+  copyright = "PwnFuzz Blog - Fuzz. Pwn. Repeat." # Footer copyright holder, otherwise will use site title
+  opengraph = true # Enable OpenGraph if true
+  schema = true # Enable Schema
+  twitter_cards = true # Enable Twitter Cards if true
+  readmore = false # Show "Read more" button in list if true
+  authorbox = true # Show authorbox at bottom of pages if true
+  toc = true # Enable Table of Contents
+  pager = true # Show pager navigation (prev/next links) at the bottom of pages if true
+  post_meta = ["author", "date", "categories", "translations"] # Order of post meta information
+
+
+[mediaTypes]
+  [mediaTypes.'text/plain']
+    suffixes = ['txt']
+
+[outputFormats]
+  [outputFormats.PlainText]
+    mediaType = 'text/plain'
+    isPlainText = true
+    isHTML = false
+
+[menu]
+  [[menu.main]]
+    identifier = "home"
+    name = "Home"
+    url = "/"
+    weight = 1
+  [[menu.main]]
+    identifier = "about"
+    name = "About"
+    url = "/about/"
+    weight = 2
+  [[menu.main]]
+    identifier = "tags"
+    name = "Tags"
+    url = "/tags/"
+    weight = 3

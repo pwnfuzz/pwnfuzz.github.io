@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Path Traversal on </title>
+    <link>http://localhost:1313/tags/path-traversal/</link>
+    <description>Recent content in Path Traversal on </description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 08 Jan 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/path-traversal/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Exploring Recent CVEs in HPE Insight Remote Support</title>
+      <link>http://localhost:1313/posts/hpe-irs-cve-deep-dive/</link>
+      <pubDate>Wed, 08 Jan 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/hpe-irs-cve-deep-dive/</guid>
+      <description>&lt;p&gt;In this post, we’ll delve into two critical vulnerabilities recently discovered in the HPE Insight Remote Support (IRS) application, versions prior to &lt;code&gt;v7.14.0.629&lt;/code&gt;. These vulnerabilities—CVE-2024-53675 (unauthenticated XXE vulnerability) and CVE-2024-53676 (Remote Code Execution, or RCE vulnerability)—pose significant security risks, allowing unauthorized access and arbitrary code execution on vulnerable systems.&lt;/p&gt;&#xA;&lt;h1 id=&#34;overview&#34;&gt;Overview&lt;/h1&gt;&#xA;&lt;p&gt;With the holiday vibes going around, I had no plans on releasing any posts but as I was working through this, I learned few things about secure coding practices and hunting for these reported vulnerabilities gives a good practice to understand the researcher&amp;rsquo;s thought process and perhaps perform variant analysis in a similar situation. The Insight Remote Support application by HPE is used to gather information and statistics for multiple other hardwares such as printers and stuff, there are certain servlets exposed through web UI, accessible without authentication allowing exploitation of all the reported vulnerabilities much easier and with no dependency on credentials. A bit of background in regards with the software is that the web server is based on Tomcat server and perhaps you may have guessed by now the backend is developed on Java.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
