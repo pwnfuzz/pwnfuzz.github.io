@@ -13,7 +13,7 @@ showReadingTime = true
 # Header configuration
 [header]
   logo = "img/logo.png"  # Add your logo here
-  logoText = "Pwn1fuzz"
+  logoText = "PwnFuzz"
   logoTitle = "Pwnfuzz - Security Research"
 
 # Content settings
