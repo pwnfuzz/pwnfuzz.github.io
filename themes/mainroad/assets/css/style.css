@@ -62,7 +62,7 @@ body {
 .container {
 	position: relative;
 	width: 100%;
-	max-width: 1430px;
+	max-width: 1480px;
 	margin: 0 auto;
 }
 
@@ -1323,3 +1323,87 @@ textarea {
 		font-size: .6875rem;
 	}
 }
+
+/* =========================
+   🔧 GLOBAL RESET / FIXES
+   ========================= */
+pre, code, pre code, .highlight, .highlight pre, .chroma, .chroma code {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, 'Courier New', monospace !important;
+  font-size: 0.95em;
+  line-height: 1.5 !important;
+  box-shadow: none !important;
+  border: none !important;
+  text-shadow: none !important;
+}
+
+.chroma span, .highlight span, pre span, code span {
+  background: transparent !important;
+  font-family: inherit !important;
+  font-size: inherit !important;
+}
+
+/* =========================
+   🎨 SYNTAX HIGHLIGHTING COLORS
+   ========================= */
+
+/* Keywords */
+.chroma .k     { color: #7c3aed !important; font-weight: 600; }
+.chroma .kt    { color: #9333ea !important; }
+
+/* Numbers */
+.chroma .mi,
+.chroma .m,
+.chroma .mh,
+.chroma .mo,
+.chroma .il { color: #2563eb !important; }
+
+/* Strings */
+.chroma .s, .chroma .s1, .chroma .s2, .chroma .sb, .chroma .sc, .chroma .sd, .chroma .se, .chroma .sh, .chroma .si, .chroma .sx, .chroma .sr, .chroma .ss {
+  color: #ff7300 !important; /* Vibrant orange */
+}
+
+/* Functions */
+.chroma .nf { color: #2563eb !important; font-weight: 500; }
+
+/* Built-in keywords and types */
+.chroma .nb { color: #0d9488 !important; }
+
+/* Attributes / variable names */
+.chroma .na { color: #b91c1c !important; }
+
+/* Comments */
+.chroma .c,
+.chroma .ch,
+.chroma .cm,
+.chroma .c1,
+.chroma .cp,
+.chroma .cs {
+  color: #64748b !important;
+  font-style: italic;
+}
+
+/* Operators and punctuation */
+.chroma .o,
+.chroma .p { color: #0f172a !important; }
+
+/* Errors */
+.chroma .err {
+  color: #dc2626 !important;
+  background: #fee2e2 !important;
+}
+
+/* =========================
+   🧱 CODE BLOCK CONTAINER
+   ========================= */
+pre.chroma,
+.highlight pre {
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 1em;
+  overflow-x: auto;
+  background: #f8fafc !important;
+  color: #0f172a !important;
+}
+

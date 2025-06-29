@@ -2,13 +2,6 @@
 [style]
   vars = {}
 
-# Custom CSS file
-customCSS = ["css/custom.css"]
-
-# Site parameters
-description = "Pwnfuzz - Exploring the world of fuzzing, binary exploitation, and exploit engineering"
-mainSections = ["posts"]
-showReadingTime = true
 
 # Header configuration
 [header]

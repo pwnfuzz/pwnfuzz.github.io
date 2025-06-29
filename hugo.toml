@@ -26,19 +26,29 @@ theme = 'mainroad'
     lineNumbersInTable = true
     noClasses = false
 
-[params]
+[Params]
+  # Site parameters
+  description = "Pwnfuzz - Exploring the world of fuzzing, binary exploitation, and exploit engineering"
+  mainSections = ["posts"]
+  showReadingTime = true
   readMore = true  # Always show read more link
   summaryLength = 200
-  description = "PwnFuzz Blog" # Site description. Used in meta description
-  copyright = "PwnFuzz Blog - Fuzz. Pwn. Repeat." # Footer copyright holder, otherwise will use site title
   opengraph = true # Enable OpenGraph if true
   schema = true # Enable Schema
   twitter_cards = true # Enable Twitter Cards if true
-  readmore = false # Show "Read more" button in list if true
   authorbox = true # Show authorbox at bottom of pages if true
   toc = true # Enable Table of Contents
   pager = true # Show pager navigation (prev/next links) at the bottom of pages if true
   post_meta = ["author", "date", "categories", "translations"] # Order of post meta information
+
+[Params.style.vars]
+  highlightColor = "#e22d30" # Override highlight color
+
+  # Override font-family sets
+  # Take care of different quotes OR escaping symbols in these params if necessary
+  fontFamilyPrimary = "'Open Sans', Helvetica, Arial, sans-serif"
+  # Secondary font-family set responsible for pre, code, kbd, and samp tags font
+  fontFamilySecondary = "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace"
 
 
 [mediaTypes]
