@@ -28,7 +28,7 @@ theme = 'mainroad'
 
 [Params]
   # Site parameters
-  description = "Pwnfuzz - Exploring the world of fuzzing, binary exploitation, and exploit engineering"
+  description = "Pwnfuzz - Exploring the world of fuzzing, binary exploitation, and exploit engineering!"
   mainSections = ["posts"]
   showReadingTime = true
   readMore = true  # Always show read more link
