@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap');
 *,
 *::before,
 *::after {
@@ -43,7 +44,7 @@ html {
 
 body {
 	margin: 0;
-	font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+	font-family: 'Google Sans', 'Product Sans', 'Inter', sans-serif;
 	font-size: 14px;
 	font-size: .875rem;
 	line-height: 1.6;
