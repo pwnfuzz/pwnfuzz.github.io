@@ -36,7 +36,7 @@ theme = 'mainroad'
   opengraph = true # Enable OpenGraph if true
   schema = true # Enable Schema
   twitter_cards = true # Enable Twitter Cards if true
-  authorbox = true # Show authorbox at bottom of pages if true
+  authorbox = false # Show authorbox at bottom of pages if true
   toc = true # Enable Table of Contents
   pager = true # Show pager navigation (prev/next links) at the bottom of pages if true
   post_meta = ["author", "date", "categories", "translations"] # Order of post meta information
@@ -68,12 +68,17 @@ theme = 'mainroad'
     url = "/"
     weight = 1
   [[menu.main]]
-    identifier = "about"
-    name = "About"
-    url = "/about/"
+    identifier = "1day-breakdowns"
+    name = "1Day Breakdowns"
+    url = "/1day-breakdowns/"
     weight = 2
   [[menu.main]]
     identifier = "tags"
     name = "Tags"
     url = "/tags/"
     weight = 3
+  [[menu.main]]
+    identifier = "about"
+    name = "About"
+    url = "/about/"
+    weight = 4

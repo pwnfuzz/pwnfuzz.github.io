@@ -1,4 +1,6 @@
 # Theme parameters
+[Params]
+  authorbox = false
 [style]
   vars = {}
 
@@ -16,7 +18,7 @@
 
 # Author settings
 [Author]
-    name = "D4mianwayne"
+    name = "D4mianWayne"
     bio = "Vulnerability Researcher, Exploit Developer"
     avatar = "/img/profile-placeholder.jpg"
 

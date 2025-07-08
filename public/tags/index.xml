@@ -93,6 +93,20 @@
       <description></description>
     </item>
     <item>
+      <title>1day</title>
+      <link>http://localhost:1313/tags/1day/</link>
+      <pubDate>Sat, 01 Jun 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/1day/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Example</title>
+      <link>http://localhost:1313/tags/example/</link>
+      <pubDate>Sat, 01 Jun 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/example/</guid>
+      <description></description>
+    </item>
+    <item>
       <title>Cve-2024-4040</title>
       <link>http://localhost:1313/tags/cve-2024-4040/</link>
       <pubDate>Thu, 09 May 2024 00:00:00 +0000</pubDate>

@@ -40,8 +40,6 @@
       "ul"
     ],
     "classes": [
-      "authorbox",
-      "authorbox__warning",
       "body",
       "btn",
       "clearfix",
