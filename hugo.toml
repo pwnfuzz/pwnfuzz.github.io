@@ -2,6 +2,23 @@ baseURL = 'https://pwnfuzz.com/'
 languageCode = 'en-us'
 theme = 'mainroad'
 
+# SEO and Site Configuration
+title = "PwnFuzz - Security Research & Exploit Development"
+description = "PwnFuzz is a leading security research blog focused on vulnerability discovery, exploit development, binary exploitation, and offensive security. Expert analysis of CVEs, fuzzing techniques, and red team methodologies."
+keywords = ["pwnfuzz", "security research", "exploit development", "vulnerability analysis", "binary exploitation", "fuzzing", "red team", "penetration testing", "CVE analysis", "offensive security"]
+author = "D4mianWayne"
+
+# Enable sitemap generation
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+  section = ["HTML", "RSS"]
+  taxonomy = ["HTML", "RSS"]
+  taxonomyTerm = ["HTML"]
+
+[sitemap]
+  changefreq = "weekly"
+  priority = 0.5
+  filename = "sitemap.xml"
 
 [Params.logo]
   image = "img/pwnfuzz.png" # Logo image. Path relative to "static"
@@ -10,7 +27,6 @@ theme = 'mainroad'
 
 [pagination]
   pagerSize = 5
-
 
 [build]
   writeStats = true
@@ -27,8 +43,8 @@ theme = 'mainroad'
     noClasses = false
 
 [Params]
-  # Site parameters
-  description = "Pwnfuzz - Exploring the world of fuzzing, binary exploitation, and exploit engineering!"
+  # Enhanced SEO parameters
+  description = "PwnFuzz - Expert security research and exploit development. Deep dive into vulnerability analysis, binary exploitation, fuzzing techniques, and offensive security methodologies."
   mainSections = ["posts"]
   showReadingTime = true
   readMore = true  # Always show read more link
@@ -40,6 +56,12 @@ theme = 'mainroad'
   toc = true # Enable Table of Contents
   pager = true # Show pager navigation (prev/next links) at the bottom of pages if true
   post_meta = ["author", "date", "categories", "translations"] # Order of post meta information
+  
+  # SEO specific settings
+  seo = true
+  canonicalURL = true
+  noindex = false
+  nofollow = false
 
 [Params.style.vars]
   highlightColor = "#e22d30" # Override highlight color
@@ -49,7 +71,6 @@ theme = 'mainroad'
   fontFamilyPrimary = "'Google Sans', 'Product Sans', 'Inter', sans-serif"
   # Secondary font-family set responsible for pre, code, kbd, and samp tags font
   fontFamilySecondary = "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace"
-
 
 [mediaTypes]
   [mediaTypes.'text/plain']

@@ -1,9 +1,25 @@
 # Theme parameters
 [Params]
   authorbox = false
+  
+  # Social media links
+  twitter_username = "@D4mianWayne"
+  github_username = "D4mianWayne"
+  linkedin_username = "d4mianwayne"
+  
+  # SEO settings
+  og_image = "/img/pwnfuzz.png"
+  twitter_image = "/img/pwnfuzz.png"
+  
+  # Site metadata
+  site_name = "PwnFuzz"
+  site_description = "PwnFuzz is a leading security research platform focused on vulnerability discovery, exploit development, and offensive security. Expert analysis by D4mianWayne covering CVEs, fuzzing, and red team methodologies."
+  
+  # Keywords for SEO
+  keywords = ["pwnfuzz", "security research", "exploit development", "vulnerability analysis", "binary exploitation", "fuzzing", "red team", "penetration testing", "CVE analysis", "offensive security", "D4mianWayne"]
+
 [style]
   vars = {}
-
 
 # Header configuration
 [header]
@@ -21,8 +37,6 @@
     name = "D4mianWayne"
     bio = "Vulnerability Researcher, Exploit Developer"
     avatar = "/img/profile-placeholder.jpg"
-
-# Social links can be added here if the theme supports them in params
 
 # Widgets
 [sidebar]
