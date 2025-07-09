@@ -3,22 +3,15 @@
   <section class="hero-section">
     <div class="hero-content">
       <h1 class="hero-title">Welcome to PwnFuzz</h1>
-      <p class="hero-subtitle">Advanced Security Research & Exploit Development</p>
       <p class="hero-description">
-        PwnFuzz is a premier platform for vulnerability discovery, exploit development, and offensive security research. 
-        Our expert analysis covers the latest CVEs, fuzzing methodologies, and red team techniques.
+        Explore our comprehensive research platform with detailed technical analysis, exploit development guides, and cutting-edge security insights.
       </p>
-      <div class="hero-cta">
-        <a href="/posts/" class="btn btn-primary">Latest Research</a>
-        <a href="/about/" class="btn btn-secondary">About PwnFuzz</a>
-      </div>
     </div>
   </section>
 
-  <section class="featured-posts">
-    <h2>Latest Security Research</h2>
+  <section class="blog-list">
     <div class="posts-grid">
-      {{ range first 6 (where .Site.RegularPages "Type" "posts") }}
+      {{ range where .Site.RegularPages "Section" "posts" }}
       <article class="post-card">
         <div class="post-card-content">
           <h3 class="post-card-title">
@@ -26,293 +19,140 @@
           </h3>
           <div class="post-card-meta">
             <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
-            {{ if .Params.categories }}
-            <span class="post-category">{{ index .Params.categories 0 }}</span>
-            {{ end }}
+            <span class="meta-sep">•</span>
+            <span class="post-author">{{ with .Params.author }}{{ . }}{{ else }}{{ .Site.Params.author }}{{ end }}</span>
+            {{ with .ReadingTime }}<span class="meta-sep">•</span><span class="reading-time">{{ . }} min read</span>{{ end }}
           </div>
-          <p class="post-card-excerpt">{{ .Summary }}</p>
-          {{ if .Params.tags }}
-          <div class="post-tags">
-            {{ range first 3 .Params.tags }}
-            <span class="tag">{{ . }}</span>
-            {{ end }}
-          </div>
+          <p class="post-card-excerpt">{{ .Summary | plainify | truncate 180 }}</p>
+          {{ with .Params.tags }}
+            <div class="post-tags">
+              <span class="tags-label">Tags:</span>
+              {{ range first 3 . }}
+                <a class="tag" href="/tags/{{ . | urlize }}/">{{ . }}</a>
+              {{ end }}
+            </div>
           {{ end }}
         </div>
       </article>
       {{ end }}
-    </div>
-    <div class="view-all-posts">
-      <a href="/posts/" class="btn btn-outline">View All Research</a>
-    </div>
-  </section>
-
-  <section class="research-areas">
-    <h2>PwnFuzz Research Focus Areas</h2>
-    <div class="research-grid">
-      <div class="research-item">
-        <h3>Vulnerability Research</h3>
-        <p>Deep-dive analysis of CVEs and zero-day discoveries with technical exploitation details.</p>
-      </div>
-      <div class="research-item">
-        <h3>Exploit Development</h3>
-        <p>Custom exploit creation for complex vulnerabilities across multiple platforms and architectures.</p>
-      </div>
-      <div class="research-item">
-        <h3>Binary Exploitation</h3>
-        <p>Advanced techniques in memory corruption, code execution, and reverse engineering.</p>
-      </div>
-      <div class="research-item">
-        <h3>Fuzzing Methodologies</h3>
-        <p>Automated vulnerability discovery through intelligent fuzzing and tool development.</p>
-      </div>
-      <div class="research-item">
-        <h3>Red Team Operations</h3>
-        <p>Real-world offensive security assessments and attack simulation methodologies.</p>
-      </div>
-      <div class="research-item">
-        <h3>Security Tooling</h3>
-        <p>Custom security tools and frameworks for vulnerability research and exploitation.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="about-preview">
-    <div class="about-content">
-      <h2>About PwnFuzz</h2>
-      <p>
-        Founded by <strong>D4mianWayne</strong>, a certified security researcher with OSCP, OSED, CRTE, and CRTO credentials, 
-        PwnFuzz represents the cutting edge of offensive security research. Our platform serves as a knowledge hub for 
-        security professionals, researchers, and enthusiasts interested in the latest developments in vulnerability research 
-        and exploit development.
-      </p>
-      <p>
-        The name "PwnFuzz" embodies our methodology: <strong>Fuzz</strong> for systematic vulnerability discovery, 
-        <strong>Pwn</strong> for mastery of exploitation techniques, and <strong>Repeat</strong> for continuous improvement 
-        and iterative research.
-      </p>
-      <a href="/about/" class="btn btn-primary">Learn More About PwnFuzz</a>
     </div>
   </section>
 </div>
 
 <style>
 .hero-section {
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-  color: white;
-  padding: 4rem 0;
+  background: #fff;
+  color: #222;
+  padding: 2.5rem 0 1.5rem 0;
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #eee;
 }
-
 .hero-title {
-  font-size: 3rem;
-  margin-bottom: 1rem;
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
   font-weight: 700;
 }
-
-.hero-subtitle {
-  font-size: 1.5rem;
-  margin-bottom: 1.5rem;
-  color: #e22d30;
-}
-
 .hero-description {
   font-size: 1.1rem;
-  max-width: 800px;
-  margin: 0 auto 2rem;
-  line-height: 1.6;
+  max-width: 700px;
+  margin: 0 auto 0.5rem auto;
+  line-height: 1.5;
 }
-
-.hero-cta {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.btn {
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  text-decoration: none;
-  border-radius: 5px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.btn-primary {
-  background: #e22d30;
-  color: white;
-}
-
-.btn-primary:hover {
-  background: #c41e3a;
-  transform: translateY(-2px);
-}
-
-.btn-secondary {
-  background: transparent;
-  color: white;
-  border: 2px solid white;
-}
-
-.btn-secondary:hover {
-  background: white;
-  color: #1a1a1a;
-}
-
-.btn-outline {
-  background: transparent;
-  color: #e22d30;
-  border: 2px solid #e22d30;
-}
-
-.btn-outline:hover {
-  background: #e22d30;
-  color: white;
-}
-
-.featured-posts {
-  margin-bottom: 4rem;
-}
-
-.featured-posts h2 {
-  text-align: center;
-  margin-bottom: 2rem;
-  font-size: 2rem;
-}
-
 .posts-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
   margin-bottom: 2rem;
 }
-
 .post-card {
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   padding: 1.5rem;
+  background: #fff;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
 .post-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
 }
-
 .post-card-title a {
   color: #333;
   text-decoration: none;
   font-size: 1.2rem;
   font-weight: 600;
 }
-
 .post-card-title a:hover {
   color: #e22d30;
 }
-
 .post-card-meta {
-  margin: 0.5rem 0;
-  font-size: 0.9rem;
-  color: #666;
+  margin: 0.5rem 0 0.5rem 0;
+  font-size: 0.95rem;
+  color: #888;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
 }
-
-.post-category {
-  background: #e22d30;
-  color: white;
-  padding: 0.2rem 0.5rem;
-  border-radius: 3px;
-  margin-left: 0.5rem;
+.meta-sep {
+  color: #ccc;
+  margin: 0 0.3em;
 }
-
-.post-card-excerpt {
-  margin: 1rem 0;
-  line-height: 1.5;
+.post-author {
+  color: #555;
+  font-weight: 500;
 }
-
+.reading-time {
+  color: #888;
+  font-style: italic;
+}
 .post-tags {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.3rem;
+  align-items: center;
+  margin-top: 0.5em;
   flex-wrap: wrap;
 }
-
+.tags-label {
+  font-weight: 500;
+  color: #888;
+  margin-right: 0.3em;
+}
 .tag {
-  background: #f0f0f0;
-  padding: 0.2rem 0.5rem;
-  border-radius: 3px;
-  font-size: 0.8rem;
-}
-
-.view-all-posts {
-  text-align: center;
-}
-
-.research-areas {
-  margin-bottom: 4rem;
-}
-
-.research-areas h2 {
-  text-align: center;
-  margin-bottom: 2rem;
-  font-size: 2rem;
-}
-
-.research-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-}
-
-.research-item {
-  text-align: center;
-  padding: 2rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  transition: transform 0.3s ease;
-}
-
-.research-item:hover {
-  transform: translateY(-5px);
-}
-
-.research-item h3 {
+  background: #f8f8fa;
   color: #e22d30;
-  margin-bottom: 1rem;
+  border: 1px solid #e22d30;
+  padding: 0.18rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.85em;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+  margin-right: 0.2em;
+  margin-bottom: 0.1em;
+  display: inline-block;
 }
-
-.about-preview {
-  background: #f8f9fa;
-  padding: 3rem;
-  border-radius: 8px;
-  text-align: center;
+.tag:hover {
+  background: #e22d30;
+  color: #fff;
+  border: 1px solid #e22d30;
 }
-
-.about-preview h2 {
-  margin-bottom: 1.5rem;
-  font-size: 2rem;
+.post-card-excerpt {
+  margin: 0.5rem 0 0 0;
+  line-height: 1.5;
+  color: #444;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 3.5em;
+  max-height: 4.5em;
 }
-
-.about-content p {
-  max-width: 800px;
-  margin: 0 auto 1.5rem;
-  line-height: 1.6;
-}
-
 @media (max-width: 768px) {
   .hero-title {
-    font-size: 2rem;
+    font-size: 1.5rem;
   }
-  
-  .hero-subtitle {
-    font-size: 1.2rem;
-  }
-  
   .posts-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .research-grid {
     grid-template-columns: 1fr;
   }
 }

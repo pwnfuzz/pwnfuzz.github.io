@@ -2,31 +2,31 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Java on PwnFuzz - Security Research &amp; Exploit Development</title>
-    <link>https://pwnfuzz.com/tags/java/</link>
+    <link>http://localhost:1313/tags/java/</link>
     <description>Recent content in Java on PwnFuzz - Security Research &amp; Exploit Development</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 30 Mar 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://pwnfuzz.com/tags/java/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/tags/java/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>CVE 2025-2825 - CrushFTP Authentication Bypass Analysis</title>
-      <link>https://pwnfuzz.com/posts/crushftp-cve-2025-2825/</link>
+      <link>http://localhost:1313/posts/crushftp-cve-2025-2825/</link>
       <pubDate>Sun, 30 Mar 2025 00:00:00 +0000</pubDate>
-      <guid>https://pwnfuzz.com/posts/crushftp-cve-2025-2825/</guid>
+      <guid>http://localhost:1313/posts/crushftp-cve-2025-2825/</guid>
       <description>&lt;p&gt;After the &lt;a href=&#34;https://thehackernews.com/2025/03/new-security-flaws-found-in-vmware.html&#34;&gt;news&lt;/a&gt; made it’s way to my feeds, having worked on the CrushFTP’s &lt;a href=&#34;https://www.notion.so/CVE-2025-2825-1c553a570fe780998981fe4e2c1694e1?pvs=21&#34;&gt;CVE-2024-4040&lt;/a&gt; vulnerability analysis, this sounded like a good thing to do over and maybe I could write the exploit before anyone but unfortunately &lt;a href=&#34;https://projectdiscovery.io/blog/crushftp-authentication-bypass&#34;&gt;Project Discovery&lt;/a&gt; guys beat me to it. Anyways, enough story, let’s dive into the vulnerability:&lt;/p&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;CrushFTP versions 10.0.0 through 10.8.3 and 11.0.0 through 11.3.0 are affected by a vulnerability that may result in unauthenticated access. Remote and unauthenticated HTTP requests to CrushFTP server may allow attackers to gain unauthorized access.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Exploring Recent CVEs in HPE Insight Remote Support</title>
-      <link>https://pwnfuzz.com/posts/hpe-irs-cve-deep-dive/</link>
+      <link>http://localhost:1313/posts/hpe-irs-cve-deep-dive/</link>
       <pubDate>Wed, 08 Jan 2025 00:00:00 +0000</pubDate>
-      <guid>https://pwnfuzz.com/posts/hpe-irs-cve-deep-dive/</guid>
+      <guid>http://localhost:1313/posts/hpe-irs-cve-deep-dive/</guid>
       <description>&lt;p&gt;In this post, we’ll delve into two critical vulnerabilities recently discovered in the HPE Insight Remote Support (IRS) application, versions prior to &lt;code&gt;v7.14.0.629&lt;/code&gt;. These vulnerabilities—CVE-2024-53675 (unauthenticated XXE vulnerability) and CVE-2024-53676 (Remote Code Execution, or RCE vulnerability)—pose significant security risks, allowing unauthorized access and arbitrary code execution on vulnerable systems.&lt;/p&gt;&#xA;&lt;h1 id=&#34;overview&#34;&gt;Overview&lt;/h1&gt;&#xA;&lt;p&gt;With the holiday vibes going around, I had no plans on releasing any posts but as I was working through this, I learned few things about secure coding practices and hunting for these reported vulnerabilities gives a good practice to understand the researcher&amp;rsquo;s thought process and perhaps perform variant analysis in a similar situation. The Insight Remote Support application by HPE is used to gather information and statistics for multiple other hardwares such as printers and stuff, there are certain servlets exposed through web UI, accessible without authentication allowing exploitation of all the reported vulnerabilities much easier and with no dependency on credentials. A bit of background in regards with the software is that the web server is based on Tomcat server and perhaps you may have guessed by now the backend is developed on Java.&lt;/p&gt;</description>
     </item>
     <item>
       <title>CVE 2024-4040 - CrushFTP Server-Side Template Injection Vulnerability Analysis</title>
-      <link>https://pwnfuzz.com/posts/crushftp-cve-2024-4040/</link>
+      <link>http://localhost:1313/posts/crushftp-cve-2024-4040/</link>
       <pubDate>Thu, 09 May 2024 00:00:00 +0000</pubDate>
-      <guid>https://pwnfuzz.com/posts/crushftp-cve-2024-4040/</guid>
+      <guid>http://localhost:1313/posts/crushftp-cve-2024-4040/</guid>
       <description>&lt;p&gt;This blog post contains a thorough analysis of Server Side Template Injection vulnerability in a commercial Managed File Transfer product named CrushFTP. Exploit script is available &lt;a href=&#34;https://github.com/D4mianWayne/POCs/tree/main/CVE%202024-4040&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;&#xA;&lt;h1 id=&#34;cve-2024-4040---crushftp-server-side-template-injection-vulnerability&#34;&gt;CVE 2024-4040 - CrushFTP Server-Side Template Injection Vulnerability&lt;/h1&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;I am writing a blog post after a very long time. Finally the “hiatus” has ended and now I am back on track for analyzing real world vulnerabilities and how it has been exploited, more so I will try to uncover what exactly happens under the hood. For starter, I had many vulnerabilities listed and I was confused on what to pick up first but then I saw a news stating that a zero day vulnerability was identified in CrushFTP server. I worked on FTP server sometimes back as part of my work so I thought this would be better to pick for starter.&lt;/p&gt;</description>
     </item>
   </channel>

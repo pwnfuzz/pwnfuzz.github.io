@@ -2,143 +2,143 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on PwnFuzz - Security Research &amp; Exploit Development</title>
-    <link>https://pwnfuzz.com/tags/</link>
+    <link>http://localhost:1313/tags/</link>
     <description>Recent content in Tags on PwnFuzz - Security Research &amp; Exploit Development</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 30 Mar 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://pwnfuzz.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Auth-Bypass</title>
-      <link>https://pwnfuzz.com/tags/auth-bypass/</link>
+      <link>http://localhost:1313/tags/auth-bypass/</link>
       <pubDate>Sun, 30 Mar 2025 00:00:00 +0000</pubDate>
-      <guid>https://pwnfuzz.com/tags/auth-bypass/</guid>
+      <guid>http://localhost:1313/tags/auth-bypass/</guid>
       <description></description>
     </item>
     <item>
       <title>CrushFTP</title>
-      <link>https://pwnfuzz.com/tags/crushftp/</link>
+      <link>http://localhost:1313/tags/crushftp/</link>
       <pubDate>Sun, 30 Mar 2025 00:00:00 +0000</pubDate>
-      <guid>https://pwnfuzz.com/tags/crushftp/</guid>
+      <guid>http://localhost:1313/tags/crushftp/</guid>
       <description></description>
     </item>
     <item>
       <title>CVE-2025-2825</title>
-      <link>https://pwnfuzz.com/tags/cve-2025-2825/</link>
+      <link>http://localhost:1313/tags/cve-2025-2825/</link>
       <pubDate>Sun, 30 Mar 2025 00:00:00 +0000</pubDate>
-      <guid>https://pwnfuzz.com/tags/cve-2025-2825/</guid>
+      <guid>http://localhost:1313/tags/cve-2025-2825/</guid>
       <description></description>
     </item>
     <item>
       <title>Exploit-Development</title>
-      <link>https://pwnfuzz.com/tags/exploit-development/</link>
+      <link>http://localhost:1313/tags/exploit-development/</link>
       <pubDate>Sun, 30 Mar 2025 00:00:00 +0000</pubDate>
-      <guid>https://pwnfuzz.com/tags/exploit-development/</guid>
+      <guid>http://localhost:1313/tags/exploit-development/</guid>
       <description></description>
     </item>
     <item>
       <title>Java</title>
-      <link>https://pwnfuzz.com/tags/java/</link>
+      <link>http://localhost:1313/tags/java/</link>
       <pubDate>Sun, 30 Mar 2025 00:00:00 +0000</pubDate>
-      <guid>https://pwnfuzz.com/tags/java/</guid>
+      <guid>http://localhost:1313/tags/java/</guid>
       <description></description>
     </item>
     <item>
       <title>Logic-Flaw</title>
-      <link>https://pwnfuzz.com/tags/logic-flaw/</link>
+      <link>http://localhost:1313/tags/logic-flaw/</link>
       <pubDate>Sun, 30 Mar 2025 00:00:00 +0000</pubDate>
-      <guid>https://pwnfuzz.com/tags/logic-flaw/</guid>
+      <guid>http://localhost:1313/tags/logic-flaw/</guid>
       <description></description>
     </item>
     <item>
       <title>Vulnerability-Research</title>
-      <link>https://pwnfuzz.com/tags/vulnerability-research/</link>
+      <link>http://localhost:1313/tags/vulnerability-research/</link>
       <pubDate>Sun, 30 Mar 2025 00:00:00 +0000</pubDate>
-      <guid>https://pwnfuzz.com/tags/vulnerability-research/</guid>
+      <guid>http://localhost:1313/tags/vulnerability-research/</guid>
       <description></description>
     </item>
     <item>
       <title>CVE-2024-53675</title>
-      <link>https://pwnfuzz.com/tags/cve-2024-53675/</link>
+      <link>http://localhost:1313/tags/cve-2024-53675/</link>
       <pubDate>Wed, 08 Jan 2025 00:00:00 +0000</pubDate>
-      <guid>https://pwnfuzz.com/tags/cve-2024-53675/</guid>
+      <guid>http://localhost:1313/tags/cve-2024-53675/</guid>
       <description></description>
     </item>
     <item>
       <title>CVE-2024-53676</title>
-      <link>https://pwnfuzz.com/tags/cve-2024-53676/</link>
+      <link>http://localhost:1313/tags/cve-2024-53676/</link>
       <pubDate>Wed, 08 Jan 2025 00:00:00 +0000</pubDate>
-      <guid>https://pwnfuzz.com/tags/cve-2024-53676/</guid>
+      <guid>http://localhost:1313/tags/cve-2024-53676/</guid>
       <description></description>
     </item>
     <item>
       <title>Path Traversal</title>
-      <link>https://pwnfuzz.com/tags/path-traversal/</link>
+      <link>http://localhost:1313/tags/path-traversal/</link>
       <pubDate>Wed, 08 Jan 2025 00:00:00 +0000</pubDate>
-      <guid>https://pwnfuzz.com/tags/path-traversal/</guid>
+      <guid>http://localhost:1313/tags/path-traversal/</guid>
       <description></description>
     </item>
     <item>
       <title>RCE</title>
-      <link>https://pwnfuzz.com/tags/rce/</link>
+      <link>http://localhost:1313/tags/rce/</link>
       <pubDate>Wed, 08 Jan 2025 00:00:00 +0000</pubDate>
-      <guid>https://pwnfuzz.com/tags/rce/</guid>
+      <guid>http://localhost:1313/tags/rce/</guid>
       <description></description>
     </item>
     <item>
       <title>XXE</title>
-      <link>https://pwnfuzz.com/tags/xxe/</link>
+      <link>http://localhost:1313/tags/xxe/</link>
       <pubDate>Wed, 08 Jan 2025 00:00:00 +0000</pubDate>
-      <guid>https://pwnfuzz.com/tags/xxe/</guid>
+      <guid>http://localhost:1313/tags/xxe/</guid>
       <description></description>
     </item>
     <item>
       <title>.NET</title>
-      <link>https://pwnfuzz.com/tags/.net/</link>
+      <link>http://localhost:1313/tags/.net/</link>
       <pubDate>Sun, 24 Nov 2024 00:00:00 +0000</pubDate>
-      <guid>https://pwnfuzz.com/tags/.net/</guid>
+      <guid>http://localhost:1313/tags/.net/</guid>
       <description></description>
     </item>
     <item>
       <title>CVE-2024-37297</title>
-      <link>https://pwnfuzz.com/tags/cve-2024-37297/</link>
+      <link>http://localhost:1313/tags/cve-2024-37297/</link>
       <pubDate>Sun, 24 Nov 2024 00:00:00 +0000</pubDate>
-      <guid>https://pwnfuzz.com/tags/cve-2024-37297/</guid>
+      <guid>http://localhost:1313/tags/cve-2024-37297/</guid>
       <description></description>
     </item>
     <item>
       <title>OOB-XXE</title>
-      <link>https://pwnfuzz.com/tags/oob-xxe/</link>
+      <link>http://localhost:1313/tags/oob-xxe/</link>
       <pubDate>Sun, 24 Nov 2024 00:00:00 +0000</pubDate>
-      <guid>https://pwnfuzz.com/tags/oob-xxe/</guid>
+      <guid>http://localhost:1313/tags/oob-xxe/</guid>
       <description></description>
     </item>
     <item>
       <title>1day</title>
-      <link>https://pwnfuzz.com/tags/1day/</link>
+      <link>http://localhost:1313/tags/1day/</link>
       <pubDate>Sat, 01 Jun 2024 00:00:00 +0000</pubDate>
-      <guid>https://pwnfuzz.com/tags/1day/</guid>
+      <guid>http://localhost:1313/tags/1day/</guid>
       <description></description>
     </item>
     <item>
       <title>Example</title>
-      <link>https://pwnfuzz.com/tags/example/</link>
+      <link>http://localhost:1313/tags/example/</link>
       <pubDate>Sat, 01 Jun 2024 00:00:00 +0000</pubDate>
-      <guid>https://pwnfuzz.com/tags/example/</guid>
+      <guid>http://localhost:1313/tags/example/</guid>
       <description></description>
     </item>
     <item>
       <title>Cve-2024-4040</title>
-      <link>https://pwnfuzz.com/tags/cve-2024-4040/</link>
+      <link>http://localhost:1313/tags/cve-2024-4040/</link>
       <pubDate>Thu, 09 May 2024 00:00:00 +0000</pubDate>
-      <guid>https://pwnfuzz.com/tags/cve-2024-4040/</guid>
+      <guid>http://localhost:1313/tags/cve-2024-4040/</guid>
       <description></description>
     </item>
     <item>
       <title>SSTI</title>
-      <link>https://pwnfuzz.com/tags/ssti/</link>
+      <link>http://localhost:1313/tags/ssti/</link>
       <pubDate>Thu, 09 May 2024 00:00:00 +0000</pubDate>
-      <guid>https://pwnfuzz.com/tags/ssti/</guid>
+      <guid>http://localhost:1313/tags/ssti/</guid>
       <description></description>
     </item>
   </channel>

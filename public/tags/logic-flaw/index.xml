@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Logic-Flaw on PwnFuzz - Security Research &amp; Exploit Development</title>
-    <link>https://pwnfuzz.com/tags/logic-flaw/</link>
+    <link>http://localhost:1313/tags/logic-flaw/</link>
     <description>Recent content in Logic-Flaw on PwnFuzz - Security Research &amp; Exploit Development</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 30 Mar 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://pwnfuzz.com/tags/logic-flaw/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/tags/logic-flaw/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>CVE 2025-2825 - CrushFTP Authentication Bypass Analysis</title>
-      <link>https://pwnfuzz.com/posts/crushftp-cve-2025-2825/</link>
+      <link>http://localhost:1313/posts/crushftp-cve-2025-2825/</link>
       <pubDate>Sun, 30 Mar 2025 00:00:00 +0000</pubDate>
-      <guid>https://pwnfuzz.com/posts/crushftp-cve-2025-2825/</guid>
+      <guid>http://localhost:1313/posts/crushftp-cve-2025-2825/</guid>
       <description>&lt;p&gt;After the &lt;a href=&#34;https://thehackernews.com/2025/03/new-security-flaws-found-in-vmware.html&#34;&gt;news&lt;/a&gt; made it’s way to my feeds, having worked on the CrushFTP’s &lt;a href=&#34;https://www.notion.so/CVE-2025-2825-1c553a570fe780998981fe4e2c1694e1?pvs=21&#34;&gt;CVE-2024-4040&lt;/a&gt; vulnerability analysis, this sounded like a good thing to do over and maybe I could write the exploit before anyone but unfortunately &lt;a href=&#34;https://projectdiscovery.io/blog/crushftp-authentication-bypass&#34;&gt;Project Discovery&lt;/a&gt; guys beat me to it. Anyways, enough story, let’s dive into the vulnerability:&lt;/p&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;CrushFTP versions 10.0.0 through 10.8.3 and 11.0.0 through 11.3.0 are affected by a vulnerability that may result in unauthenticated access. Remote and unauthenticated HTTP requests to CrushFTP server may allow attackers to gain unauthorized access.&lt;/p&gt;</description>
     </item>
   </channel>
