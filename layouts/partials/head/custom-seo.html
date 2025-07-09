@@ -1,7 +1,7 @@
 {{/* Enhanced SEO Meta Tags */}}
 <meta name="robots" content="index, follow">
 <meta name="author" content="{{ .Site.Params.author | default "D4mianWayne" }}">
-<meta name="keywords" content="{{ if .Params.keywords }}{{ delimit .Params.keywords ", " }}{{ else }}{{ delimit .Site.Params.keywords ", " }}{{ end }}">
+<meta name="keywords" content="{{ if .Params.keywords }}{{ delimit .Params.keywords ", " }}{{ else if .Site.Params.keywords }}{{ delimit .Site.Params.keywords ", " }}{{ else }}pwnfuzz, security research, exploit development, vulnerability analysis, binary exploitation, fuzzing, red team, penetration testing, CVE analysis, offensive security{{ end }}">
 
 {{/* Canonical URL */}}
 <link rel="canonical" href="{{ .Permalink }}">

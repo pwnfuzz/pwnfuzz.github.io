@@ -1,24 +1,123 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en">
 <head>
-	<meta name="generator" content="Hugo 0.147.9"><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+	<meta name="generator" content="Hugo 0.147.9">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title></title>
+	<title>PwnFuzz - Security Research &amp; Exploit Development</title>
 	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
-	<meta name="description" content="Pwnfuzz - Exploring the world of fuzzing, binary exploitation, and exploit engineering!">
-		<meta property="og:url" content="http://localhost:1313/">
-  <meta property="og:description" content="Pwnfuzz - Exploring the world of fuzzing, binary exploitation, and exploit engineering!">
+	<meta name="description" content="PwnFuzz - Expert security research and exploit development. Deep dive into vulnerability analysis, binary exploitation, fuzzing techniques, and offensive security methodologies.">
+	
+	
+	
+<meta name="robots" content="index, follow">
+<meta name="author" content="map[avatar:/img/profile-placeholder.jpg bio:Vulnerability Researcher, Exploit Developer name:D4mianWayne]">
+<meta name="keywords" content="pwnfuzz, security research, exploit development, vulnerability analysis, binary exploitation, fuzzing, red team, penetration testing, CVE analysis, offensive security">
+
+
+<link rel="canonical" href="https://pwnfuzz.com/">
+
+
+
+<meta property="og:site_name" content="PwnFuzz - Security Research &amp; Exploit Development">
+<meta property="og:title" content="PwnFuzz - Security Research &amp; Exploit Development">
+<meta property="og:description" content="PwnFuzz - Expert security research and exploit development. Deep dive into vulnerability analysis, binary exploitation, fuzzing techniques, and offensive security methodologies.">
+<meta property="og:url" content="https://pwnfuzz.com/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en">
+
+
+
+
+
+
+
+
+
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@D4mianWayne">
+<meta name="twitter:creator" content="@D4mianWayne">
+<meta name="twitter:title" content="PwnFuzz - Security Research &amp; Exploit Development">
+<meta name="twitter:description" content="PwnFuzz - Expert security research and exploit development. Deep dive into vulnerability analysis, binary exploitation, fuzzing techniques, and offensive security methodologies.">
+
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "PwnFuzz",
+  "url": "https://pwnfuzz.com",
+  "logo": "https://pwnfuzz.com/img/pwnfuzz.png",
+  "description": "PwnFuzz - Expert security research and exploit development. Deep dive into vulnerability analysis, binary exploitation, fuzzing techniques, and offensive security methodologies.",
+  "founder": {
+    "@type": "Person",
+    "name": "D4mianWayne",
+    "jobTitle": "Security Researcher",
+    "url": "https://github.com/D4mianWayne"
+  },
+  "sameAs": [
+    "https://github.com/D4mianWayne"
+  ]
+}
+</script>
+
+
+
+
+
+
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta http-equiv="X-XSS-Protection" content="1; mode=block">
+<meta name="referrer" content="strict-origin-when-cross-origin"> 
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "PwnFuzz",
+  "url": "https://pwnfuzz.com",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://pwnfuzz.com/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script> 
+		<meta property="og:url" content="https://pwnfuzz.com/">
+  <meta property="og:site_name" content="PwnFuzz - Security Research & Exploit Development">
+  <meta property="og:title" content="PwnFuzz - Security Research & Exploit Development">
+  <meta property="og:description" content="PwnFuzz - Expert security research and exploit development. Deep dive into vulnerability analysis, binary exploitation, fuzzing techniques, and offensive security methodologies.">
   <meta property="og:locale" content="en_us">
   <meta property="og:type" content="website">
 
 		
-  <meta itemprop="description" content="Pwnfuzz - Exploring the world of fuzzing, binary exploitation, and exploit engineering!">
+  <meta itemprop="name" content="PwnFuzz - Security Research & Exploit Development">
+  <meta itemprop="description" content="PwnFuzz - Expert security research and exploit development. Deep dive into vulnerability analysis, binary exploitation, fuzzing techniques, and offensive security methodologies.">
   <meta itemprop="datePublished" content="2025-03-30T00:00:00+00:00">
   <meta itemprop="dateModified" content="2025-03-30T00:00:00+00:00">
 		
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:description" content="Pwnfuzz - Exploring the world of fuzzing, binary exploitation, and exploit engineering!">
+  <meta name="twitter:title" content="PwnFuzz - Security Research & Exploit Development">
+  <meta name="twitter:description" content="PwnFuzz - Expert security research and exploit development. Deep dive into vulnerability analysis, binary exploitation, fuzzing techniques, and offensive security methodologies.">
 
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link rel="dns-prefetch" href="//fonts.googleapis.com">
@@ -27,10 +126,25 @@
 
 	<link rel="stylesheet" href="/css/style.css">
 	
-	<link rel="alternate" type="application/rss+xml" href="/index.xml" title="">
+	<link rel="alternate" type="application/rss+xml" href="/index.xml" title="PwnFuzz - Security Research & Exploit Development">
 
 	<link rel="shortcut icon" href="/favicon.ico">
 		
+		
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-R5CC5776NV"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-R5CC5776NV');
+        }
+      </script>
 </head>
 <body class="body">
 	<div class="container container--outer">
@@ -90,320 +204,424 @@
 		<div class="wrapper flex">
 			<div class="primary">
 			
-<main class="main list" role="main">
-	
-<article class="list__item post">
-    <header class="list__header">
-        <h2 class="list__title post__title">
-            <a href="/posts/crushftp-cve-2025-2825/" rel="bookmark">
-                CVE 2025-2825 - CrushFTP Authentication Bypass Analysis
-            </a>
-        </h2>
-        
-        <div class="post-meta">
-            
-                <span class="post-author">
-                    <i class="fas fa-user"></i> D4mianWayne
-                </span>
-                <span class="meta-separator">•</span>
-            
-            
-            <time class="post-date" datetime="2025-03-30T00:00:00Z">
-                <i class="far fa-calendar-alt"></i> March 30, 2025
-            </time>
-            
-            
-                <span class="meta-separator">•</span>
-                <span class="post-categories">
-                    <i class="far fa-folder"></i>
-                    
-                        
-                        <a href="/categories/cve-analysis">CVE Analysis</a>
-                    
-                </span>
-            
-            
-            
-                <span class="meta-separator">•</span>
-                <span class="reading-time">
-                    <i class="far fa-clock"></i> 10 min read
-                </span>
-            
-        </div>
-    </header>
-    
-    <div class="content list__excerpt post__content clearfix">
-        <div class="post-summary">
-        
-        
-        
-        
-        
-        
-        
-            
-            
-            
-            
-            
-            
-            
-                <div class="post-summary">
-                    After the news made it’s way to my feeds, having worked on the CrushFTP’s CVE-2024-4040 vulnerability analysis, this sounded like a good thing to do over and maybe I could write the exploit before anyone but unfortunately Project Discovery guys beat me to it. Anyways, enough story, let’s dive into the vulnerability:
-CrushFTP versions 10.0.0 through 10.8.3 and 11.0.0 through 11.3.0 are affected by …
-                </div>
-            
-        
-        </div>
+<div class="content main__content clearfix">
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">Welcome to PwnFuzz</h1>
+      <p class="hero-subtitle">Advanced Security Research & Exploit Development</p>
+      <p class="hero-description">
+        PwnFuzz is a premier platform for vulnerability discovery, exploit development, and offensive security research. 
+        Our expert analysis covers the latest CVEs, fuzzing methodologies, and red team techniques.
+      </p>
+      <div class="hero-cta">
+        <a href="/posts/" class="btn btn-primary">Latest Research</a>
+        <a href="/about/" class="btn btn-secondary">About PwnFuzz</a>
+      </div>
     </div>
-    
-    
-    <div class="list__footer clearfix">
-        <a class="list__footer-readmore btn" href="/posts/crushftp-cve-2025-2825/">
-            Read more…
-        </a>
-    </div>
-    
-    
-    
-</article>
+  </section>
 
-<article class="list__item post">
-    <header class="list__header">
-        <h2 class="list__title post__title">
-            <a href="/posts/hpe-irs-cve-deep-dive/" rel="bookmark">
-                Exploring Recent CVEs in HPE Insight Remote Support
-            </a>
-        </h2>
-        
-        <div class="post-meta">
+  <section class="featured-posts">
+    <h2>Latest Security Research</h2>
+    <div class="posts-grid">
+      
+      <article class="post-card">
+        <div class="post-card-content">
+          <h3 class="post-card-title">
+            <a href="/posts/crushftp-cve-2025-2825/">CVE 2025-2825 - CrushFTP Authentication Bypass Analysis</a>
+          </h3>
+          <div class="post-card-meta">
+            <time datetime="2025-03-30">March 30, 2025</time>
             
-                <span class="post-author">
-                    <i class="fas fa-user"></i> D4mianWayne
-                </span>
-                <span class="meta-separator">•</span>
+            <span class="post-category">CVE Analysis</span>
             
+          </div>
+          <p class="post-card-excerpt"><p>After the <a href="https://thehackernews.com/2025/03/new-security-flaws-found-in-vmware.html">news</a> made it’s way to my feeds, having worked on the CrushFTP’s <a href="https://www.notion.so/CVE-2025-2825-1c553a570fe780998981fe4e2c1694e1?pvs=21">CVE-2024-4040</a> vulnerability analysis, this sounded like a good thing to do over and maybe I could write the exploit before anyone but unfortunately <a href="https://projectdiscovery.io/blog/crushftp-authentication-bypass">Project Discovery</a> guys beat me to it. Anyways, enough story, let’s dive into the vulnerability:</p>
+<blockquote>
+<p>CrushFTP versions 10.0.0 through 10.8.3 and 11.0.0 through 11.3.0 are affected by a vulnerability that may result in unauthenticated access. Remote and unauthenticated HTTP requests to CrushFTP server may allow attackers to gain unauthorized access.</p></p>
+          
+          <div class="post-tags">
             
-            <time class="post-date" datetime="2025-01-08T00:00:00Z">
-                <i class="far fa-calendar-alt"></i> January 8, 2025
-            </time>
+            <span class="tag">CVE-2025-2825</span>
             
+            <span class="tag">Java</span>
             
-                <span class="meta-separator">•</span>
-                <span class="post-categories">
-                    <i class="far fa-folder"></i>
-                    
-                        
-                        <a href="/categories/cve-analysis">CVE Analysis</a>
-                    
-                </span>
+            <span class="tag">auth-bypass</span>
             
-            
-            
-                <span class="meta-separator">•</span>
-                <span class="reading-time">
-                    <i class="far fa-clock"></i> 10 min read
-                </span>
-            
+          </div>
+          
         </div>
-    </header>
-    
-    <div class="content list__excerpt post__content clearfix">
-        <div class="post-summary">
-        
-        
-        
-        
-        
-        
-        
+      </article>
+      
+      <article class="post-card">
+        <div class="post-card-content">
+          <h3 class="post-card-title">
+            <a href="/posts/hpe-irs-cve-deep-dive/">Exploring Recent CVEs in HPE Insight Remote Support</a>
+          </h3>
+          <div class="post-card-meta">
+            <time datetime="2025-01-08">January 8, 2025</time>
             
+            <span class="post-category">CVE Analysis</span>
             
+          </div>
+          <p class="post-card-excerpt"><p>In this post, we’ll delve into two critical vulnerabilities recently discovered in the HPE Insight Remote Support (IRS) application, versions prior to <code>v7.14.0.629</code>. These vulnerabilities—CVE-2024-53675 (unauthenticated XXE vulnerability) and CVE-2024-53676 (Remote Code Execution, or RCE vulnerability)—pose significant security risks, allowing unauthorized access and arbitrary code execution on vulnerable systems.</p>
+<h1 id="overview">Overview</h1>
+<p>With the holiday vibes going around, I had no plans on releasing any posts but as I was working through this, I learned few things about secure coding practices and hunting for these reported vulnerabilities gives a good practice to understand the researcher&rsquo;s thought process and perhaps perform variant analysis in a similar situation. The Insight Remote Support application by HPE is used to gather information and statistics for multiple other hardwares such as printers and stuff, there are certain servlets exposed through web UI, accessible without authentication allowing exploitation of all the reported vulnerabilities much easier and with no dependency on credentials. A bit of background in regards with the software is that the web server is based on Tomcat server and perhaps you may have guessed by now the backend is developed on Java.</p></p>
+          
+          <div class="post-tags">
             
+            <span class="tag">CVE-2024-53676</span>
             
+            <span class="tag">CVE-2024-53675</span>
             
+            <span class="tag">Java</span>
             
-            
-                <div class="post-summary">
-                    In this post, we’ll delve into two critical vulnerabilities recently discovered in the HPE Insight Remote Support (IRS) application, versions prior to v7.14.0.629. These vulnerabilities—CVE-2024-53675 (unauthenticated XXE vulnerability) and CVE-2024-53676 (Remote Code Execution, or RCE vulnerability)—pose significant security risks, allowing unauthorized access and arbitrary code execution on …
-                </div>
-            
-        
+          </div>
+          
         </div>
+      </article>
+      
+      <article class="post-card">
+        <div class="post-card-content">
+          <h3 class="post-card-title">
+            <a href="/posts/ivanti-endpoint-manager-xxe-cve-2024-37397/">CVE 2024-37397 - Ivanti Endpoint Manager XXE Vulnerability</a>
+          </h3>
+          <div class="post-card-meta">
+            <time datetime="2024-11-24">November 24, 2024</time>
+            
+            <span class="post-category">CVE Analysis</span>
+            
+          </div>
+          <p class="post-card-excerpt"><p>This blog provides an in-depth analysis of the exploitation process for an unauthenticated XXE vulnerability in Ivanti Endpoint Manager, identified as CVE-2024-37397.</p>
+<h1 id="uncovering-the-importxml-vulnerability">Uncovering the <code>ImportXml</code> Vulnerability</h1>
+<hr>
+<p><img src="/img/ivanti-cve-2024-37397/zdi-overview.jpg" alt=""></p>
+<p>This vulnerability was identified by 06fe5fd2bc53027c4a3b7e395af0b850e7b8a044 and detailed in the ZDI advisory, which provided key information about the affected component. The advisory mentioned that the XXE vulnerability was found in the <code>ImportXml</code> function, guiding us to search for references to this specific function.</p></p>
+          
+          <div class="post-tags">
+            
+            <span class="tag">CVE-2024-37297</span>
+            
+            <span class="tag">.NET</span>
+            
+            <span class="tag">OOB-XXE</span>
+            
+          </div>
+          
+        </div>
+      </article>
+      
+      <article class="post-card">
+        <div class="post-card-content">
+          <h3 class="post-card-title">
+            <a href="/posts/crushftp-cve-2024-4040/">CVE 2024-4040 - CrushFTP Server-Side Template Injection Vulnerability Analysis</a>
+          </h3>
+          <div class="post-card-meta">
+            <time datetime="2024-05-09">May 9, 2024</time>
+            
+            <span class="post-category">CVE Analysis</span>
+            
+          </div>
+          <p class="post-card-excerpt"><p>This blog post contains a thorough analysis of Server Side Template Injection vulnerability in a commercial Managed File Transfer product named CrushFTP. Exploit script is available <a href="https://github.com/D4mianWayne/POCs/tree/main/CVE%202024-4040">here</a>.</p>
+<h1 id="cve-2024-4040---crushftp-server-side-template-injection-vulnerability">CVE 2024-4040 - CrushFTP Server-Side Template Injection Vulnerability</h1>
+<hr>
+<p>I am writing a blog post after a very long time. Finally the “hiatus” has ended and now I am back on track for analyzing real world vulnerabilities and how it has been exploited, more so I will try to uncover what exactly happens under the hood. For starter, I had many vulnerabilities listed and I was confused on what to pick up first but then I saw a news stating that a zero day vulnerability was identified in CrushFTP server. I worked on FTP server sometimes back as part of my work so I thought this would be better to pick for starter.</p></p>
+          
+          <div class="post-tags">
+            
+            <span class="tag">cve-2024-4040</span>
+            
+            <span class="tag">Java</span>
+            
+            <span class="tag">SSTI</span>
+            
+          </div>
+          
+        </div>
+      </article>
+      
     </div>
-    
-    
-    <div class="list__footer clearfix">
-        <a class="list__footer-readmore btn" href="/posts/hpe-irs-cve-deep-dive/">
-            Read more…
-        </a>
+    <div class="view-all-posts">
+      <a href="/posts/" class="btn btn-outline">View All Research</a>
     </div>
-    
-    
-    
-</article>
+  </section>
 
-<article class="list__item post">
-    <header class="list__header">
-        <h2 class="list__title post__title">
-            <a href="/posts/ivanti-endpoint-manager-xxe-cve-2024-37397/" rel="bookmark">
-                CVE 2024-37397 - Ivanti Endpoint Manager XXE Vulnerability
-            </a>
-        </h2>
-        
-        <div class="post-meta">
-            
-                <span class="post-author">
-                    <i class="fas fa-user"></i> D4mianWayne
-                </span>
-                <span class="meta-separator">•</span>
-            
-            
-            <time class="post-date" datetime="2024-11-24T00:00:00Z">
-                <i class="far fa-calendar-alt"></i> November 24, 2024
-            </time>
-            
-            
-                <span class="meta-separator">•</span>
-                <span class="post-categories">
-                    <i class="far fa-folder"></i>
-                    
-                        
-                        <a href="/categories/cve-analysis">CVE Analysis</a>
-                    
-                </span>
-            
-            
-            
-                <span class="meta-separator">•</span>
-                <span class="reading-time">
-                    <i class="far fa-clock"></i> 13 min read
-                </span>
-            
-        </div>
-    </header>
-    
-    <div class="content list__excerpt post__content clearfix">
-        <div class="post-summary">
-        
-        
-        
-        
-        
-        
-        
-            
-            
-            
-            
-            
-            
-            
-                <div class="post-summary">
-                    This blog provides an in-depth analysis of the exploitation process for an unauthenticated XXE vulnerability in Ivanti Endpoint Manager, identified as CVE-2024-37397.
-Uncovering the ImportXml Vulnerability This vulnerability was identified by 06fe5fd2bc53027c4a3b7e395af0b850e7b8a044 and detailed in the ZDI advisory, which provided key information about the affected component. The advisory …
-                </div>
-            
-        
-        </div>
+  <section class="research-areas">
+    <h2>PwnFuzz Research Focus Areas</h2>
+    <div class="research-grid">
+      <div class="research-item">
+        <h3>Vulnerability Research</h3>
+        <p>Deep-dive analysis of CVEs and zero-day discoveries with technical exploitation details.</p>
+      </div>
+      <div class="research-item">
+        <h3>Exploit Development</h3>
+        <p>Custom exploit creation for complex vulnerabilities across multiple platforms and architectures.</p>
+      </div>
+      <div class="research-item">
+        <h3>Binary Exploitation</h3>
+        <p>Advanced techniques in memory corruption, code execution, and reverse engineering.</p>
+      </div>
+      <div class="research-item">
+        <h3>Fuzzing Methodologies</h3>
+        <p>Automated vulnerability discovery through intelligent fuzzing and tool development.</p>
+      </div>
+      <div class="research-item">
+        <h3>Red Team Operations</h3>
+        <p>Real-world offensive security assessments and attack simulation methodologies.</p>
+      </div>
+      <div class="research-item">
+        <h3>Security Tooling</h3>
+        <p>Custom security tools and frameworks for vulnerability research and exploitation.</p>
+      </div>
     </div>
-    
-    
-    <div class="list__footer clearfix">
-        <a class="list__footer-readmore btn" href="/posts/ivanti-endpoint-manager-xxe-cve-2024-37397/">
-            Read more…
-        </a>
-    </div>
-    
-    
-    
-</article>
+  </section>
 
-<article class="list__item post">
-    <header class="list__header">
-        <h2 class="list__title post__title">
-            <a href="/posts/crushftp-cve-2024-4040/" rel="bookmark">
-                CVE 2024-4040 - CrushFTP Server-Side Template Injection Vulnerability Analysis
-            </a>
-        </h2>
-        
-        <div class="post-meta">
-            
-                <span class="post-author">
-                    <i class="fas fa-user"></i> D4mianWayne
-                </span>
-                <span class="meta-separator">•</span>
-            
-            
-            <time class="post-date" datetime="2024-05-09T00:00:00Z">
-                <i class="far fa-calendar-alt"></i> May 9, 2024
-            </time>
-            
-            
-                <span class="meta-separator">•</span>
-                <span class="post-categories">
-                    <i class="far fa-folder"></i>
-                    
-                        
-                        <a href="/categories/cve-analysis">CVE Analysis</a>
-                    
-                </span>
-            
-            
-            
-                <span class="meta-separator">•</span>
-                <span class="reading-time">
-                    <i class="far fa-clock"></i> 23 min read
-                </span>
-            
-        </div>
-    </header>
-    
-    <div class="content list__excerpt post__content clearfix">
-        <div class="post-summary">
-        
-        
-        
-        
-        
-        
-        
-            
-            
-            
-            
-            
-            
-            
-                <div class="post-summary">
-                    This blog post contains a thorough analysis of Server Side Template Injection vulnerability in a commercial Managed File Transfer product named CrushFTP. Exploit script is available here.
-CVE 2024-4040 - CrushFTP Server-Side Template Injection Vulnerability I am writing a blog post after a very long time. Finally the “hiatus” has ended and now I am back on track for analyzing real world …
-                </div>
-            
-        
-        </div>
+  <section class="about-preview">
+    <div class="about-content">
+      <h2>About PwnFuzz</h2>
+      <p>
+        Founded by <strong>D4mianWayne</strong>, a certified security researcher with OSCP, OSED, CRTE, and CRTO credentials, 
+        PwnFuzz represents the cutting edge of offensive security research. Our platform serves as a knowledge hub for 
+        security professionals, researchers, and enthusiasts interested in the latest developments in vulnerability research 
+        and exploit development.
+      </p>
+      <p>
+        The name "PwnFuzz" embodies our methodology: <strong>Fuzz</strong> for systematic vulnerability discovery, 
+        <strong>Pwn</strong> for mastery of exploitation techniques, and <strong>Repeat</strong> for continuous improvement 
+        and iterative research.
+      </p>
+      <a href="/about/" class="btn btn-primary">Learn More About PwnFuzz</a>
     </div>
-    
-    
-    <div class="list__footer clearfix">
-        <a class="list__footer-readmore btn" href="/posts/crushftp-cve-2024-4040/">
-            Read more…
-        </a>
-    </div>
-    
-    
-    
-</article>
+  </section>
+</div>
 
-</main>
+<style>
+.hero-section {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  color: white;
+  padding: 4rem 0;
+  text-align: center;
+  margin-bottom: 3rem;
+}
 
+.hero-title {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.hero-subtitle {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #e22d30;
+}
+
+.hero-description {
+  font-size: 1.1rem;
+  max-width: 800px;
+  margin: 0 auto 2rem;
+  line-height: 1.6;
+}
+
+.hero-cta {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: #e22d30;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #c41e3a;
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.btn-secondary:hover {
+  background: white;
+  color: #1a1a1a;
+}
+
+.btn-outline {
+  background: transparent;
+  color: #e22d30;
+  border: 2px solid #e22d30;
+}
+
+.btn-outline:hover {
+  background: #e22d30;
+  color: white;
+}
+
+.featured-posts {
+  margin-bottom: 4rem;
+}
+
+.featured-posts h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+}
+
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.post-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.post-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.post-card-title a {
+  color: #333;
+  text-decoration: none;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.post-card-title a:hover {
+  color: #e22d30;
+}
+
+.post-card-meta {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.post-category {
+  background: #e22d30;
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  margin-left: 0.5rem;
+}
+
+.post-card-excerpt {
+  margin: 1rem 0;
+  line-height: 1.5;
+}
+
+.post-tags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.tag {
+  background: #f0f0f0;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.8rem;
+}
+
+.view-all-posts {
+  text-align: center;
+}
+
+.research-areas {
+  margin-bottom: 4rem;
+}
+
+.research-areas h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+}
+
+.research-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.research-item {
+  text-align: center;
+  padding: 2rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+.research-item:hover {
+  transform: translateY(-5px);
+}
+
+.research-item h3 {
+  color: #e22d30;
+  margin-bottom: 1rem;
+}
+
+.about-preview {
+  background: #f8f9fa;
+  padding: 3rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.about-preview h2 {
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+}
+
+.about-content p {
+  max-width: 800px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.2rem;
+  }
+  
+  .posts-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .research-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
 
 			</div>
 			<aside class="sidebar"><div class="widget-search widget">
 	<form class="widget-search__form" role="search" method="get" action="https://google.com/search">
 		<input class="widget-search__field" type="search" placeholder="Search…" value="" name="q" aria-label="Search…">
 		<input class="widget-search__submit" type="submit" value="Search">
-		<input type="hidden" name="sitesearch" value="http://localhost:1313/">
+		<input type="hidden" name="sitesearch" value="https://pwnfuzz.com/">
 	</form>
 </div>
 <div class="widget-recent widget">
@@ -437,16 +655,19 @@ CVE 2024-4040 - CrushFTP Server-Side Template Injection Vulnerability I am writi
 		<a class="widget-taglist__link widget__link btn" href="/tags/.net/" title=".NET">.NET (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/1day/" title="1day">1day (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/auth-bypass/" title="Auth-Bypass">Auth-Bypass (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/crushftp/" title="CrushFTP">CrushFTP (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-37297/" title="CVE-2024-37297">CVE-2024-37297 (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-4040/" title="Cve-2024-4040">Cve-2024-4040 (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-53675/" title="CVE-2024-53675">CVE-2024-53675 (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2024-53676/" title="CVE-2024-53676">CVE-2024-53676 (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/cve-2025-2825/" title="CVE-2025-2825">CVE-2025-2825 (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/example/" title="Example">Example (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/exploit-development/" title="Exploit-Development">Exploit-Development (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/logic-flaw/" title="Logic-Flaw">Logic-Flaw (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/oob-xxe/" title="OOB-XXE">OOB-XXE (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/path-traversal/" title="Path Traversal">Path Traversal (1)</a>
 		<a class="widget-taglist__link widget__link btn" href="/tags/ssti/" title="SSTI">SSTI (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/vulnerability-research/" title="Vulnerability-Research">Vulnerability-Research (1)</a>
 	</div>
 </div>
 
@@ -456,7 +677,7 @@ CVE 2024-4040 - CrushFTP Server-Side Template Injection Vulnerability I am writi
 	<div class="container footer__container flex">
 		
 		<div class="footer__copyright">
-			&copy; 2025 .
+			&copy; 2025 PwnFuzz - Security Research &amp; Exploit Development.
 			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
 		</div>
 	</div>

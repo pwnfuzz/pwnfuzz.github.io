@@ -8,6 +8,9 @@ description = "PwnFuzz is a leading security research blog focused on vulnerabil
 keywords = ["pwnfuzz", "security research", "exploit development", "vulnerability analysis", "binary exploitation", "fuzzing", "red team", "penetration testing", "CVE analysis", "offensive security"]
 author = "D4mianWayne"
 
+# Google Analytics
+googleAnalytics = "G-R5CC5776NV"
+
 # Enable sitemap generation
 [outputs]
   home = ["HTML", "RSS", "JSON"]
