@@ -1,0 +1,58 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { SITE_TITLE } from '../../consts';
+
+const posts: CollectionEntry<'blog'>[] = await getCollection('blog');
+const allTags = Array.from(new Set(posts.flatMap(post => post.data.tags || [])));
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <BaseHead title={`Tags | ${SITE_TITLE}`} description="All tags used in blog posts." />
+  <style>
+    body {
+      background: #f8fafc;
+    }
+    .tags-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5em;
+      margin-top: 1em;
+      padding: 2rem;
+    }
+    .tags-list a {
+      display: inline-block;
+      background: #ede9fe;
+      color: #7c3aed;
+      border-radius: 6px;
+      padding: 0.2em 0.7em;
+      font-size: 0.95em;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.2s, color 0.2s;
+    }
+    .tags-list a:hover {
+      background: #7c3aed;
+      color: #fff;
+    }
+    h1 {
+      padding: 2rem 2rem 0;
+    }
+  </style> 
+</head>
+<body>
+  <Header />
+  <main>
+    <h1>Tags</h1>
+    <div class="tags-list">
+      {allTags.map((tag) => (
+        <a href={`/posts/${tag}/`}>{tag}</a>
+      ))}
+    </div>
+  </main>
+  <Footer />
+</body>
+</html> 

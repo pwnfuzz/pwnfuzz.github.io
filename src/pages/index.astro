@@ -2,48 +2,319 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
----
+import { SITE_TITLE } from '../consts';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import FormattedDate from '../components/FormattedDate.astro';
+import FallbackImage from '../assets/blog-placeholder-1.jpg';
 
+const postsUnprocessed = (await getCollection('blog')).filter(
+  post => post.data.summary || post.data.description
+).sort(
+  (a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+const posts = await Promise.all(
+  postsUnprocessed.map(async (post) => {
+    const wordCount = (post.body || '').split(/\s+/).length;
+    const readingTime = `${Math.max(1, Math.ceil(wordCount / 200))} min read`;
+    return {
+      ...post,
+      readingTime,
+    };
+  })
+);
+
+const allTags = Array.from(new Set(posts.flatMap(post => post.data.tags || [])));
+---
 <!doctype html>
 <html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This
-				template serves as a lightweight, minimally-styled starting point for anyone looking to build
-				a personal website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to
-				<a href="https://docs.astro.build/">read the docs</a>
-				or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out
-				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a>
-				by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
-		</main>
-		<Footer />
-	</body>
+  <head>
+    <BaseHead title={`Blog | ${SITE_TITLE}`} description="All technical writeups and deep dives." image={FallbackImage} />
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;600;700&display=swap');
+      body { font-family: 'Google Sans', 'Inter', Arial, sans-serif; background: #f8fafc; color: #222226; }
+      main {
+        max-width: 1300px;
+        margin: 0 auto;
+        display: flex;
+        align-items: flex-start;
+        gap: 3rem;
+        padding: 2.5rem 2.5rem 2rem 2.5rem;
+      }
+      main[data-astro-cid-j7pv25f6] {
+        width: 100%;
+        margin: 0 auto;
+      }
+      .main-content {
+        flex: 1 1 0;
+        min-width: 0;
+        font-size: 16px;
+      }
+      .sidebar {
+        border-left: 1.5px solid #e5e7eb;
+        padding-left: 2.2rem;
+        flex: 0 0 280px;
+        max-width: 320px;
+        min-width: 220px;
+        font-size: 1rem;
+        padding-top: 0.5rem;
+        color: #64748b;
+      }
+      .section-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #7c3aed;
+        margin-bottom: 1.5rem;
+        letter-spacing: 1px;
+      }
+      .post-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .post-row {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(30,41,59,0.04);
+        padding: 2rem 2.5rem;
+        margin-bottom: 2.2rem;
+        border: 1px solid #ede9fe;
+        position: relative;
+        animation: fadein 0.7s;
+      }
+      .post-title {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: #7c3aed;
+        text-decoration: none;
+        transition: color 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5em;
+      }
+      .post-title::after {
+        content: '\203A'; /* chevron */
+        font-size: 1em;
+        color: #a78bfa;
+        margin-left: 0.2em;
+        transition: color 0.2s;
+      }
+      .post-row:hover .post-title {
+        color: #5b21b6;
+        text-decoration: underline;
+      }
+      .post-row:hover .post-title::after {
+        color: #7c3aed;
+      }
+      .post-meta {
+        color: #6b7280;
+        font-size: 0.98rem;
+        margin: 0.2rem 0 0.7rem 0;
+        letter-spacing: 0.01em;
+        display: flex;
+        gap: 0.7em;
+        align-items: center;
+      }
+      .post-meta .author {
+        font-weight: 600;
+        color: #7c3aed;
+      }
+      .post-meta .reading-time {
+        background: #e0e7ff;
+        color: #2563eb;
+        border-radius: 999px;
+        padding: 0.13em 0.8em;
+        font-size: 0.93em;
+        font-weight: 600;
+        margin-left: 0.2em;
+        letter-spacing: 0.01em;
+      }
+      .post-summary {
+        color: #222;
+        font-size: 1.01rem;
+        margin-bottom: 0.7rem;
+        line-height: 1.6;
+      }
+      @keyframes fadein {
+        from { opacity: 0; transform: translateY(16px); }
+        to { opacity: 1; transform: none; }
+      }
+      .sidebar-section {
+        margin-bottom: 2.2rem;
+        background: none;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 0 0 1.5rem 0;
+        border: none;
+      }
+      .sidebar-section h3 {
+        font-size: 1.08rem;
+        color: #7c3aed;
+        font-weight: 700;
+        margin-bottom: 0.7rem;
+        letter-spacing: 0.01em;
+      }
+      .sidebar-tags a {
+        display: inline-block;
+        background: #ede9fe;
+        color: #7c3aed;
+        border-radius: 6px;
+        padding: 0.2em 0.7em;
+        font-size: 0.93em;
+        margin-right: 0.5em;
+        text-decoration: none;
+        margin-bottom: 0.2em;
+        font-weight: 600;
+      }
+      @media (max-width: 900px) {
+        main { flex-direction: column; }
+        .sidebar { max-width: 100%; min-width: 0; margin-top: 2rem; }
+      }
+      @media (max-width: 600px) {
+        .section-title { font-size: 1.3rem; }
+        .card { padding: 1.1rem 1rem 1rem 1rem; }
+        main { padding: 1.2rem 0.5rem 1rem 0.5rem; }
+      }
+      .hero {
+        padding: 2.5rem 2rem 1.5rem 2rem;
+        background: linear-gradient(90deg, #ede9fe 0%, #fff 100%);
+        border-radius: 14px;
+        margin-bottom: 2.5rem;
+        box-shadow: 0 2px 8px rgba(30,41,59,0.04);
+        text-align: center;
+      }
+      .hero-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #7c3aed;
+        margin-bottom: 0.7rem;
+        letter-spacing: 1px;
+      }
+      .hero-desc {
+        font-size: 1.18rem;
+        color: #444;
+        margin-bottom: 1.2rem;
+      }
+      .hero-indicator {
+        display: inline-block;
+        background: #7c3aed;
+        color: #fff;
+        font-size: 1.1rem;
+        font-weight: 700;
+        border-radius: 8px;
+        padding: 0.3em 1.2em;
+        letter-spacing: 0.08em;
+        margin-top: 0.5rem;
+      }
+      .sidebar-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2em;
+      }
+      .sidebar-item {
+        font-size: 1rem;
+        font-family: 'Google Sans', 'Inter', Arial, sans-serif;
+      }
+      .sidebar-item a {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #7c3aed;
+        text-decoration: none;
+        transition: color 0.2s;
+        letter-spacing: 0.01em;
+        display: inline-block;
+        margin-bottom: 0.1em;
+      }
+      .sidebar-item a:hover {
+        color: #5b21b6;
+        text-decoration: underline;
+      }
+      .sidebar-delim {
+        border-bottom: 1px solid #e5e7eb;
+        margin: 0.7em 0 0.2em 0;
+      }
+      .sidebar-item-desc {
+        font-size: 0.77em;
+        color: #222226;
+        margin-top: 0.2em;
+      }
+      .post-tags {
+        margin-top: 0.7em;
+      }
+      .post-tag {
+        display: inline-block;
+        background: #ede9fe;
+        color: #7c3aed;
+        border-radius: 6px;
+        padding: 0.2em 0.7em;
+        font-size: 0.93em;
+        margin-right: 0.5em;
+        text-decoration: none;
+        margin-bottom: 0.2em;
+        font-weight: 600;
+        transition: background 0.2s, color 0.2s;
+      }
+      .post-tag:hover {
+        background: #7c3aed;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <div class="main-content">
+        <section class="hero">
+          <h1 class="hero-title">Welcome to PwnFuzz</h1>
+          <p class="hero-desc">Explore our comprehensive research platform with detailed technical analysis, exploit development guides, and cutting-edge security insights.</p>
+          <div class="hero-indicator">Blog</div>
+        </section>
+        <ul class="post-list">
+          {posts.length === 0 ? (
+            <div style="color:#888; font-size:1.1rem;">No blog posts found. Please add posts to <code>src/content/blog/</code> with the correct frontmatter.</div>
+          ) : (
+            posts.map((post) => (
+              <li class="post-row">
+                <a href={`/posts/${post.id}/`} class="post-title">{post.data.title}</a>
+                <div class="post-meta">
+                  <FormattedDate date={post.data.pubDate} />
+                  {post.data.author && <span class="author">{post.data.author}</span>}
+                  <span class="reading-time">
+                    {post.readingTime}
+                  </span>
+                </div>
+                <div class="post-summary">{post.data.summary || post.data.description}</div>
+                {post.data.tags && post.data.tags.length > 0 && (
+                  <div class="post-tags">
+                    {post.data.tags.map(tag => (
+                      <a href={`/tags/${tag}/`} class="post-tag">{tag}</a>
+                    ))}
+                  </div>
+                )}
+              </li>
+            ))
+          )}
+        </ul>
+      </div>
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <h3>Recent Posts</h3>
+          <div class="sidebar-list">
+            {posts.slice(0, 5).map((post, idx) => (
+              <div class="sidebar-item" style="margin-bottom:0.7em;">
+                <a href={`/posts/${post.id}/`}>{post.data.title}</a>
+                <div class="sidebar-item-desc">
+                  {post.data.summary ? post.data.summary.split(' ').slice(0,15).join(' ') + (post.data.summary.split(' ').length > 15 ? '...' : '') :
+                   post.data.description ? post.data.description.split(' ').slice(0,15).join(' ') + (post.data.description.split(' ').length > 15 ? '...' : '') :
+                   (post.data.pubDate ? (new Date(post.data.pubDate)).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '')}
+                </div>
+                {idx < 4 && <div class="sidebar-delim"></div>}
+              </div>
+            ))}
+          </div>
+        </div>
+      </aside>
+    </main>
+    <Footer />
+  </body>
 </html>

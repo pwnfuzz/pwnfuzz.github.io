@@ -13,8 +13,11 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 
 <html lang="en">
 	<head>
-		<BaseHead title={title} description={description} />
+		<BaseHead title={title} description={description} image={heroImage} />
 		<style>
+			body {
+				background: #f8fafc;
+			}
 			main {
 				width: calc(100% - 2em);
 				max-width: 100%;
@@ -30,11 +33,57 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				box-shadow: var(--box-shadow);
 			}
 			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
+				background: #fff;
+				width: 1000px;
+				max-width: 100%;
 				margin: auto;
-				padding: 1em;
+				padding: 2.5rem 3rem 2.5rem 3rem;
 				color: rgb(var(--gray-dark));
+				font-size: 1.04rem;
+				line-height: 1.7;
+			}
+			.toc-block {
+				background: #fafdff;
+				border: 1px dashed #e0e7ef;
+				border-radius: 7px;
+				padding: 0.7rem 0.8rem;
+				font-size: 0.93rem;
+				margin-bottom: 1.2rem;
+				color: #6b7280;
+			}
+			.toc-title {
+				font-weight: 500;
+				font-size: 0.99rem;
+				color: #8b5cf6;
+				margin-bottom: 0.4rem;
+				letter-spacing: 0.01em;
+			}
+			.toc-list {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+			}
+			.toc-list li {
+				margin-bottom: 0.32em;
+			}
+			.toc-link {
+				color: #7c3aed;
+				text-decoration: none;
+				font-weight: 400;
+				transition: color 0.2s;
+			}
+			.toc-link:hover {
+				color: #5b21b6;
+				text-decoration: underline;
+			}
+			.prose h1 {
+				font-size: 2.1rem;
+			}
+			.prose h2 {
+				font-size: 1.4rem;
+			}
+			.prose h3 {
+				font-size: 1.18rem;
 			}
 			.title {
 				margin-bottom: 1em;
@@ -51,6 +100,15 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			}
 			.last-updated-on {
 				font-style: italic;
+			}
+			@media (max-width: 900px) {
+				.prose {
+					display: block;
+					padding: 1.5rem 0.5rem;
+				}
+				.toc {
+					display: none;
+				}
 			}
 		</style>
 	</head>
@@ -77,6 +135,10 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 						<h1>{title}</h1>
 						<hr />
 					</div>
+					<nav class="toc-block" id="toc-block" style="display:none">
+						<div class="toc-title">On this page</div>
+						<ul class="toc-list"></ul>
+					</nav>
 					<slot />
 				</div>
 			</article>
@@ -84,3 +146,25 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		<Footer />
 	</body>
 </html>
+<script type="module">
+  const toc = document.getElementById('toc-block');
+  const tocList = toc?.querySelector('.toc-list');
+  const content = document.querySelector('.prose');
+  if (tocList && content) {
+    const headings = Array.from(content.querySelectorAll('h2, h3'));
+    if (headings.length > 0) {
+      toc.style.display = '';
+      headings.forEach(h => {
+        if (!h.id) h.id = h.textContent.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        const li = document.createElement('li');
+        li.style.marginLeft = h.tagName === 'H3' ? '1.2em' : '0';
+        const a = document.createElement('a');
+        a.href = `#${h.id}`;
+        a.className = 'toc-link';
+        a.textContent = h.textContent;
+        li.appendChild(a);
+        tocList.appendChild(li);
+      });
+    }
+  }
+</script>

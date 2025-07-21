@@ -1,0 +1,228 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { SITE_TITLE } from '../../consts';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import FormattedDate from '../../components/FormattedDate.astro';
+
+const posts: CollectionEntry<'blog'>[] = (await getCollection('blog')).filter(
+  post => post.data.summary || post.data.description
+).sort(
+  (a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+const allTags = Array.from(new Set(posts.flatMap(post => post.data.tags || [])));
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={`Blog | ${SITE_TITLE}`} description="All technical writeups and deep dives." />
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;600;700&display=swap');
+      body { font-family: 'Google Sans', 'Inter', Arial, sans-serif; background: #f8fafc; color: #1e293b; }
+      main {
+        max-width: 1300px;
+        margin: 0 auto;
+        display: flex;
+        align-items: flex-start;
+        gap: 3rem;
+        padding: 2.5rem 2.5rem 2rem 2.5rem;
+        background: #f8fafc;
+      }
+      main[data-astro-cid-j7pv25f6] {
+        width: 100%;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+      .main-content {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(30,41,59,0.04);
+        padding: 2rem 2.5rem;
+        flex: 1 1 0;
+        min-width: 0;
+        font-size: 16px;
+      }
+      .sidebar {
+        border-left: 1.5px solid #e5e7eb;
+        padding-left: 2.2rem;
+        flex: 0 0 280px;
+        max-width: 320px;
+        min-width: 220px;
+        font-size: 14px;
+        padding-top: 0.5rem;
+        color: #64748b;
+      }
+      .section-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #e11d48;
+        margin-bottom: 1.5rem;
+        letter-spacing: 1px;
+      }
+      .post-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .post-row {
+        padding: 2.4rem 0 2.2rem 0;
+        border-bottom: 1px solid #e5e7eb;
+        position: relative;
+        animation: fadein 0.7s;
+      }
+      .post-title {
+        font-size: 1.7rem;
+        font-weight: 800;
+        color: #e11d48;
+        text-decoration: none;
+        transition: color 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5em;
+      }
+      .post-title::after {
+        content: '\203A'; /* chevron */
+        font-size: 1.2em;
+        color: #e11d48;
+        margin-left: 0.2em;
+        transition: color 0.2s;
+      }
+      .post-row:hover .post-title {
+        color: #a61b34;
+        text-decoration: underline;
+      }
+      .post-row:hover .post-title::after {
+        color: #a61b34;
+      }
+      .post-meta {
+        color: #64748b;
+        font-size: 1.06rem;
+        margin: 0.2rem 0 0.7rem 0;
+        letter-spacing: 0.01em;
+        display: flex;
+        gap: 0.7em;
+        align-items: center;
+      }
+      .post-meta .author {
+        font-weight: 600;
+        color: #e11d48;
+      }
+      .post-meta .reading-time {
+        background: #e0e7ff;
+        color: #2563eb;
+        border-radius: 999px;
+        padding: 0.13em 0.8em;
+        font-size: 0.98em;
+        font-weight: 600;
+        margin-left: 0.2em;
+        letter-spacing: 0.01em;
+      }
+      .post-summary {
+        color: #1e293b;
+        font-size: 1.13rem;
+        margin-bottom: 0.7rem;
+        line-height: 1.6;
+        font-weight: 400;
+      }
+      code {
+        background: #f1f5f9;
+        color: #0f172a;
+        border-radius: 4px;
+        padding: 2px 6px;
+        font-size: 0.97em;
+      }
+      pre {
+        background: #f1f5f9;
+        color: #0f172a;
+        border-radius: 8px;
+        padding: 1.2em;
+        font-size: 0.97em;
+        overflow-x: auto;
+      }
+      @keyframes fadein {
+        from { opacity: 0; transform: translateY(16px); }
+        to { opacity: 1; transform: none; }
+      }
+      .sidebar-section {
+        margin-bottom: 2.2rem;
+        background: none;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 0 0 1.5rem 0;
+        border: none;
+      }
+      .sidebar-section h3 {
+        font-size: 1.08rem;
+        color: #e11d48;
+        font-weight: 700;
+        margin-bottom: 0.7rem;
+        letter-spacing: 0.01em;
+      }
+      .sidebar-tags a {
+        display: inline-block;
+        background: #fee2e2;
+        color: #e11d48;
+        border-radius: 6px;
+        padding: 0.2em 0.7em;
+        font-size: 0.93em;
+        margin-right: 0.5em;
+        text-decoration: none;
+        margin-bottom: 0.2em;
+        font-weight: 600;
+      }
+      @media (max-width: 900px) {
+        main { flex-direction: column; }
+        .sidebar { max-width: 100%; min-width: 0; margin-top: 2rem; }
+      }
+      @media (max-width: 600px) {
+        .section-title { font-size: 1.3rem; }
+        .card { padding: 1.1rem 1rem 1rem 1rem; }
+        main { padding: 1.2rem 0.5rem 1rem 0.5rem; }
+      }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <div class="main-content">
+        <div class="section-title">All Blog Posts</div>
+        <ul class="post-list">
+          {posts.length === 0 ? (
+            <div style="color:#888; font-size:1.1rem;">No blog posts found. Please add posts to <code>src/content/blog/</code> with the correct frontmatter.</div>
+          ) : (
+            posts.map((post) => (
+              <li class="post-row">
+                <a href={`/posts/${post.id}/`} class="post-title">{post.data.title}</a>
+                <div class="post-meta">
+                  <FormattedDate date={post.data.pubDate} />
+                  {post.data.author && <span class="author">{post.data.author}</span>}
+                  {/* <span class="reading-time">10 min read</span> */}
+                </div>
+                <div class="post-summary">{post.data.summary || post.data.description}</div>
+              </li>
+            ))
+          )}
+        </ul>
+      </div>
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <h3>Recent Posts</h3>
+          <ul>
+            {posts.slice(0, 5).map((post) => (
+              <li style="margin-bottom:1.2em;">
+                <a href={`/posts/${post.id}/`}>{post.data.title}</a>
+                <div style="font-size:0.97em;color:#1e293b;margin-top:0.2em;">
+                  {post.data.summary ? post.data.summary.split(' ').slice(0,7).join(' ') + (post.data.summary.split(' ').length > 7 ? '...' : '') :
+                   post.data.description ? post.data.description.split(' ').slice(0,7).join(' ') + (post.data.description.split(' ').length > 7 ? '...' : '') :
+                   (post.data.pubDate ? (new Date(post.data.pubDate)).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '')}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </aside>
+    </main>
+    <Footer />
+  </body>
+</html> 

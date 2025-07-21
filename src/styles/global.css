@@ -4,17 +4,19 @@
   License MIT: https://github.com/HermanMartinus/bearblog/blob/master/LICENSE.md
  */
 
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+
 :root {
-	--accent: #2337ff;
-	--accent-dark: #000d8a;
-	--black: 15, 18, 25;
+	--accent: #2563eb;
+	--accent-dark: #174ea6;
+	--black: 34, 41, 57;
 	--gray: 96, 115, 159;
-	--gray-light: 229, 233, 240;
+	--gray-light: 245, 247, 250;
 	--gray-dark: 34, 41, 57;
-	--gray-gradient: rgba(var(--gray-light), 50%), #fff;
+	--gray-gradient: rgba(var(--gray-light), 70%), #fff;
 	--box-shadow:
-		0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%),
-		0 16px 32px rgba(var(--gray), 33%);
+		0 2px 6px rgba(var(--gray), 10%), 0 8px 24px rgba(var(--gray), 10%),
+		0 16px 32px rgba(var(--gray), 10%);
 }
 @font-face {
 	font-family: 'Atkinson';
@@ -31,10 +33,11 @@
 	font-display: swap;
 }
 body {
-	font-family: 'Atkinson', sans-serif;
+	font-family: 'Google Sans', 'Atkinson', sans-serif;
 	margin: 0;
 	padding: 0;
 	text-align: left;
+	background: #fff;
 	background: linear-gradient(var(--gray-gradient)) no-repeat;
 	background-size: 100% 600px;
 	word-wrap: break-word;
@@ -44,7 +47,7 @@ body {
 	line-height: 1.7;
 }
 main {
-	width: 720px;
+	width: 1300px;
 	max-width: calc(100% - 2em);
 	margin: auto;
 	padding: 3em 1em;
@@ -56,7 +59,7 @@ h4,
 h5,
 h6 {
 	margin: 0 0 0.5rem 0;
-	color: rgb(var(--black));
+	color: #222226;
 	line-height: 1.2;
 }
 h1 {
@@ -79,10 +82,12 @@ b {
 	font-weight: 700;
 }
 a {
-	color: var(--accent);
+	color: #7c3aed;
+	text-decoration: none;
+	transition: color 0.2s;
 }
 a:hover {
-	color: var(--accent);
+	color: #5b21b6;
 }
 p {
 	margin-bottom: 1em;
@@ -106,13 +111,22 @@ img {
 	border-radius: 8px;
 }
 code {
-	padding: 2px 5px;
-	background-color: rgb(var(--gray-light));
-	border-radius: 2px;
+	padding: 2px 7px;
+	background-color: #f4f1ed;
+	border-radius: 4px;
+	font-size: 0.92em;
+	font-family: 'JetBrains Mono', 'Fira Mono', 'Consolas', 'Menlo', monospace;
+	color: #3b3a36;
 }
 pre {
-	padding: 1.5em;
-	border-radius: 8px;
+	padding: 1.7em;
+	border-radius: 10px;
+	background: #f4f1ed;
+	color: #3b3a36;
+	font-size: 0.92em;
+	font-family: 'JetBrains Mono', 'Fira Mono', 'Consolas', 'Menlo', monospace;
+	overflow-x: auto;
+	box-shadow: 0 2px 8px rgba(60,50,30,0.06);
 }
 pre > code {
 	all: unset;

@@ -12,7 +12,25 @@ const blog = defineCollection({
 		pubDate: z.coerce.date(),
 		updatedDate: z.coerce.date().optional(),
 		heroImage: image().optional(),
+		tags: z.array(z.string()).optional(),
+		author: z.string().optional(),
+		summary: z.string().optional(),
 	}),
 });
 
-export const collections = { blog };
+const breakdowns = defineCollection({
+	// Load Markdown and MDX files in the `src/content/breakdowns/` directory.
+	loader: glob({ base: './src/content/breakdowns', pattern: '**/*.{md,mdx}' }),
+	schema: ({ image }) => z.object({
+		title: z.string(),
+		description: z.string(),
+		pubDate: z.coerce.date(),
+		updatedDate: z.coerce.date().optional(),
+		heroImage: image().optional(),
+		tags: z.array(z.string()).optional(),
+		author: z.string().optional(),
+		summary: z.string().optional(),
+	}),
+});
+
+export const collections = { blog, breakdowns };

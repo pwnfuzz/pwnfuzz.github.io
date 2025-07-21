@@ -1,0 +1,325 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { SITE_TITLE } from '../../consts';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import FormattedDate from '../../components/FormattedDate.astro';
+
+const breakdownsUnprocessed = (await getCollection('breakdowns')).sort(
+  (a: CollectionEntry<'breakdowns'>, b: CollectionEntry<'breakdowns'>) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+const breakdowns = await Promise.all(
+  breakdownsUnprocessed.map(async (breakdown) => {
+    const wordCount = (breakdown.body || '').split(/\s+/).length;
+    const readingTime = `${Math.max(1, Math.ceil(wordCount / 200))} min read`;
+    return {
+      ...breakdown,
+      readingTime,
+    };
+  })
+);
+
+const allTags = Array.from(new Set(breakdowns.flatMap(bd => bd.data.tags || [])));
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={`1Day Breakdowns | ${SITE_TITLE}`} description="Quick technical breakdowns and analyses of recent 1Day vulnerabilities and exploits." />
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;600;700&display=swap');
+      body { font-family: 'Google Sans', 'Inter', Arial, sans-serif; background: #f8fafc; color: #1e293b; }
+      main {
+        max-width: 1300px;
+        margin: 0 auto;
+        display: flex;
+        align-items: flex-start;
+        gap: 3rem;
+        padding: 2.5rem 2.5rem 2rem 2.5rem;
+      }
+      main[data-astro-cid-j7pv25f6] {
+        width: 100%;
+        margin: 0 auto;
+      }
+      .main-content {
+        flex: 1 1 0;
+        min-width: 0;
+        font-size: 16px;
+      }
+      .post-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .post-row {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(30,41,59,0.04);
+        padding: 2rem 2.5rem;
+        margin-bottom: 2.2rem;
+        border: 1px solid #ede9fe;
+        position: relative;
+        animation: fadein 0.7s;
+      }
+      .post-title {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: #7c3aed;
+        text-decoration: none;
+        transition: color 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5em;
+      }
+      .post-title::after {
+        content: '\203A'; /* chevron */
+        font-size: 1em;
+        color: #a78bfa;
+        margin-left: 0.2em;
+        transition: color 0.2s;
+      }
+      .post-row:hover .post-title {
+        color: #5b21b6;
+        text-decoration: underline;
+      }
+      .post-row:hover .post-title::after {
+        color: #7c3aed;
+      }
+      .post-meta {
+        color: #6b7280;
+        font-size: 0.98rem;
+        margin: 0.2rem 0 0.7rem 0;
+        letter-spacing: 0.01em;
+        display: flex;
+        gap: 0.7em;
+        align-items: center;
+      }
+      .post-meta .author {
+        font-weight: 600;
+        color: #7c3aed;
+      }
+      .post-meta .reading-time {
+        background: #e0e7ff;
+        color: #2563eb;
+        border-radius: 999px;
+        padding: 0.13em 0.8em;
+        font-size: 0.93em;
+        font-weight: 600;
+        margin-left: 0.2em;
+        letter-spacing: 0.01em;
+      }
+      .post-summary {
+        color: #222;
+        font-size: 1.01rem;
+        margin-bottom: 0.7rem;
+        line-height: 1.6;
+      }
+      code {
+        background: #f1f5f9;
+        color: #0f172a;
+        border-radius: 4px;
+        padding: 2px 6px;
+        font-size: 0.97em;
+      }
+      pre {
+        background: #f1f5f9;
+        color: #0f172a;
+        border-radius: 8px;
+        padding: 1.2em;
+        font-size: 0.97em;
+        overflow-x: auto;
+      }
+      @keyframes fadein {
+        from { opacity: 0; transform: translateY(16px); }
+        to { opacity: 1; transform: none; }
+      }
+      .sidebar-section {
+        margin-bottom: 2.2rem;
+        background: none;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 0 0 1.5rem 0;
+        border: none;
+      }
+      .sidebar-section h3 {
+        font-size: 1.08rem;
+        color: #7c3aed;
+        font-weight: 700;
+        margin-bottom: 0.7rem;
+        letter-spacing: 0.01em;
+      }
+      .sidebar-tags a {
+        display: inline-block;
+        background: #fee2e2;
+        color: #7c3aed;
+        border-radius: 6px;
+        padding: 0.2em 0.7em;
+        font-size: 0.93em;
+        margin-right: 0.5em;
+        text-decoration: none;
+        margin-bottom: 0.2em;
+        font-weight: 600;
+      }
+      .sidebar {
+        border-left: 1.5px solid #e5e7eb;
+        padding-left: 2.2rem;
+        flex: 0 0 280px;
+        max-width: 320px;
+        min-width: 220px;
+        font-size: 1rem;
+        padding-top: 0.5rem;
+        color: #64748b;
+      }
+      @media (max-width: 900px) {
+        main { flex-direction: column; }
+        .sidebar { max-width: 100%; min-width: 0; margin-top: 2rem; }
+      }
+      @media (max-width: 600px) {
+        .section-title { font-size: 1.3rem; }
+        .card { padding: 1.1rem 1rem 1rem 1rem; }
+        main { padding: 1.2rem 0.5rem 1rem 0.5rem; }
+      }
+      .hero {
+        padding: 2.5rem 2rem 1.5rem 2rem;
+        background: linear-gradient(90deg, #ede9fe 0%, #fff 100%);
+        border-radius: 14px;
+        margin-bottom: 2.5rem;
+        box-shadow: 0 2px 8px rgba(30,41,59,0.04);
+        text-align: center;
+      }
+      .hero-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #7c3aed;
+        margin-bottom: 0.7rem;
+        letter-spacing: 1px;
+      }
+      .hero-desc {
+        font-size: 1.18rem;
+        color: #444;
+        margin-bottom: 1.2rem;
+      }
+      .hero-indicator {
+        display: inline-block;
+        background: #7c3aed;
+        color: #fff;
+        font-size: 1.1rem;
+        font-weight: 700;
+        border-radius: 8px;
+        padding: 0.3em 1.2em;
+        letter-spacing: 0.08em;
+        margin-top: 0.5rem;
+      }
+      .sidebar-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2em;
+      }
+      .sidebar-item {
+        font-size: 1rem;
+        font-family: 'Google Sans', 'Inter', Arial, sans-serif;
+      }
+      .sidebar-item a {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #7c3aed;
+        text-decoration: none;
+        transition: color 0.2s;
+        letter-spacing: 0.01em;
+        display: inline-block;
+        margin-bottom: 0.1em;
+      }
+      .sidebar-item a:hover {
+        color: #5b21b6;
+        text-decoration: underline;
+      }
+      .sidebar-delim {
+        border-bottom: 1px solid #e5e7eb;
+        margin: 0.7em 0 0.2em 0;
+      }
+      .sidebar-item-desc {
+        font-size: 0.77em;
+        color: #1e293b;
+        margin-top: 0.2em;
+      }
+      .post-tags {
+        margin-top: 0.7em;
+      }
+      .post-tag {
+        display: inline-block;
+        background: #ede9fe;
+        color: #7c3aed;
+        border-radius: 6px;
+        padding: 0.2em 0.7em;
+        font-size: 0.93em;
+        margin-right: 0.5em;
+        text-decoration: none;
+        margin-bottom: 0.2em;
+        font-weight: 600;
+        transition: background 0.2s, color 0.2s;
+      }
+      .post-tag:hover {
+        background: #7c3aed;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <div class="main-content">
+        <section class="hero">
+          <h1 class="hero-title">Explore 1Day Vulnerability Breakdowns</h1>
+          <p class="hero-desc">Dive into rapid, technical breakdowns of the latest vulnerabilities, exploits, and real-world attack surfaces—curated for researchers and security professionals.</p>
+          <div class="hero-indicator">Breakdowns</div>
+        </section>
+        <ul class="post-list">
+          {breakdowns.length === 0 ? (
+            <div style="color:#888; font-size:1.1rem;">No breakdowns found. Please add posts to <code>src/content/breakdowns/</code> with the correct frontmatter.</div>
+          ) : (
+            breakdowns.map((bd) => (
+              <li class="post-row">
+                <a href={`/breakdowns/${bd.id}/`} class="post-title">{bd.data.title}</a>
+                <div class="post-meta">
+                  <FormattedDate date={bd.data.pubDate} />
+                  {bd.data.author && <span class="author">{bd.data.author}</span>}
+                  <span class="reading-time">
+                    {bd.readingTime}
+                  </span>
+                </div>
+                <div class="post-summary">{bd.data.summary || bd.data.description}</div>
+                {bd.data.tags && bd.data.tags.length > 0 && (
+                  <div class="post-tags">
+                    {bd.data.tags.map(tag => (
+                      <a href={`/tags/${tag}/`} class="post-tag">{tag}</a>
+                    ))}
+                  </div>
+                )}
+              </li>
+            ))
+          )}
+        </ul>
+      </div>
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <h3>Recent Breakdowns</h3>
+          <div class="sidebar-list">
+            {breakdowns.slice(0, 5).map((bd, idx) => (
+              <div class="sidebar-item" style="margin-bottom:0.7em;">
+                <a href={`/breakdowns/${bd.id}/`}>{bd.data.title}</a>
+                <div class="sidebar-item-desc">
+                  {bd.data.summary ? bd.data.summary.split(' ').slice(0,15).join(' ') + (bd.data.summary.split(' ').length > 15 ? '...' : '') :
+                   bd.data.description ? bd.data.description.split(' ').slice(0,15).join(' ') + (bd.data.description.split(' ').length > 15 ? '...' : '') :
+                   (bd.data.pubDate ? (new Date(bd.data.pubDate)).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '')}
+                </div>
+                {idx < 4 && <div class="sidebar-delim"></div>}
+              </div>
+            ))}
+          </div>
+        </div>
+      </aside>
+    </main>
+    <Footer />
+  </body>
+</html> 
