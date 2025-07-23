@@ -13,10 +13,11 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 
 <html lang="en">
 	<head>
-		<BaseHead title={title} description={description} image={heroImage} />
+		<BaseHead title={title} description={description} />
 		<style>
 			body {
-				background: #f8fafc;
+				background: var(--drac-bg);
+				color: var(--drac-fg);
 			}
 			main {
 				width: calc(100% - 2em);
@@ -29,32 +30,31 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			.hero-image img {
 				display: block;
 				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
 			}
 			.prose {
-				background: #fff;
-				width: 1000px;
+				width: 1250px;
 				max-width: 100%;
 				margin: auto;
 				padding: 2.5rem 3rem 2.5rem 3rem;
-				color: rgb(var(--gray-dark));
+				color: var(--drac-fg);
 				font-size: 1.04rem;
 				line-height: 1.7;
+				background: var(--drac-bg-alt);
+				border-radius: 10px;
 			}
 			.toc-block {
-				background: #fafdff;
-				border: 1px dashed #e0e7ef;
+				background: var(--drac-selection);
+				border: 1px dashed var(--drac-comment);
 				border-radius: 7px;
 				padding: 0.7rem 0.8rem;
 				font-size: 0.93rem;
 				margin-bottom: 1.2rem;
-				color: #6b7280;
+				color: var(--drac-comment);
 			}
 			.toc-title {
 				font-weight: 500;
 				font-size: 0.99rem;
-				color: #8b5cf6;
+				color: var(--drac-purple);
 				margin-bottom: 0.4rem;
 				letter-spacing: 0.01em;
 			}
@@ -67,22 +67,25 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				margin-bottom: 0.32em;
 			}
 			.toc-link {
-				color: #7c3aed;
+				color: var(--drac-cyan);
 				text-decoration: none;
 				font-weight: 400;
 				transition: color 0.2s;
 			}
 			.toc-link:hover {
-				color: #5b21b6;
+				color: var(--drac-green);
 				text-decoration: underline;
 			}
-			.prose h1 {
+			.prose h1, .title h1 {
+				color: var(--drac-pink);
 				font-size: 2.1rem;
 			}
 			.prose h2 {
+				color: var(--drac-purple);
 				font-size: 1.4rem;
 			}
 			.prose h3 {
+				color: var(--drac-cyan);
 				font-size: 1.18rem;
 			}
 			.title {
@@ -96,10 +99,27 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			}
 			.date {
 				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
+				color: var(--drac-comment);
 			}
 			.last-updated-on {
 				font-style: italic;
+				color: var(--drac-yellow);
+			}
+			code, pre {
+				background: var(--drac-bg-alt);
+				color: var(--drac-yellow);
+				border-radius: 6px;
+				padding: 0.2em 0.4em;
+				font-family: 'Fira Mono', 'Consolas', 'Monaco', monospace;
+			}
+			pre {
+				padding: 1.2em;
+				overflow-x: auto;
+			}
+			hr {
+				border: none;
+				border-top: 1px solid var(--drac-comment);
+				margin: 2em 0;
 			}
 			@media (max-width: 900px) {
 				.prose {

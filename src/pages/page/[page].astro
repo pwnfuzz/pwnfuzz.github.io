@@ -1,10 +1,19 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import { SITE_TITLE } from '../consts';
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { SITE_TITLE } from '../../consts';
 import { getCollection, type CollectionEntry } from 'astro:content';
-import FormattedDate from '../components/FormattedDate.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+
+export async function getStaticPaths() {
+  const postsUnprocessed = (await getCollection('blog')).filter(
+    post => post.data.summary || post.data.description
+  );
+  const POSTS_PER_PAGE = 4;
+  const totalPages = Math.ceil(postsUnprocessed.length / POSTS_PER_PAGE);
+  return Array.from({ length: totalPages }, (_, i) => ({ params: { page: String(i + 1) } }));
+}
 
 const postsUnprocessed = (await getCollection('blog')).filter(
   post => post.data.summary || post.data.description
@@ -23,11 +32,10 @@ const posts = await Promise.all(
   })
 );
 
-const allTags = Array.from(new Set(posts.flatMap(post => post.data.tags || [])));
 const POSTS_PER_PAGE = 4;
-const paginatedPosts = posts.slice(0, POSTS_PER_PAGE);
-// Calculate total pages for button rendering
+const page = Number(Astro.params.page);
 const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
+const paginatedPosts = posts.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE);
 ---
 <!doctype html>
 <html lang="en">
@@ -44,10 +52,6 @@ const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
         gap: 3rem;
         padding: 2.5rem 2.5rem 2rem 2.5rem;
         background: var(--bg);
-      }
-      main[data-astro-cid-j7pv25f6] {
-        width: 100%;
-        margin: 0 auto;
       }
       .main-content {
         flex: 1 1 0;
@@ -92,6 +96,19 @@ const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
         transition: color 0.2s;
         display: inline;
       }
+      .post-title::after {
+        content: '\203A'; /* chevron */
+        font-size: 1em;
+        margin-left: 0.2em;
+        transition: color 0.2s;
+      }
+      .post-row:hover .post-title {
+        color: var(--drac-green);
+        text-decoration: underline;
+      }
+      .post-row:hover .post-title::after {
+        color: var(--drac-green);
+      }
       .post-meta {
         color: #555;
         font-size: 0.95rem;
@@ -119,6 +136,10 @@ const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
         margin-bottom: 0.7rem;
         line-height: 1.6;
       }
+      @keyframes fadein {
+        from { opacity: 0; transform: translateY(16px); }
+        to { opacity: 1; transform: none; }
+      }
       .sidebar-section {
         margin-bottom: 2.2rem;
         background: var(--bg);
@@ -136,8 +157,8 @@ const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
       }
       .sidebar-tags a {
         display: inline-block;
-        background: var(--muted);
-        color: var(--text-secondary);
+        background: #ede9fe;
+        color: #7c3aed;
         border-radius: 6px;
         padding: 0.2em 0.7em;
         font-size: 0.93em;
@@ -145,17 +166,6 @@ const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
         text-decoration: none;
         margin-bottom: 0.2em;
         font-weight: 600;
-      }
-      @media (max-width: 900px) {
-        main { flex-direction: column; }
-        .sidebar { max-width: 100%; min-width: 0; margin-top: 2rem; }
-      }
-      @media (max-width: 600px) {
-        .section-title { font-size: 1.3rem; }
-        .card { padding: 1.1rem 1rem 1rem 1rem; }
-        main { padding: 1.2rem 0.5rem 1rem 0.5rem; }
-        .main-content { width: 100%; padding: 0; }
-        .sidebar { width: 100%; padding-left: 0.5rem; }
       }
       .sidebar-list {
         display: flex;
@@ -209,6 +219,21 @@ const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
         background: var(--border);
         color: var(--fg);
       }
+      code {
+        background: var(--drac-bg-alt);
+        color: var(--drac-yellow);
+        border-radius: 4px;
+        padding: 2px 6px;
+        font-size: 0.97em;
+      }
+      pre {
+        background: var(--drac-bg-alt);
+        color: var(--drac-yellow);
+        border-radius: 8px;
+        padding: 1.2em;
+        font-size: 0.97em;
+        overflow-x: auto;
+      }
       .pagination-link {
         color: var(--fg);
         background: var(--muted);
@@ -229,12 +254,146 @@ const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
         color: var(--fg);
         cursor: default;
       }
+      @media (max-width: 900px) {
+        main { flex-direction: column; }
+        .sidebar { max-width: 100%; min-width: 0; margin-top: 2rem; }
+      }
+      @media (max-width: 600px) {
+        .section-title { font-size: 1.3rem; }
+        .card { padding: 1.1rem 1rem 1rem 1rem; }
+        main { padding: 1.2rem 0.5rem 1rem 0.5rem; }
+        .main-content { width: 100%; padding: 0; }
+        .sidebar { width: 100%; padding-left: 0.5rem; }
+      }
+      .hero {
+        padding: 2.5rem 2rem 1.5rem 2rem;
+        background: linear-gradient(90deg, var(--drac-selection) 0%, var(--drac-bg) 100%);
+        border-radius: 14px;
+        margin-bottom: 2.5rem;
+        box-shadow: 0 2px 8px rgba(40,42,54,0.04);
+        text-align: center;
+      }
+      .hero-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--drac-pink);
+        margin-bottom: 0.7rem;
+        letter-spacing: 1px;
+      }
+      .hero-desc {
+        font-size: 1.18rem;
+        color: var(--drac-fg);
+        margin-bottom: 1.2rem;
+      }
+      .hero-indicator {
+        display: inline-block;
+        color: var(--drac-bg);
+        font-size: 1.1rem;
+        font-weight: 700;
+        border-radius: 8px;
+        padding: 0.3em 1.2em;
+        letter-spacing: 0.08em;
+        margin-top: 0.5rem;
+      }
+      .sidebar-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2em;
+      }
+      .sidebar-item {
+        font-size: 1rem;
+        font-family: 'Google Sans', 'Inter', Arial, sans-serif;
+      }
+      .sidebar-item a {
+        font-size: 1.05rem;
+        font-weight: 600;
+        text-decoration: underline;
+        transition: color 0.2s;
+        letter-spacing: 0.01em;
+        display: inline-block;
+        margin-bottom: 0.1em;
+      }
+      .sidebar-item a:hover {
+        color: var(--drac-green);
+        text-decoration: underline;
+      }
+      .sidebar-delim {
+        border-bottom: 1px solid var(--drac-comment);
+        margin: 0.7em 0 0.2em 0;
+      }
+      .sidebar-item-desc {
+        font-size: 0.77em;
+        color: var(--drac-fg);
+        margin-top: 0.2em;
+      }
+      .post-tags {
+        margin-top: 0.7em;
+      }
+      .post-tag {
+        display: inline-block;
+        background: var(--drac-selection);
+        color: var(--drac-cyan);
+        border-radius: 6px;
+        padding: 0.2em 0.7em;
+        font-size: 0.93em;
+        margin-right: 0.5em;
+        text-decoration: none;
+        margin-bottom: 0.2em;
+        font-weight: 600;
+        transition: background 0.2s, color 0.2s;
+      }
+      .post-tag:hover {
+        background: var(--drac-cyan);
+        color: var(--drac-bg);
+      }
+      code {
+        background: var(--drac-bg-alt);
+        color: var(--drac-yellow);
+        border-radius: 4px;
+        padding: 2px 6px;
+        font-size: 0.97em;
+      }
+      pre {
+        background: var(--drac-bg-alt);
+        color: var(--drac-yellow);
+        border-radius: 8px;
+        padding: 1.2em;
+        font-size: 0.97em;
+        overflow-x: auto;
+      }
+      .pagination-link {
+        color: var(--drac-cyan);
+        background: var(--drac-bg-alt);
+        border: 1px solid var(--drac-selection);
+        border-radius: 6px;
+        padding: 0.4em 1.1em;
+        margin: 0 0.1em;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.2s, color 0.2s;
+      }
+      .pagination-link:hover {
+        background: var(--drac-cyan);
+        color: var(--drac-bg);
+      }
+      .pagination-active {
+        background: var(--drac-cyan);
+        color: var(--drac-bg);
+        cursor: default;
+      }
     </style>
   </head>
   <body>
     <Header />
     <main>
       <div class="main-content">
+        {page === 1 && (
+          <section class="hero">
+            <h1 class="hero-title">Welcome to PwnFuzz</h1>
+            <p class="hero-desc">Explore our comprehensive research platform with detailed technical analysis, exploit development guides, and cutting-edge security insights.</p>
+            <div class="hero-indicator">Blog</div>
+          </section>
+        )}
         <ul class="post-list">
           {paginatedPosts.length === 0 ? (
             <div style="color:#888; font-size:1.1rem;">No blog posts found. Please add posts to <code>src/content/blog/</code> with the correct frontmatter.</div>
@@ -245,7 +404,7 @@ const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
                 <div class="post-meta">
                   <FormattedDate date={post.data.pubDate} />
                   {post.data.author && <span class="author">{post.data.author}</span>}
-                  <span class="reading-time">{post.readingTime}</span>
+                  {/* <span class="reading-time">10 min read</span> */}
                 </div>
                 <div class="post-summary">{post.data.summary || post.data.description}</div>
               </li>
@@ -253,10 +412,10 @@ const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
           )}
         </ul>
         <nav class="pagination" style="display:flex;justify-content:center;gap:1em;margin:2em 0;align-items:center;">
-          <a href="/" class="pagination-link pagination-active">1</a>
-          {totalPages >= 2 && <a href="/page/2/" class="pagination-link">2</a>}
-          {totalPages >= 3 && <a href="/page/3/" class="pagination-link">3</a>}
-          {totalPages > 1 && <a href="/page/2/" class="pagination-link">Next &rarr;</a>}
+          <a href="/" class={`pagination-link${page === 1 ? ' pagination-active' : ''}`}>1</a>
+          {totalPages >= 2 && <a href="/page/2/" class={`pagination-link${page === 2 ? ' pagination-active' : ''}`}>2</a>}
+          {totalPages >= 3 && <a href="/page/3/" class={`pagination-link${page === 3 ? ' pagination-active' : ''}`}>3</a>}
+          {page < totalPages && <a href={`/page/${page + 1}/`} class="pagination-link">Next &rarr;</a>}
         </nav>
       </div>
       <aside class="sidebar">
@@ -280,4 +439,4 @@ const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
     </main>
     <Footer />
   </body>
-</html>
+</html> 

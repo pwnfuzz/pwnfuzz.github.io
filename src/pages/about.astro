@@ -1,35 +1,52 @@
 ---
-import Layout from '../layouts/BlogPost.astro';
+// Minimal About page for PwnFuzz Labs
 ---
 
-<Layout
-	title="About PwnFuzz Labs – Deep Technical Security Research"
-	description="PwnFuzz Labs is the research arm of PwnFuzz, focused on advanced exploit development, vulnerability analysis, and fuzzing methodologies. Explore technical deep-dives and offensive security insights curated by D4mianWayne."
-	pubDate={new Date()}
->
-	<p>
-		<strong>PwnFuzz Labs</strong> is the dedicated research division of PwnFuzz, delivering deep technical content on exploit development, vulnerability analysis, and offensive security tooling. This space is reserved for high-resolution insights into real-world attack surfaces—covering kernel internals, enterprise applications, protocol targets, and more.
-	</p>
+<div class="about-dracula">
+  <p>
+    <strong>PwnFuzz Labs</strong> is the research arm of PwnFuzz, focused on advanced exploit development, vulnerability analysis, and fuzzing methodologies. For the main platform and more resources, visit <a href="https://www.pwnfuzz.com" target="_blank" rel="noopener">pwnfuzz.com</a>.
+  </p>
+</div>
 
-	<h2>What is PwnFuzz Labs?</h2>
-	<p>
-		PwnFuzz Labs exists to document, dissect, and share advanced offensive security techniques. Every post is a technical walkthrough—whether reverse engineering complex CVEs, crafting custom fuzzers, or developing reliable exploits. The labs serve as a curated archive of research, tool development, and methodology experimentation.
-	</p>
-
-	<h2>A Research-Driven Approach</h2>
-	<p>
-		Content published on PwnFuzz Labs emphasizes a research-first mindset-documenting failures, edge cases, patch analysis, mitigation bypasses, and exploitation primitives. Our goal is to push offensive understanding forward while maintaining clarity, rigor, and reproducibility.
-	</p>
-
-	<h2>Learn More About Us</h2>
-	<p>
-		For an overview of PwnFuzz, its vision, and background, visit the main site. PwnFuzz Labs is an extension of that mission—built to support deeper experimentation and long-form research beyond standard write-ups.
-	</p>
-
-	<h2>Disclaimer</h2>
-	<p>
-		All content published on PwnFuzz Labs is intended for <strong>educational and research purposes only</strong>. The techniques, code, and information shared here are meant to advance understanding of security concepts and responsible disclosure.<br/>
-		We <strong>do not condone or support</strong> the use of this material for malicious purposes.<br/>
-		<strong>PwnFuzz and its contributors assume no liability</strong> for any misuse or damage resulting from the application of knowledge shared on this platform.
-	</p>
-</Layout>
+<style>
+  body {
+    background: var(--drac-bg);
+    color: var(--drac-fg);
+    font-family: 'Google Sans', 'Inter', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  .about-dracula {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    max-width: 600px;
+    margin: 6rem auto 0 auto;
+    font-size: 1.18rem;
+    color: var(--drac-fg);
+    background: var(--drac-bg-alt);
+    border-radius: 14px;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 2px 8px rgba(40,42,54,0.10);
+    text-align: center;
+  }
+  .about-dracula a {
+    color: var(--drac-cyan);
+    text-decoration: underline;
+    transition: color 0.2s;
+    word-break: break-all;
+  }
+  .about-dracula a:hover {
+    color: var(--drac-green);
+  }
+  @media (max-width: 600px) {
+    .about-dracula {
+      padding: 1.2rem 0.5rem;
+      font-size: 1rem;
+      margin: 2.5rem 0 0 0;
+      border-radius: 8px;
+    }
+  }
+</style>

@@ -21,7 +21,9 @@ const breakdowns = await Promise.all(
   })
 );
 
-const allTags = Array.from(new Set(breakdowns.flatMap(bd => bd.data.tags || [])));
+const BREAKDOWNS_PER_PAGE = 4;
+const paginatedBreakdowns = breakdowns.slice(0, BREAKDOWNS_PER_PAGE);
+const totalPages = Math.ceil(breakdowns.length / BREAKDOWNS_PER_PAGE);
 ---
 <!doctype html>
 <html lang="en">
@@ -29,7 +31,7 @@ const allTags = Array.from(new Set(breakdowns.flatMap(bd => bd.data.tags || []))
     <BaseHead title={`1Day Breakdowns | ${SITE_TITLE}`} description="Quick technical breakdowns and analyses of recent 1Day vulnerabilities and exploits." />
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;600;700&display=swap');
-      body { font-family: 'Google Sans', 'Inter', Arial, sans-serif; background: #f8fafc; color: #1e293b; }
+      body { font-family: 'Google Sans', 'Inter', Arial, sans-serif; background: var(--bg); color: var(--fg); }
       main {
         max-width: 1300px;
         margin: 0 auto;
@@ -37,6 +39,7 @@ const allTags = Array.from(new Set(breakdowns.flatMap(bd => bd.data.tags || []))
         align-items: flex-start;
         gap: 3rem;
         padding: 2.5rem 2.5rem 2rem 2.5rem;
+        background: var(--bg);
       }
       main[data-astro-cid-j7pv25f6] {
         width: 100%;
@@ -47,48 +50,47 @@ const allTags = Array.from(new Set(breakdowns.flatMap(bd => bd.data.tags || []))
         min-width: 0;
         font-size: 16px;
       }
+      .sidebar {
+        border-left: 1px solid var(--border);
+        padding-left: 1.2rem;
+        flex: 0 0 280px;
+        max-width: 320px;
+        min-width: 220px;
+        font-size: 1rem;
+        padding-top: 0.5rem;
+        color: var(--text-secondary);
+        background: var(--bg);
+      }
+      .section-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--fg);
+        margin-bottom: 1.2rem;
+        letter-spacing: 0.5px;
+      }
       .post-list {
         list-style: none;
         margin: 0;
         padding: 0;
       }
       .post-row {
-        background: #fff;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(30,41,59,0.04);
-        padding: 2rem 2.5rem;
-        margin-bottom: 2.2rem;
-        border: 1px solid #ede9fe;
+        padding: 1.2rem 0;
+        border-bottom: 1px solid var(--border);
         position: relative;
-        animation: fadein 0.7s;
+        background: var(--bg);
+        color: #000;
       }
       .post-title {
         font-size: 1.35rem;
-        font-weight: 800;
-        color: #7c3aed;
-        text-decoration: none;
-        transition: color 0.2s;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5em;
-      }
-      .post-title::after {
-        content: '\203A'; /* chevron */
-        font-size: 1em;
-        color: #a78bfa;
-        margin-left: 0.2em;
-        transition: color 0.2s;
-      }
-      .post-row:hover .post-title {
-        color: #5b21b6;
+        font-weight: 700;
+        color: #000;
         text-decoration: underline;
-      }
-      .post-row:hover .post-title::after {
-        color: #7c3aed;
+        transition: color 0.2s;
+        display: inline;
       }
       .post-meta {
-        color: #6b7280;
-        font-size: 0.98rem;
+        color: #555;
+        font-size: 0.95rem;
         margin: 0.2rem 0 0.7rem 0;
         letter-spacing: 0.01em;
         display: flex;
@@ -97,46 +99,25 @@ const allTags = Array.from(new Set(breakdowns.flatMap(bd => bd.data.tags || []))
       }
       .post-meta .author {
         font-weight: 600;
-        color: #7c3aed;
+        color: #666;
       }
       .post-meta .reading-time {
-        background: #e0e7ff;
-        color: #2563eb;
-        border-radius: 999px;
-        padding: 0.13em 0.8em;
+        background: none;
+        color: #888;
         font-size: 0.93em;
-        font-weight: 600;
+        font-weight: 400;
         margin-left: 0.2em;
         letter-spacing: 0.01em;
       }
       .post-summary {
-        color: #222;
-        font-size: 1.01rem;
+        color: #000;
+        font-size: 1rem;
         margin-bottom: 0.7rem;
         line-height: 1.6;
       }
-      code {
-        background: #f1f5f9;
-        color: #0f172a;
-        border-radius: 4px;
-        padding: 2px 6px;
-        font-size: 0.97em;
-      }
-      pre {
-        background: #f1f5f9;
-        color: #0f172a;
-        border-radius: 8px;
-        padding: 1.2em;
-        font-size: 0.97em;
-        overflow-x: auto;
-      }
-      @keyframes fadein {
-        from { opacity: 0; transform: translateY(16px); }
-        to { opacity: 1; transform: none; }
-      }
       .sidebar-section {
         margin-bottom: 2.2rem;
-        background: none;
+        background: var(--bg);
         border-radius: 0;
         box-shadow: none;
         padding: 0 0 1.5rem 0;
@@ -144,72 +125,10 @@ const allTags = Array.from(new Set(breakdowns.flatMap(bd => bd.data.tags || []))
       }
       .sidebar-section h3 {
         font-size: 1.08rem;
-        color: #7c3aed;
-        font-weight: 700;
+        color: var(--text-secondary);
+        font-weight: 600;
         margin-bottom: 0.7rem;
         letter-spacing: 0.01em;
-      }
-      .sidebar-tags a {
-        display: inline-block;
-        background: #fee2e2;
-        color: #7c3aed;
-        border-radius: 6px;
-        padding: 0.2em 0.7em;
-        font-size: 0.93em;
-        margin-right: 0.5em;
-        text-decoration: none;
-        margin-bottom: 0.2em;
-        font-weight: 600;
-      }
-      .sidebar {
-        border-left: 1.5px solid #e5e7eb;
-        padding-left: 2.2rem;
-        flex: 0 0 280px;
-        max-width: 320px;
-        min-width: 220px;
-        font-size: 1rem;
-        padding-top: 0.5rem;
-        color: #64748b;
-      }
-      @media (max-width: 900px) {
-        main { flex-direction: column; }
-        .sidebar { max-width: 100%; min-width: 0; margin-top: 2rem; }
-      }
-      @media (max-width: 600px) {
-        .section-title { font-size: 1.3rem; }
-        .card { padding: 1.1rem 1rem 1rem 1rem; }
-        main { padding: 1.2rem 0.5rem 1rem 0.5rem; }
-      }
-      .hero {
-        padding: 2.5rem 2rem 1.5rem 2rem;
-        background: linear-gradient(90deg, #ede9fe 0%, #fff 100%);
-        border-radius: 14px;
-        margin-bottom: 2.5rem;
-        box-shadow: 0 2px 8px rgba(30,41,59,0.04);
-        text-align: center;
-      }
-      .hero-title {
-        font-size: 2.5rem;
-        font-weight: 800;
-        color: #7c3aed;
-        margin-bottom: 0.7rem;
-        letter-spacing: 1px;
-      }
-      .hero-desc {
-        font-size: 1.18rem;
-        color: #444;
-        margin-bottom: 1.2rem;
-      }
-      .hero-indicator {
-        display: inline-block;
-        background: #7c3aed;
-        color: #fff;
-        font-size: 1.1rem;
-        font-weight: 700;
-        border-radius: 8px;
-        padding: 0.3em 1.2em;
-        letter-spacing: 0.08em;
-        margin-top: 0.5rem;
       }
       .sidebar-list {
         display: flex;
@@ -223,24 +142,24 @@ const allTags = Array.from(new Set(breakdowns.flatMap(bd => bd.data.tags || []))
       .sidebar-item a {
         font-size: 1.05rem;
         font-weight: 600;
-        color: #7c3aed;
-        text-decoration: none;
+        color: var(--fg);
+        text-decoration: underline;
         transition: color 0.2s;
         letter-spacing: 0.01em;
         display: inline-block;
         margin-bottom: 0.1em;
       }
       .sidebar-item a:hover {
-        color: #5b21b6;
+        color: var(--text-secondary);
         text-decoration: underline;
       }
       .sidebar-delim {
-        border-bottom: 1px solid #e5e7eb;
+        border-bottom: 1px solid var(--border);
         margin: 0.7em 0 0.2em 0;
       }
       .sidebar-item-desc {
         font-size: 0.77em;
-        color: #1e293b;
+        color: var(--text-secondary);
         margin-top: 0.2em;
       }
       .post-tags {
@@ -248,8 +167,8 @@ const allTags = Array.from(new Set(breakdowns.flatMap(bd => bd.data.tags || []))
       }
       .post-tag {
         display: inline-block;
-        background: #ede9fe;
-        color: #7c3aed;
+        background: var(--muted);
+        color: var(--text-secondary);
         border-radius: 6px;
         padding: 0.2em 0.7em;
         font-size: 0.93em;
@@ -260,60 +179,83 @@ const allTags = Array.from(new Set(breakdowns.flatMap(bd => bd.data.tags || []))
         transition: background 0.2s, color 0.2s;
       }
       .post-tag:hover {
-        background: #7c3aed;
-        color: #fff;
+        background: var(--border);
+        color: var(--fg);
+      }
+      .pagination-link {
+        color: var(--fg);
+        background: var(--muted);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 0.4em 1.1em;
+        margin: 0 0.1em;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.2s, color 0.2s;
+      }
+      .pagination-link:hover {
+        background: var(--border);
+        color: var(--fg);
+      }
+      .pagination-active {
+        background: var(--border);
+        color: var(--fg);
+        cursor: default;
+      }
+      @media (max-width: 900px) {
+        main { flex-direction: column; }
+        .sidebar { max-width: 100%; min-width: 0; margin-top: 2rem; }
+      }
+      @media (max-width: 600px) {
+        .section-title { font-size: 1.3rem; }
+        .card { padding: 1.1rem 1rem 1rem 1rem; }
+        main { padding: 1.2rem 0.5rem 1rem 0.5rem; }
+        .main-content { width: 100%; padding: 0; }
+        .sidebar { width: 100%; padding-left: 0.5rem; }
       }
     </style>
   </head>
   <body>
     <Header />
-    <main>
+    <main data-astro-cid-j7pv25f6>
       <div class="main-content">
-        <section class="hero">
-          <h1 class="hero-title">Explore 1Day Vulnerability Breakdowns</h1>
-          <p class="hero-desc">Dive into rapid, technical breakdowns of the latest vulnerabilities, exploits, and real-world attack surfaces—curated for researchers and security professionals.</p>
-          <div class="hero-indicator">Breakdowns</div>
-        </section>
         <ul class="post-list">
-          {breakdowns.length === 0 ? (
+          {paginatedBreakdowns.length === 0 ? (
             <div style="color:#888; font-size:1.1rem;">No breakdowns found. Please add posts to <code>src/content/breakdowns/</code> with the correct frontmatter.</div>
           ) : (
-            breakdowns.map((bd) => (
+            paginatedBreakdowns.map((breakdown) => (
               <li class="post-row">
-                <a href={`/breakdowns/${bd.id}/`} class="post-title">{bd.data.title}</a>
+                <a href={`/breakdowns/${breakdown.id}/`} class="post-title">{breakdown.data.title}</a>
                 <div class="post-meta">
-                  <FormattedDate date={bd.data.pubDate} />
-                  {bd.data.author && <span class="author">{bd.data.author}</span>}
-                  <span class="reading-time">
-                    {bd.readingTime}
-                  </span>
+                  <FormattedDate date={breakdown.data.pubDate} />
+                  {breakdown.data.author && <span class="author">{breakdown.data.author}</span>}
+                  <span class="reading-time">{breakdown.readingTime}</span>
                 </div>
-                <div class="post-summary">{bd.data.summary || bd.data.description}</div>
-                {bd.data.tags && bd.data.tags.length > 0 && (
-                  <div class="post-tags">
-                    {bd.data.tags.map(tag => (
-                      <a href={`/tags/${tag}/`} class="post-tag">{tag}</a>
-                    ))}
-                  </div>
-                )}
+                <div class="post-summary">{breakdown.data.summary || breakdown.data.description}</div>
               </li>
             ))
           )}
         </ul>
+        <nav class="pagination" style="display:flex;justify-content:center;gap:1em;margin:2em 0;align-items:center;">
+          <a href="/breakdowns/" class="pagination-link pagination-active">1</a>
+          {totalPages >= 2 && <a href="/breakdowns/page/2/" class="pagination-link">2</a>}
+          {totalPages >= 3 && <a href="/breakdowns/page/3/" class="pagination-link">3</a>}
+          {totalPages > 1 && <a href="/breakdowns/page/2/" class="pagination-link">Next &rarr;</a>}
+        </nav>
       </div>
       <aside class="sidebar">
         <div class="sidebar-section">
           <h3>Recent Breakdowns</h3>
           <div class="sidebar-list">
-            {breakdowns.slice(0, 5).map((bd, idx) => (
+            {breakdowns.slice(0, 3).map((breakdown, idx) => (
               <div class="sidebar-item" style="margin-bottom:0.7em;">
-                <a href={`/breakdowns/${bd.id}/`}>{bd.data.title}</a>
+                <a href={`/breakdowns/${breakdown.id}/`}>{breakdown.data.title}</a>
                 <div class="sidebar-item-desc">
-                  {bd.data.summary ? bd.data.summary.split(' ').slice(0,15).join(' ') + (bd.data.summary.split(' ').length > 15 ? '...' : '') :
-                   bd.data.description ? bd.data.description.split(' ').slice(0,15).join(' ') + (bd.data.description.split(' ').length > 15 ? '...' : '') :
-                   (bd.data.pubDate ? (new Date(bd.data.pubDate)).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '')}
+                  {breakdown.data.summary ? breakdown.data.summary.split(' ').slice(0,15).join(' ') + (breakdown.data.summary.split(' ').length > 15 ? '...' : '') :
+                   breakdown.data.description ? breakdown.data.description.split(' ').slice(0,15).join(' ') + (breakdown.data.description.split(' ').length > 15 ? '...' : '') :
+                   (breakdown.data.pubDate ? (new Date(breakdown.data.pubDate)).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '')}
                 </div>
-                {idx < 4 && <div class="sidebar-delim"></div>}
+                {idx < 2 && <div class="sidebar-delim"></div>}
               </div>
             ))}
           </div>

@@ -7,16 +7,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
 
 :root {
-	--accent: #2563eb;
-	--accent-dark: #174ea6;
-	--black: 34, 41, 57;
-	--gray: 96, 115, 159;
-	--gray-light: 245, 247, 250;
-	--gray-dark: 34, 41, 57;
-	--gray-gradient: rgba(var(--gray-light), 70%), #fff;
-	--box-shadow:
-		0 2px 6px rgba(var(--gray), 10%), 0 8px 24px rgba(var(--gray), 10%),
-		0 16px 32px rgba(var(--gray), 10%);
+  --bg: #f7f8fa;
+  --fg: #23263a;
+  --card: #fff;
+  --card-fg: #23263a;
+  --primary: #b3b8c5;
+  --border: #e5e7eb;
+  --muted: #e5e7eb;
+  --error-red: #ff3333;
+  --soft-gray: #e5e7eb;
+  --text-muted: #b3b8c5;
+  --text-secondary: #888;
+  --shadow: 0 2px 8px rgba(44, 41, 78, 0.03), 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 @font-face {
 	font-family: 'Atkinson';
@@ -45,6 +47,9 @@ body {
 	color: rgb(var(--gray-dark));
 	font-size: 20px;
 	line-height: 1.7;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'Google Sans', 'Inter', Arial, sans-serif;
 }
 main {
 	width: 1300px;
@@ -59,7 +64,7 @@ h4,
 h5,
 h6 {
 	margin: 0 0 0.5rem 0;
-	color: #222226;
+	color: #23263a;
 	line-height: 1.2;
 }
 h1 {
@@ -82,12 +87,15 @@ b {
 	font-weight: 700;
 }
 a {
-	color: #7c3aed;
-	text-decoration: none;
+	color: var(--fg);
+	text-decoration: underline;
 	transition: color 0.2s;
+  color: var(--drac-cyan);
 }
 a:hover {
-	color: #5b21b6;
+	color: var(--text-secondary);
+  color: var(--drac-green);
+  text-decoration: underline;
 }
 p {
 	margin-bottom: 1em;
@@ -127,6 +135,13 @@ pre {
 	font-family: 'JetBrains Mono', 'Fira Mono', 'Consolas', 'Menlo', monospace;
 	overflow-x: auto;
 	box-shadow: 0 2px 8px rgba(60,50,30,0.06);
+  padding: 1.2em;
+  overflow-x: auto;
+  background: var(--card);
+  color: var(--accent-orange);
+  border-radius: 6px;
+  padding: 0.2em 0.4em;
+  font-family: 'Fira Mono', 'Consolas', 'Monaco', monospace;
 }
 pre > code {
 	all: unset;
@@ -140,6 +155,9 @@ blockquote {
 hr {
 	border: none;
 	border-top: 1px solid rgb(var(--gray-light));
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2em 0;
 }
 @media (max-width: 720px) {
 	body {
@@ -166,4 +184,35 @@ hr {
 	clip-path: inset(50%);
 	/* added line to stop words getting smushed together (as they go onto separate lines and some screen readers do not understand line feeds as a space */
 	white-space: nowrap;
+}
+
+::-webkit-selection {
+  background: #b3d4fc;
+}
+::selection {
+  background: #b3d4fc;
+}
+
+/* Utility classes for accent colors */
+.text-primary { color: var(--primary); }
+.text-violet { color: var(--muted-violet); }
+.text-orange { color: var(--accent-orange); }
+.text-error { color: var(--error-red); }
+.text-indigo { color: var(--deep-indigo); }
+.text-muted { color: var(--text-muted); }
+.text-secondary { color: var(--text-secondary); }
+.bg-card { background: var(--card); }
+.bg-gradient { background: var(--gradient); }
+.shadow { box-shadow: var(--shadow); }
+
+input, textarea, select, button {
+  background: var(--card);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.5em 1em;
+}
+
+input:focus, textarea:focus, select:focus, button:focus {
+  outline: 2px solid var(--text-muted);
 }

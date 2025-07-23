@@ -35,13 +35,11 @@ const allTags = Array.from(new Set(posts.flatMap(post => post.data.tags || [])))
         margin: 0 auto;
       }
       .main-content {
-        background: #fff;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(30,41,59,0.04);
         padding: 2rem 2.5rem;
         flex: 1 1 0;
         min-width: 0;
         font-size: 16px;
+        /* No background, border-radius, or box-shadow */
       }
       .sidebar {
         border-left: 1.5px solid #e5e7eb;
@@ -66,10 +64,10 @@ const allTags = Array.from(new Set(posts.flatMap(post => post.data.tags || [])))
         padding: 0;
       }
       .post-row {
-        padding: 2.4rem 0 2.2rem 0;
+        padding: 1.2rem 0;
         border-bottom: 1px solid #e5e7eb;
         position: relative;
-        animation: fadein 0.7s;
+        /* No background, border-radius, or box-shadow */
       }
       .post-title {
         font-size: 1.7rem;
@@ -80,6 +78,7 @@ const allTags = Array.from(new Set(posts.flatMap(post => post.data.tags || [])))
         display: inline-flex;
         align-items: center;
         gap: 0.5em;
+        /* No background, border-radius, or box-shadow */
       }
       .post-title::after {
         content: '\203A'; /* chevron */
@@ -124,6 +123,7 @@ const allTags = Array.from(new Set(posts.flatMap(post => post.data.tags || [])))
         margin-bottom: 0.7rem;
         line-height: 1.6;
         font-weight: 400;
+        /* No background, border-radius, or box-shadow */
       }
       code {
         background: #f1f5f9;
