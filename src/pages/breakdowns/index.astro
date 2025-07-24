@@ -31,7 +31,12 @@ const totalPages = Math.ceil(breakdowns.length / BREAKDOWNS_PER_PAGE);
     <BaseHead title={`1Day Breakdowns | ${SITE_TITLE}`} description="Quick technical breakdowns and analyses of recent 1Day vulnerabilities and exploits." />
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;600;700&display=swap');
-      body { font-family: 'Google Sans', 'Inter', Arial, sans-serif; background: var(--bg); color: var(--fg); }
+      body { font-family: 'Google Sans', 'Inter', Arial, sans-serif; background: #f8fafc; color: #1e293b; }
+      body {
+        background-image: url("data:image/svg+xml,%3csvg width='32' height='32' viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cline x1='0' y1='32' x2='32' y2='0' stroke='rgba(0,0,0,0.04)' stroke-width='1'/%3e%3c/svg%3e");
+        background-repeat: repeat;
+        background-size: 32px 32px;
+      }
       main {
         max-width: 1300px;
         margin: 0 auto;
@@ -64,7 +69,7 @@ const totalPages = Math.ceil(breakdowns.length / BREAKDOWNS_PER_PAGE);
       .section-title {
         font-size: 1.3rem;
         font-weight: 600;
-        color: var(--fg);
+        color: var(--accent);
         margin-bottom: 1.2rem;
         letter-spacing: 0.5px;
       }
@@ -83,10 +88,18 @@ const totalPages = Math.ceil(breakdowns.length / BREAKDOWNS_PER_PAGE);
       .post-title {
         font-size: 1.35rem;
         font-weight: 700;
-        color: #000;
+        color: #111;
         text-decoration: underline;
         transition: color 0.2s;
-        display: inline;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5em;
+      }
+      .post-title .hash {
+        color: var(--accent);
+        text-decoration: underline;
+        font-weight: 900;
+        margin-right: 0.18em;
       }
       .post-meta {
         color: #555;
@@ -125,7 +138,7 @@ const totalPages = Math.ceil(breakdowns.length / BREAKDOWNS_PER_PAGE);
       }
       .sidebar-section h3 {
         font-size: 1.08rem;
-        color: var(--text-secondary);
+        color: var(--accent);
         font-weight: 600;
         margin-bottom: 0.7rem;
         letter-spacing: 0.01em;
@@ -142,19 +155,23 @@ const totalPages = Math.ceil(breakdowns.length / BREAKDOWNS_PER_PAGE);
       .sidebar-item a {
         font-size: 1.05rem;
         font-weight: 600;
-        color: var(--fg);
+        color: #111;
         text-decoration: underline;
         transition: color 0.2s;
         letter-spacing: 0.01em;
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4em;
         margin-bottom: 0.1em;
       }
-      .sidebar-item a:hover {
-        color: var(--text-secondary);
+      .sidebar-item a .hash {
+        color: var(--accent);
         text-decoration: underline;
+        font-weight: 900;
+        margin-right: 0.18em;
       }
       .sidebar-delim {
-        border-bottom: 1px solid var(--border);
+        border-bottom: 2px solid var(--accent);
         margin: 0.7em 0 0.2em 0;
       }
       .sidebar-item-desc {
@@ -225,7 +242,7 @@ const totalPages = Math.ceil(breakdowns.length / BREAKDOWNS_PER_PAGE);
           ) : (
             paginatedBreakdowns.map((breakdown) => (
               <li class="post-row">
-                <a href={`/breakdowns/${breakdown.id}/`} class="post-title">{breakdown.data.title}</a>
+                <a href={`/breakdowns/${breakdown.id}/`} class="post-title"><span class="hash">#</span>{breakdown.data.title}</a>
                 <div class="post-meta">
                   <FormattedDate date={breakdown.data.pubDate} />
                   {breakdown.data.author && <span class="author">{breakdown.data.author}</span>}
@@ -249,7 +266,7 @@ const totalPages = Math.ceil(breakdowns.length / BREAKDOWNS_PER_PAGE);
           <div class="sidebar-list">
             {breakdowns.slice(0, 3).map((breakdown, idx) => (
               <div class="sidebar-item" style="margin-bottom:0.7em;">
-                <a href={`/breakdowns/${breakdown.id}/`}>{breakdown.data.title}</a>
+                <a href={`/breakdowns/${breakdown.id}/`}><span class="hash">#</span>{breakdown.data.title}</a>
                 <div class="sidebar-item-desc">
                   {breakdown.data.summary ? breakdown.data.summary.split(' ').slice(0,15).join(' ') + (breakdown.data.summary.split(' ').length > 15 ? '...' : '') :
                    breakdown.data.description ? breakdown.data.description.split(' ').slice(0,15).join(' ') + (breakdown.data.description.split(' ').length > 15 ? '...' : '') :

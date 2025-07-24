@@ -20,6 +20,11 @@ const allTags = Array.from(new Set(posts.flatMap(post => post.data.tags || [])))
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;600;700&display=swap');
       body { font-family: 'Google Sans', 'Inter', Arial, sans-serif; background: #f8fafc; color: #1e293b; }
+      body {
+        background-image: url("data:image/svg+xml,%3csvg width='32' height='32' viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cline x1='0' y1='32' x2='32' y2='0' stroke='rgba(0,0,0,0.04)' stroke-width='1'/%3e%3c/svg%3e");
+        background-repeat: repeat;
+        background-size: 32px 32px;
+      }
       main {
         max-width: 1300px;
         margin: 0 auto;
@@ -54,7 +59,7 @@ const allTags = Array.from(new Set(posts.flatMap(post => post.data.tags || [])))
       .section-title {
         font-size: 2rem;
         font-weight: 700;
-        color: #e11d48;
+        color: var(--accent);
         margin-bottom: 1.5rem;
         letter-spacing: 1px;
       }
@@ -72,27 +77,33 @@ const allTags = Array.from(new Set(posts.flatMap(post => post.data.tags || [])))
       .post-title {
         font-size: 1.7rem;
         font-weight: 800;
-        color: #e11d48;
-        text-decoration: none;
+        color: #111;
+        text-decoration: underline;
         transition: color 0.2s;
         display: inline-flex;
         align-items: center;
         gap: 0.5em;
         /* No background, border-radius, or box-shadow */
       }
+      .post-title .hash {
+        color: var(--accent);
+        text-decoration: underline;
+        font-weight: 900;
+        margin-right: 0.18em;
+      }
       .post-title::after {
         content: '\203A'; /* chevron */
         font-size: 1.2em;
-        color: #e11d48;
+        color: var(--accent);
         margin-left: 0.2em;
         transition: color 0.2s;
       }
       .post-row:hover .post-title {
-        color: #a61b34;
+        color: var(--accent);
         text-decoration: underline;
       }
       .post-row:hover .post-title::after {
-        color: #a61b34;
+        color: var(--accent);
       }
       .post-meta {
         color: #64748b;
@@ -105,7 +116,7 @@ const allTags = Array.from(new Set(posts.flatMap(post => post.data.tags || [])))
       }
       .post-meta .author {
         font-weight: 600;
-        color: #e11d48;
+        color: var(--accent);
       }
       .post-meta .reading-time {
         background: #e0e7ff;
@@ -154,15 +165,37 @@ const allTags = Array.from(new Set(posts.flatMap(post => post.data.tags || [])))
       }
       .sidebar-section h3 {
         font-size: 1.08rem;
-        color: #e11d48;
+        color: var(--accent);
         font-weight: 700;
         margin-bottom: 0.7rem;
         letter-spacing: 0.01em;
       }
+      .sidebar-section ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .sidebar-section li {
+        margin-bottom: 1.2em;
+      }
+      .sidebar-section a {
+        color: #111;
+        text-decoration: underline;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4em;
+      }
+      .sidebar-section a .hash {
+        color: var(--accent);
+        text-decoration: underline;
+        font-weight: 900;
+        margin-right: 0.18em;
+      }
       .sidebar-tags a {
         display: inline-block;
         background: #fee2e2;
-        color: #e11d48;
+        color: var(--accent);
         border-radius: 6px;
         padding: 0.2em 0.7em;
         font-size: 0.93em;
@@ -193,7 +226,7 @@ const allTags = Array.from(new Set(posts.flatMap(post => post.data.tags || [])))
           ) : (
             posts.map((post) => (
               <li class="post-row">
-                <a href={`/posts/${post.id}/`} class="post-title">{post.data.title}</a>
+                <a href={`/posts/${post.id}/`} class="post-title"><span class="hash">#</span>{post.data.title}</a>
                 <div class="post-meta">
                   <FormattedDate date={post.data.pubDate} />
                   {post.data.author && <span class="author">{post.data.author}</span>}
@@ -211,7 +244,7 @@ const allTags = Array.from(new Set(posts.flatMap(post => post.data.tags || [])))
           <ul>
             {posts.slice(0, 5).map((post) => (
               <li style="margin-bottom:1.2em;">
-                <a href={`/posts/${post.id}/`}>{post.data.title}</a>
+                <a href={`/posts/${post.id}/`}><span class="hash">#</span>{post.data.title}</a>
                 <div style="font-size:0.97em;color:#1e293b;margin-top:0.2em;">
                   {post.data.summary ? post.data.summary.split(' ').slice(0,7).join(' ') + (post.data.summary.split(' ').length > 7 ? '...' : '') :
                    post.data.description ? post.data.description.split(' ').slice(0,7).join(' ') + (post.data.description.split(' ').length > 7 ? '...' : '') :
