@@ -132,10 +132,11 @@ const paginatedPosts = posts.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER
         letter-spacing: 0.01em;
       }
       .post-summary {
-        color: #000;
-        font-size: 1rem;
+        color: #6b7280;
+        font-size: 0.98rem;
         margin-bottom: 0.7rem;
         line-height: 1.6;
+        font-weight: 400;
       }
       @keyframes fadein {
         from { opacity: 0; transform: translateY(16px); }
@@ -407,7 +408,7 @@ const paginatedPosts = posts.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER
                   {post.data.author && <span class="author">{post.data.author}</span>}
                   {/* <span class="reading-time">10 min read</span> */}
                 </div>
-                <div class="post-summary">{post.data.summary || post.data.description}</div>
+                <div class="post-summary">{(post.data.summary || post.data.description).split(' ').slice(0, 50).join(' ') + ((post.data.summary || post.data.description).split(' ').length > 50 ? '...' : '')}</div>
               </li>
             ))
           )}

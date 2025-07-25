@@ -142,6 +142,87 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				}
 			}
 		</style>
+		<style>
+			.author-box {
+				display: flex;
+				align-items: center;
+				gap: 1.2em;
+				background: linear-gradient(90deg, #fafdff 60%, #f7f8fa 100%);
+				border: 1.5px solid #e0e7ef;
+				border-radius: 16px;
+				padding: 1.5em 2em;
+				margin: 2.5em auto 0 auto;
+				max-width: 600px;
+				box-shadow: 0 4px 24px rgba(44,41,78,0.10), 0 1.5px 8px rgba(44,41,78,0.06);
+				transition: transform 0.22s cubic-bezier(.4,0,.2,1), box-shadow 0.22s cubic-bezier(.4,0,.2,1);
+				cursor: pointer;
+			}
+			.author-box:hover {
+				transform: translateY(-4px) scale(1.025);
+				box-shadow: 0 8px 32px rgba(44,41,78,0.16), 0 2px 12px rgba(44,41,78,0.10);
+				border-color: #e22d30;
+				background: linear-gradient(90deg, #fafdff 40%, #ffeaea 100%);
+			}
+			.author-avatar {
+				width: 74px;
+				height: 74px;
+				border-radius: 50%;
+				object-fit: cover;
+				border: 2.5px solid #e22d30;
+				background: #fff;
+				box-shadow: 0 2px 8px rgba(44,41,78,0.08);
+				transition: border-color 0.22s;
+			}
+			.author-box:hover .author-avatar {
+				border-color: #3b82f6;
+			}
+			.author-info {
+				display: flex;
+				flex-direction: column;
+				gap: 0.3em;
+			}
+			.author-name {
+				font-size: 1.18rem;
+				font-weight: 800;
+				color: #e22d30;
+				margin-bottom: 0.18em;
+				letter-spacing: 0.01em;
+				text-shadow: 0 1px 2px #fff8, 0 0.5px 1px #e22d3022;
+			}
+			.author-bio {
+				color: #23263a;
+				font-size: 1.04rem;
+				font-weight: 500;
+				line-height: 1.5;
+			}
+			.author-extra {
+				display: block;
+				color: #888;
+				font-size: 0.97rem;
+				margin-top: 0.3em;
+				font-style: italic;
+			}
+			.author-tagline {
+				display: block;
+				color: #3b82f6;
+				font-size: 0.98rem;
+				margin-top: 0.25em;
+				font-weight: 700;
+				letter-spacing: 0.01em;
+				font-family: 'JetBrains Mono', 'Fira Mono', 'Consolas', 'Monaco', monospace;
+			}
+			@media (max-width: 600px) {
+				.author-box {
+					flex-direction: column;
+					align-items: flex-start;
+					padding: 1em 0.7em;
+				}
+				.author-avatar {
+					width: 54px;
+					height: 54px;
+				}
+			}
+		</style>
 	</head>
 
 	<body>
@@ -172,6 +253,32 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 					</nav>
 					<slot />
 				</div>
+				<!-- Author Box Start -->
+				{Astro.props.author && (
+					<div class="author-box">
+						<img class="author-avatar" src={`/img/team/${Astro.props.author.toLowerCase()}.jpg`} alt={Astro.props.author} />
+						<div class="author-info">
+							<div class="author-name">{Astro.props.author}</div>
+							<div class="author-bio">
+								{Astro.props.author === 'd4mianwayne' && (
+									<>
+										Security researcher focused on fuzzing, reverse engineering, and exploit development. Wannabe Pwner and a bit of a nerd.<br/>
+										<span class="author-extra">Loves CTFs, open-source, and coffee. Always learning, always hacking.</span>
+										<span class="author-tagline">wannabe pwner | security researcher</span>
+									</>
+								)}
+								{Astro.props.author === 'ghostbyt3' && (
+									<>
+										Security researcher focused on red teaming and web application security, with a strong interest in reverse engineering, exploit development, and low-level Windows internals.<br/>
+										<span class="author-extra">Enjoys automating exploits, breaking boundaries, and sharing knowledge with the community.</span>
+										<span class="author-tagline">windows internals nerd | security researcher</span>
+									</>
+								)}
+							</div>
+						</div>
+					</div>
+				)}
+				<!-- Author Box End -->
 			</article>
 		</main>
 		<Footer />

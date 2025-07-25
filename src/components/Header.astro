@@ -112,23 +112,16 @@ const navLinks = [
     }
   </style>
   <script is:inline>
-    let lastScrollY = window.scrollY;
-    let ticking = false;
     function onScroll() {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const header = document.getElementById('siteHeader');
-          if (window.scrollY > lastScrollY && window.scrollY > 40) {
-            header.classList.add('hide-on-scroll');
-          } else {
-            header.classList.remove('hide-on-scroll');
-          }
-          lastScrollY = window.scrollY;
-          ticking = false;
-        });
-        ticking = true;
+      const header = document.getElementById('siteHeader');
+      if (window.scrollY === 0) {
+        header.classList.remove('hide-on-scroll');
+      } else {
+        header.classList.add('hide-on-scroll');
       }
     }
     window.addEventListener('scroll', onScroll);
+    // Run once on load in case not at top
+    onScroll();
   </script>
 </header>
