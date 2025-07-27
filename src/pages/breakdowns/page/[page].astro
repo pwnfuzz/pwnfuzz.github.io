@@ -1,34 +1,54 @@
 ---
-import BaseHead from '../../components/BaseHead.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
-import { SITE_TITLE } from '../../consts';
+import BaseHead from '../../../components/BaseHead.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import { SITE_TITLE } from '../../../consts';
 import { getCollection, type CollectionEntry } from 'astro:content';
-import FormattedDate from '../../components/FormattedDate.astro';
+import FormattedDate from '../../../components/FormattedDate.astro';
 
-const breakdownsUnprocessed = (await getCollection('breakdowns')).sort(
-  (a: CollectionEntry<'breakdowns'>, b: CollectionEntry<'breakdowns'>) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+export async function getStaticPaths() {
+  const breakdownsUnprocessed = (await getCollection('breakdowns')).sort(
+    (a: CollectionEntry<'breakdowns'>, b: CollectionEntry<'breakdowns'>) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+  );
 
-const breakdowns = await Promise.all(
-  breakdownsUnprocessed.map(async (breakdown) => {
-    const wordCount = (breakdown.body || '').split(/\s+/).length;
-    const readingTime = `${Math.max(1, Math.ceil(wordCount / 200))} min read`;
+  const breakdowns = await Promise.all(
+    breakdownsUnprocessed.map(async (breakdown) => {
+      const wordCount = (breakdown.body || '').split(/\s+/).length;
+      const readingTime = `${Math.max(1, Math.ceil(wordCount / 200))} min read`;
+      return {
+        ...breakdown,
+        readingTime,
+      };
+    })
+  );
+
+  const BREAKDOWNS_PER_PAGE = 4;
+  const totalPages = Math.ceil(breakdowns.length / BREAKDOWNS_PER_PAGE);
+
+  return Array.from({ length: totalPages - 1 }, (_, i) => {
+    const page = i + 2; // Start from page 2
+    const start = page * BREAKDOWNS_PER_PAGE - BREAKDOWNS_PER_PAGE;
+    const end = start + BREAKDOWNS_PER_PAGE;
+    const paginatedBreakdowns = breakdowns.slice(start, end);
+
     return {
-      ...breakdown,
-      readingTime,
+      params: { page: page.toString() },
+      props: { 
+        breakdowns: paginatedBreakdowns, 
+        page, 
+        totalPages,
+        allBreakdowns: breakdowns 
+      },
     };
-  })
-);
+  });
+}
 
-const BREAKDOWNS_PER_PAGE = 4;
-const paginatedBreakdowns = breakdowns.slice(0, BREAKDOWNS_PER_PAGE);
-const totalPages = Math.ceil(breakdowns.length / BREAKDOWNS_PER_PAGE);
+const { breakdowns, page, totalPages, allBreakdowns } = Astro.props;
 ---
 <!doctype html>
 <html lang="en">
   <head>
-    <BaseHead title={`1Day Breakdowns | ${SITE_TITLE}`} description="Quick technical breakdowns and analyses of recent 1Day vulnerabilities and exploits." />
+    <BaseHead title={`1Day Breakdowns - Page ${page} | ${SITE_TITLE}`} description="Quick technical breakdowns and analyses of recent 1Day vulnerabilities and exploits." />
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;600;700&display=swap');
       body { font-family: 'Google Sans', 'Inter', Arial, sans-serif; background: #f8fafc; color: #1e293b; }
@@ -150,12 +170,6 @@ const totalPages = Math.ceil(breakdowns.length / BREAKDOWNS_PER_PAGE);
         margin-bottom: 1.2rem;
         letter-spacing: 0.5px;
       }
-      .sidebar-item-desc {
-        color: #666;
-        font-size: 0.85rem;
-        line-height: 1.4;
-        margin-bottom: 0.5em;
-      }
       .sidebar-delim {
         height: 1px;
         background: var(--border);
@@ -216,10 +230,10 @@ const totalPages = Math.ceil(breakdowns.length / BREAKDOWNS_PER_PAGE);
     <main data-astro-cid-j7pv25f6>
       <div class="main-content">
         <ul class="post-list">
-          {paginatedBreakdowns.length === 0 ? (
-            <div style="color:#888; font-size:1.1rem;">No breakdowns found. Please add posts to <code>src/content/breakdowns/</code> with the correct frontmatter.</div>
+          {breakdowns.length === 0 ? (
+            <div style="color:#888; font-size:1.1rem;">No breakdowns found on this page.</div>
           ) : (
-            paginatedBreakdowns.map((breakdown) => (
+            breakdowns.map((breakdown) => (
               <li class="post-row">
                 <a href={`/breakdowns/${breakdown.id}/`} class="post-title"><span class="hash">#</span>{breakdown.data.title}</a>
                 <div class="post-meta">
@@ -233,17 +247,23 @@ const totalPages = Math.ceil(breakdowns.length / BREAKDOWNS_PER_PAGE);
           )}
         </ul>
         <nav class="pagination" style="display:flex;justify-content:center;gap:1em;margin:2em 0;align-items:center;">
-          <a href="/breakdowns/" class="pagination-link pagination-active">1</a>
-          {totalPages >= 2 && <a href="/breakdowns/page/2/" class="pagination-link">2</a>}
-          {totalPages >= 3 && <a href="/breakdowns/page/3/" class="pagination-link">3</a>}
-          {totalPages > 1 && <a href="/breakdowns/page/2/" class="pagination-link">Next &rarr;</a>}
+          {page > 2 && <a href="/breakdowns/" class="pagination-link">&larr; First</a>}
+          {page > 1 && <a href={page === 2 ? "/breakdowns/" : `/breakdowns/page/${page - 1}/`} class="pagination-link">&larr; Previous</a>}
+          {page > 3 && <a href="/breakdowns/" class="pagination-link">1</a>}
+          {page > 4 && <span style="color:var(--text-secondary);">...</span>}
+          {page > 2 && <a href={`/breakdowns/page/${page - 1}/`} class="pagination-link">{page - 1}</a>}
+          <a href={`/breakdowns/page/${page}/`} class="pagination-link pagination-active">{page}</a>
+          {page < totalPages && <a href={`/breakdowns/page/${page + 1}/`} class="pagination-link">{page + 1}</a>}
+          {page < totalPages - 2 && <span style="color:var(--text-secondary);">...</span>}
+          {page < totalPages - 1 && <a href={`/breakdowns/page/${totalPages}/`} class="pagination-link">{totalPages}</a>}
+          {page < totalPages && <a href={`/breakdowns/page/${page + 1}/`} class="pagination-link">Next &rarr;</a>}
         </nav>
       </div>
       <aside class="sidebar">
         <div class="sidebar-section">
           <h3>Recent Breakdowns</h3>
           <div class="sidebar-list">
-            {breakdowns.slice(0, 3).map((breakdown, idx) => (
+            {allBreakdowns.slice(0, 3).map((breakdown, idx) => (
               <div class="sidebar-item" style="margin-bottom:0.7em;">
                 <a href={`/breakdowns/${breakdown.id}/`}><span class="hash">#</span>{breakdown.data.title}</a>
                 {idx < 2 && <div class="sidebar-delim"></div>}
