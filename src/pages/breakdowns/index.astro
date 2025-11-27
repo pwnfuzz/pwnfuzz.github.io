@@ -21,238 +21,229 @@ const breakdowns = await Promise.all(
   })
 );
 
-const BREAKDOWNS_PER_PAGE = 4;
+const BREAKDOWNS_PER_PAGE = 10;
 const paginatedBreakdowns = breakdowns.slice(0, BREAKDOWNS_PER_PAGE);
 const totalPages = Math.ceil(breakdowns.length / BREAKDOWNS_PER_PAGE);
 ---
+
 <!doctype html>
 <html lang="en">
   <head>
     <BaseHead title={`1Day Breakdowns | ${SITE_TITLE}`} description="Quick technical breakdowns and analyses of recent 1Day vulnerabilities and exploits." />
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;600;700&display=swap');
-      body { font-family: 'Google Sans', 'Inter', Arial, sans-serif; background: #f8fafc; color: #1e293b; }
-      body {
-        background-image: url("data:image/svg+xml,%3csvg width='32' height='32' viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cline x1='0' y1='32' x2='32' y2='0' stroke='rgba(0,0,0,0.04)' stroke-width='1'/%3e%3c/svg%3e");
-        background-repeat: repeat;
-        background-size: 32px 32px;
-      }
-      main {
-        max-width: 1300px;
-        margin: 0 auto;
-        display: flex;
-        align-items: flex-start;
-        gap: 3rem;
-        padding: 2.5rem 2.5rem 2rem 2.5rem;
-        background: var(--bg);
-      }
-      main[data-astro-cid-j7pv25f6] {
-        width: 100%;
-        margin: 0 auto;
-      }
-      .main-content {
-        flex: 1 1 0;
-        min-width: 0;
-        font-size: 16px;
-      }
-      .sidebar {
-        border-left: 1px solid var(--border);
-        padding-left: 1.2rem;
-        flex: 0 0 280px;
-        max-width: 320px;
-        min-width: 220px;
-        font-size: 1rem;
-        padding-top: 0.5rem;
-        color: var(--text-secondary);
-        background: var(--bg);
-      }
-      .section-title {
-        font-size: 1.3rem;
-        font-weight: 600;
-        color: var(--accent);
-        margin-bottom: 1.2rem;
-        letter-spacing: 0.5px;
-      }
-      .post-list {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-      }
-      .post-row {
-        padding: 1.2rem 0;
-        border-bottom: 1px solid var(--border);
-        position: relative;
-        background: var(--bg);
-        color: #000;
-      }
-      .post-title {
-        font-size: 1.35rem;
-        font-weight: 700;
-        color: #111;
-        text-decoration: underline;
-        transition: color 0.2s;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5em;
-      }
-      .post-title .hash {
-        color: var(--accent);
-        text-decoration: underline;
-      }
-      .post-title:hover {
-        color: var(--accent);
-      }
-      .post-meta {
-        margin: 0.4em 0 0.6em 0;
-        font-size: 0.9rem;
-        color: #666;
-        display: flex;
-        gap: 1em;
-        flex-wrap: wrap;
-        align-items: center;
-      }
-      .post-meta .author {
-        color: var(--accent);
-        font-weight: 600;
-      }
-      .post-meta .reading-time {
-        color: #888;
-        font-style: italic;
-      }
-      .post-summary {
-        color: #333;
-        line-height: 1.5;
-        font-size: 0.95rem;
-        margin-top: 0.3em;
-        font-style: italic;
-      }
-      .sidebar-item a {
-        color: var(--fg);
-        text-decoration: underline;
-        font-weight: 600;
-        font-size: 0.95rem;
-        line-height: 1.4;
-        display: block;
-        margin-bottom: 0.3em;
-      }
-      .sidebar-item a:hover {
-        color: var(--accent);
-      }
-      .sidebar-item a .hash {
-        color: var(--accent);
-        text-decoration: underline;
-        margin-right: 0.3em;
-      }
-      .sidebar-section h3 {
-        font-size: 1.3rem;
-        font-weight: 600;
-        color: var(--accent);
-        margin-bottom: 1.2rem;
-        letter-spacing: 0.5px;
-      }
-      .sidebar-item-desc {
-        color: #666;
-        font-size: 0.85rem;
-        line-height: 1.4;
-        margin-bottom: 0.5em;
-      }
-      .sidebar-delim {
-        height: 1px;
-        background: var(--border);
-        margin: 0.8em 0;
-      }
-      .post-tag {
-        display: inline-block;
-        background: var(--muted);
-        color: var(--text-secondary);
-        border-radius: 6px;
-        padding: 0.2em 0.7em;
-        font-size: 0.93em;
-        margin-right: 0.5em;
-        text-decoration: none;
-        margin-bottom: 0.2em;
-        font-weight: 600;
-        transition: background 0.2s, color 0.2s;
-      }
-      .post-tag:hover {
-        background: var(--border);
-        color: var(--fg);
-      }
-      .pagination-link {
-        color: var(--fg);
-        background: var(--muted);
-        border: 1px solid var(--border);
-        border-radius: 6px;
-        padding: 0.4em 1.1em;
-        margin: 0 0.1em;
-        font-weight: 600;
-        text-decoration: none;
-        transition: background 0.2s, color 0.2s;
-      }
-      .pagination-link:hover {
-        background: var(--border);
-        color: var(--fg);
-      }
-      .pagination-active {
-        background: var(--border);
-        color: var(--fg);
-        cursor: default;
-      }
-      @media (max-width: 900px) {
-        main { flex-direction: column; }
-        .sidebar { max-width: 100%; min-width: 0; margin-top: 2rem; }
-      }
-      @media (max-width: 600px) {
-        .section-title { font-size: 1.3rem; }
-        .card { padding: 1.1rem 1rem 1rem 1rem; }
-        main { padding: 1.2rem 0.5rem 1rem 0.5rem; }
-        .main-content { width: 100%; padding: 0; }
-        .sidebar { width: 100%; padding-left: 0.5rem; }
-      }
-    </style>
   </head>
   <body>
     <Header />
-    <main data-astro-cid-j7pv25f6>
-      <div class="main-content">
-        <ul class="post-list">
-          {paginatedBreakdowns.length === 0 ? (
-            <div style="color:#888; font-size:1.1rem;">No breakdowns found. Please add posts to <code>src/content/breakdowns/</code> with the correct frontmatter.</div>
-          ) : (
-            paginatedBreakdowns.map((breakdown) => (
-              <li class="post-row">
-                <a href={`/breakdowns/${breakdown.id}/`} class="post-title"><span class="hash">#</span>{breakdown.data.title}</a>
-                <div class="post-meta">
-                  <FormattedDate date={breakdown.data.pubDate} />
-                  {breakdown.data.author && <span class="author">{breakdown.data.author}</span>}
-                  <span class="reading-time">{breakdown.readingTime}</span>
-                </div>
-                <div class="post-summary">{breakdown.data.summary || breakdown.data.description}</div>
-              </li>
-            ))
-          )}
-        </ul>
-        <nav class="pagination" style="display:flex;justify-content:center;gap:1em;margin:2em 0;align-items:center;">
-          <a href="/breakdowns/" class="pagination-link pagination-active">1</a>
+    <main class="container">
+      <section class="intro-section animate-fade-in">
+        <h1 class="page-title">1Day Breakdowns</h1>
+        <p class="page-subtitle">Rapid technical analysis of recent vulnerabilities.</p>
+      </section>
+
+      <div class="posts-list animate-fade-in" style="animation-delay: 0.1s;">
+        {paginatedBreakdowns.length === 0 ? (
+          <div class="no-posts">
+            No breakdowns found.
+          </div>
+        ) : (
+          paginatedBreakdowns.map((breakdown) => (
+            <article class="post-item">
+              <div class="post-meta-top">
+                <FormattedDate date={breakdown.data.pubDate} />
+              </div>
+              <a href={`/breakdowns/${breakdown.id}/`} class="post-link">
+                <h2 class="post-title">{breakdown.data.title}</h2>
+              </a>
+              <p class="post-summary">{breakdown.data.summary || breakdown.data.description}</p>
+              <div class="post-meta-bottom">
+                {breakdown.data.author && <span class="author-name">{breakdown.data.author}</span>}
+                <span class="reading-time">{breakdown.readingTime}</span>
+                {breakdown.data.tags && breakdown.data.tags.length > 0 && (
+                  <div class="tags-list">
+                    {breakdown.data.tags.map(tag => (
+                      <span class="tag">#{tag}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </article>
+          ))
+        )}
+      </div>
+
+      {totalPages > 1 && (
+        <nav class="pagination">
+          <a href="/breakdowns/" class="pagination-link active">1</a>
           {totalPages >= 2 && <a href="/breakdowns/page/2/" class="pagination-link">2</a>}
           {totalPages >= 3 && <a href="/breakdowns/page/3/" class="pagination-link">3</a>}
-          {totalPages > 1 && <a href="/breakdowns/page/2/" class="pagination-link">Next &rarr;</a>}
+          {totalPages > 1 && <a href="/breakdowns/page/2/" class="pagination-link next">Next &rarr;</a>}
         </nav>
-      </div>
-      <aside class="sidebar">
-        <div class="sidebar-section">
-          <h3>Recent Breakdowns</h3>
-          <div class="sidebar-list">
-            {breakdowns.slice(0, 3).map((breakdown, idx) => (
-              <div class="sidebar-item" style="margin-bottom:0.7em;">
-                <a href={`/breakdowns/${breakdown.id}/`}><span class="hash">#</span>{breakdown.data.title}</a>
-                {idx < 2 && <div class="sidebar-delim"></div>}
-              </div>
-            ))}
-          </div>
-        </div>
-      </aside>
+      )}
     </main>
     <Footer />
+
+    <style>
+      .intro-section {
+        padding: 4rem 0 3rem 0;
+        border-bottom: 1px solid var(--border-subtle);
+        margin-bottom: 3rem;
+      }
+
+      .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--fg-primary);
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.03em;
+      }
+
+      .page-subtitle {
+        font-size: 1.1rem;
+        color: var(--fg-secondary);
+        max-width: 600px;
+        margin: 0;
+      }
+
+      .posts-list {
+        display: flex;
+        flex-direction: column;
+        gap: 3rem;
+        margin-bottom: 5rem;
+        max-width: 1000px; /* Increased from 800px */
+      }
+
+      .post-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        transition: transform 0.2s ease;
+        width: 100%; /* Ensure full width */
+      }
+      
+      .post-meta-top {
+        font-size: 0.85rem;
+        color: var(--fg-muted);
+        font-family: var(--font-mono);
+      }
+
+      .post-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+      }
+
+      .post-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--fg-primary);
+        margin: 0;
+        line-height: 1.3;
+        transition: color 0.2s ease;
+      }
+
+      .post-link:hover .post-title {
+        color: var(--accent-link);
+        text-decoration: none;
+      }
+
+      .post-item:hover {
+        transform: translateY(-2px);
+      }
+
+      .post-summary {
+        font-size: 1rem;
+        color: var(--fg-secondary);
+        line-height: 1.6;
+        margin: 0.2rem 0 0.8rem 0;
+        max-width: 100%; /* Allow full width */
+        overflow-wrap: break-word;
+      }
+
+      .post-meta-bottom {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 0.85rem;
+        color: var(--fg-muted);
+        flex-wrap: wrap;
+      }
+
+      .author-name {
+        font-weight: 500;
+        color: var(--fg-secondary);
+      }
+
+      .tags-list {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .tag {
+        background: rgba(255, 255, 255, 0.5); /* Glassy */
+        backdrop-filter: blur(4px);
+        padding: 0.1rem 0.4rem;
+        border-radius: 4px;
+        color: var(--fg-secondary);
+        font-size: 0.8rem;
+        font-weight: 500;
+        border: 1px solid var(--border-subtle);
+      }
+
+      .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--border-subtle);
+      }
+
+      .pagination-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 36px;
+        height: 36px;
+        padding: 0 0.75rem;
+        border-radius: 6px;
+        background: transparent;
+        border: 1px solid var(--border-subtle);
+        color: var(--fg-secondary);
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+      }
+
+      .pagination-link:hover {
+        border-color: var(--fg-muted);
+        color: var(--fg-primary);
+        background: var(--bg-secondary);
+        text-decoration: none;
+      }
+
+      .pagination-link.active {
+        background: var(--fg-primary);
+        border-color: var(--fg-primary);
+        color: white;
+      }
+
+      .no-posts {
+        text-align: center;
+        padding: 4rem;
+        color: var(--fg-muted);
+        font-style: italic;
+      }
+
+      @media (max-width: 640px) {
+        .page-title {
+          font-size: 2rem;
+        }
+        
+        .intro-section {
+          padding: 3rem 0 2rem 0;
+          margin-bottom: 2rem;
+        }
+      }
+    </style>
   </body>
-</html> 
+</html>

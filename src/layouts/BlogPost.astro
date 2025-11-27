@@ -12,289 +12,303 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 ---
 
 <html lang="en">
-	<head>
-		<BaseHead title={title} description={description} />
-		<style>
-			body {
-				background: #f8fafc;
-				background-image: url("data:image/svg+xml,%3csvg width='32' height='32' viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cline x1='0' y1='32' x2='32' y2='0' stroke='rgba(0,0,0,0.04)' stroke-width='1'/%3e%3c/svg%3e");
-				background-repeat: repeat;
-				background-size: 32px 32px;
-				color: var(--drac-fg);
-			}
-			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
-			}
-			.hero-image {
-				width: 100%;
-			}
-			.hero-image img {
-				display: block;
-				margin: 0 auto;
-			}
-			.prose {
-				width: 1250px;
-				max-width: 100%;
-				margin: auto;
-				padding: 2.5rem 3rem 2.5rem 3rem;
-				color: var(--drac-fg);
-				font-size: 1.04rem;
-				line-height: 1.7;
-				background: #fff;
-				border-radius: 10px;
-			}
-			.toc-block {
-				background: #fafdff;
-				border: 1px dashed #e0e7ef;
-				border-radius: 7px;
-				padding: 0.7rem 0.8rem;
-				font-size: 0.93rem;
-				margin-bottom: 1.2rem;
-				color: #6b7280;
-			}
-			.toc-title {
-				font-weight: 500;
-				font-size: 0.99rem;
-				color: #8b5cf6;
-				margin-bottom: 0.4rem;
-				letter-spacing: 0.01em;
-			}
-			.toc-list {
-				list-style: none;
-				margin: 0;
-				padding: 0;
-			}
-			.toc-list li {
-				margin-bottom: 0.32em;
-			}
-			.toc-link {
-				color: #7c3aed;
-				text-decoration: none;
-				font-weight: 400;
-				transition: color 0.2s;
-			}
-			.toc-link:hover {
-				color: #5b21b6;
-				text-decoration: underline;
-			}
-			.prose h1, .title h1 {
-				color: var(--accent);
-				font-size: 2.1rem;
-			}
-			.prose h2, .prose h3 {
-				color: #111;
-				font-size: 1.4rem;
-				text-decoration: underline;
-				font-weight: 700;
-			}
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
-			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
-			}
-			.date {
-				margin-bottom: 0.5em;
-				color: var(--drac-comment);
-			}
-			.last-updated-on {
-				font-style: italic;
-				color: var(--drac-yellow);
-			}
-			code {
-				background: #23263a;
-				color: #f7f8fa;
-				border-radius: 4px;
-				padding: 0.18em 0.5em 0.15em 0.5em;
-				font-family: 'JetBrains Mono', 'Fira Mono', 'Consolas', 'Monaco', monospace;
-				font-size: 0.97em;
-				box-shadow: 0 1px 2px rgba(44,41,78,0.04);
-				border: 1px solid #23263a;
-			}
-			pre {
-				background: #23263a;
-				color: #f7f8fa;
-				border-radius: 8px;
-				padding: 1.2em 1.1em 1.1em 1.1em;
-				font-family: 'JetBrains Mono', 'Fira Mono', 'Consolas', 'Monaco', monospace;
-				font-size: 0.99em;
-				box-shadow: 0 2px 8px rgba(44,41,78,0.08);
-				border: 1.5px solid #23263a;
-				overflow-x: auto;
-			}
-			hr {
-				border: none;
-				border-top: 1px solid var(--drac-comment);
-				margin: 2em 0;
-			}
-			@media (max-width: 900px) {
-				.prose {
-					display: block;
-					padding: 1.5rem 0.5rem;
-				}
-				.toc {
-					display: none;
-				}
-			}
-			.author-box {
-				display: flex;
-				flex-direction: row;
-				align-items: center;
-				gap: 1em;
-				background: #f8fafc;
-				border: 1.5px solid #e5e7eb;
-				border-radius: 10px;
-				padding: 0.6em 1.3em 0.6em 1.1em;
-				margin: 1em auto 1em auto;
-				box-shadow: 0 2px 8px rgba(44,41,78,0.06);
-				max-width: 400px;
-				border-left: 4px solid #e22d30;
-			}
-			.author-label, .author-name {
-				text-align: left;
-			}
-			.author-avatar {
-				display: block;
-				margin: 0;
-				width: 36px;
-				height: 36px;
-				border-radius: 7px;
-				object-fit: cover;
-				border: 2px solid #e22d30;
-				background: #fff;
-				box-shadow: none;
-			}
-			.author-info {
-				display: flex;
-				flex-direction: column;
-				gap: 0.12em;
-				justify-content: center;
-				align-items: flex-start;
-			}
-			.author-bio {
-				color: #23263a;
-				font-size: 0.93rem;
-				font-weight: 500;
-				line-height: 1.3;
-			}
-			.author-extra {
-				display: block;
-				color: #888;
-				font-size: 0.85rem;
-				margin-top: 0.1em;
-				font-style: italic;
-			}
-			.author-tagline {
-				display: block;
-				color: #3b82f6;
-				font-size: 0.89rem;
-				margin-top: 0.12em;
-				font-weight: 600;
-				letter-spacing: 0.01em;
-				font-family: 'JetBrains Mono', 'Fira Mono', 'Consolas', 'Monaco', monospace;
-			}
-			@media (max-width: 900px) {
-				.author-box {
-					max-width: 98vw;
-					padding: 0.35em 0.7em 0.35em 0.7em;
-				}
-				.author-avatar {
-					width: 28px;
-					height: 28px;
-					border-radius: 5px;
-					border-width: 1.5px;
-				}
-			}
-			.backlink-row {
-				margin: 2.2em auto 0 auto;
-				text-align: center;
-			}
-			.backlink {
-				display: inline-block;
-				color: #e22d30;
-				font-size: 1.04rem;
-				font-weight: 500;
-				text-decoration: none;
-				border-bottom: 1.5px solid #e22d30;
-				padding-bottom: 1.5px;
-				transition: color 0.18s, border-color 0.18s;
-			}
-			.backlink:hover {
-				color: #b91c1c;
-				border-color: #b91c1c;
-			}
-		</style>
-	</head>
+  <head>
+    <BaseHead title={title} description={description} />
+  </head>
 
-	<body>
-		<Header />
-		<main>
-			<article>
-				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
-				</div>
-				<div class="prose">
-					<div class="title">
-						<div class="date">
-							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
-						</div>
-						<h1>{title}</h1>
-						{Astro.props.author && (
-							<div class="author-box">
-								<img class="author-avatar" src={`/img/team/${Astro.props.author.toLowerCase()}.jpg`} alt={Astro.props.author} />
-								<div class="author-info">
-									<span class="author-label">Authored by</span>
-									<div class="author-name">{Astro.props.author}</div>
-								</div>
-							</div>
-						)}
-						<hr />
-					</div>
-					<nav class="toc-block" id="toc-block" style="display:none">
-						<div class="toc-title">On this page</div>
-						<ul class="toc-list"></ul>
-					</nav>
-					<slot />
-				</div>
-				<div class="backlink-row">
-					<a href="/posts/" class="backlink">&larr; Back to all posts</a>
-				</div>
-			</article>
-		</main>
-		<Footer />
-	</body>
+  <body>
+    <Header />
+    <main class="container">
+      <article class="post-article">
+        <div class="post-header">
+          <div class="post-meta">
+            <FormattedDate date={pubDate} />
+            {updatedDate && (
+              <span class="updated-date">
+                (Updated: <FormattedDate date={updatedDate} />)
+              </span>
+            )}
+          </div>
+          <h1 class="post-title">{title}</h1>
+          {Astro.props.author && (
+            <div class="author-badge">
+              <img src={`/img/team/${Astro.props.author.toLowerCase()}.jpg`} alt={Astro.props.author} class="author-avatar" />
+              <span class="author-name">{Astro.props.author}</span>
+            </div>
+          )}
+        </div>
+
+        {heroImage && (
+          <div class="hero-image-container">
+            <Image width={1200} height={600} src={heroImage} alt="" class="hero-image" />
+          </div>
+        )}
+
+        <div class="content-wrapper">
+          <div class="inline-toc">
+            <details>
+              <summary>Table of Contents</summary>
+              <nav class="toc-nav">
+                <ul class="toc-list"></ul>
+              </nav>
+            </details>
+          </div>
+
+          <div class="prose">
+            <slot />
+          </div>
+        </div>
+
+        <div class="post-footer">
+          <a href="/posts/" class="back-link">&larr; Back to all posts</a>
+        </div>
+      </article>
+    </main>
+    <Footer />
+
+    <script>
+      // TOC Generation
+      const tocList = document.querySelector('.toc-list');
+      const content = document.querySelector('.prose');
+      
+      if (tocList && content) {
+        const headings = Array.from(content.querySelectorAll('h2, h3'));
+        
+        if (headings.length > 0) {
+          headings.forEach(h => {
+            if (!h.id) {
+              h.id = h.textContent?.toLowerCase().replace(/[^a-z0-9]+/g, '-') || '';
+            }
+            
+            const li = document.createElement('li');
+            li.className = `toc-item-${h.tagName.toLowerCase()}`;
+            
+            const a = document.createElement('a');
+            a.href = `#${h.id}`;
+            a.textContent = h.textContent;
+            a.className = 'toc-link';
+            
+            li.appendChild(a);
+            tocList.appendChild(li);
+          });
+        } else {
+          const tocContainer = document.querySelector('.inline-toc');
+          if (tocContainer) {
+            (tocContainer as HTMLElement).style.display = 'none';
+          }
+        }
+      }
+    </script>
+
+    <style>
+      .post-article {
+        padding: 4rem 0;
+      }
+
+      .post-header {
+        text-align: center;
+        max-width: 1000px;
+        margin: 0 auto 3rem auto;
+      }
+
+      .post-meta {
+        color: var(--fg-muted);
+        font-family: var(--font-mono);
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+      }
+
+      .updated-date {
+        margin-left: 0.5rem;
+        color: var(--fg-secondary);
+      }
+
+      .post-title {
+        font-size: 3.5rem;
+        margin-bottom: 1.5rem;
+        color: var(--fg-primary);
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+      }
+
+      .author-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 0.5rem 1rem;
+      }
+
+      .author-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1px solid var(--border-subtle);
+      }
+
+      .author-name {
+        font-weight: 500;
+        color: var(--fg-primary);
+        font-size: 0.95rem;
+      }
+
+      .hero-image-container {
+        margin: 0 auto 4rem auto;
+        max-width: 1400px;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid var(--border-subtle);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .hero-image {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .content-wrapper {
+        max-width: 1000px; /* Wide single column */
+        margin: 0 auto;
+      }
+
+      /* Inline TOC */
+      .inline-toc {
+        margin-bottom: 3rem;
+        border: 1px solid var(--border-subtle);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.4); /* More transparent */
+        backdrop-filter: blur(8px);
+      }
+
+      .inline-toc details {
+        padding: 1rem;
+      }
+
+      .inline-toc summary {
+        cursor: pointer;
+        font-weight: 600;
+        color: var(--fg-primary);
+        list-style: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .inline-toc summary::before {
+        content: '►';
+        font-size: 0.8em;
+        transition: transform 0.2s;
+      }
+
+      .inline-toc details[open] summary::before {
+        transform: rotate(90deg);
+      }
+
+      .toc-nav {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-subtle);
+      }
+
+      .toc-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .toc-link {
+        color: var(--fg-secondary);
+        font-size: 0.95rem;
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+
+      .toc-link:hover {
+        color: var(--accent-link);
+        text-decoration: underline;
+      }
+
+      .toc-item-h3 {
+        padding-left: 1.5rem;
+        font-size: 0.9rem;
+      }
+
+      .prose {
+        font-size: 1rem; /* Reduced to match listing (16px) */
+        line-height: 1.75;
+        color: var(--fg-primary);
+        min-width: 0;
+        max-width: 1000px; /* Limit prose width for readability within the wide container */
+      }
+
+      /* Prose Specific Overrides */
+      .prose h2 {
+        font-size: 2rem;
+        margin-top: 3.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--border-subtle);
+        color: var(--fg-primary);
+      }
+
+      .prose h3 {
+        font-size: 1.5rem;
+        margin-top: 2.5rem;
+        color: var(--fg-primary);
+      }
+
+      .prose ul, .prose ol {
+        margin-bottom: 1.5rem;
+        padding-left: 1.5rem;
+        color: var(--fg-secondary);
+      }
+
+      .prose li {
+        margin-bottom: 0.5rem;
+      }
+
+      .prose strong {
+        color: var(--fg-primary);
+        font-weight: 600;
+      }
+
+      .post-footer {
+        margin-top: 5rem;
+        text-align: center;
+        padding-top: 3rem;
+        border-top: 1px solid var(--border-subtle);
+      }
+
+      .back-link {
+        display: inline-block;
+        padding: 0.8rem 1.5rem;
+        border: 1px solid var(--border-subtle);
+        border-radius: 8px;
+        color: var(--fg-secondary);
+        font-weight: 500;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        background: rgba(255, 255, 255, 0.5); /* Glassy */
+        backdrop-filter: blur(4px);
+      }
+
+      .back-link:hover {
+        border-color: var(--fg-muted);
+        color: var(--fg-primary);
+        transform: translateY(-2px);
+      }
+
+      @media (max-width: 768px) {
+        .post-title {
+          font-size: 2.5rem;
+        }
+        
+        .prose {
+          font-size: 1.1rem;
+        }
+      }
+    </style>
+  </body>
 </html>
-<script type="module">
-  const toc = document.getElementById('toc-block');
-  const tocList = toc?.querySelector('.toc-list');
-  const content = document.querySelector('.prose');
-  if (tocList && content) {
-    const headings = Array.from(content.querySelectorAll('h2, h3'));
-    if (headings.length > 0) {
-      toc.style.display = '';
-      headings.forEach(h => {
-        if (!h.id) h.id = h.textContent.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-        const li = document.createElement('li');
-        li.style.marginLeft = h.tagName === 'H3' ? '1.2em' : '0';
-        const a = document.createElement('a');
-        a.href = `#${h.id}`;
-        a.className = 'toc-link';
-        a.textContent = h.textContent;
-        li.appendChild(a);
-        tocList.appendChild(li);
-      });
-    }
-  }
-</script>

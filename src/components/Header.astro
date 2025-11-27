@@ -5,123 +5,149 @@ const navLinks = [
   { href: 'https://www.pwnfuzz.com', label: 'About', external: true },
 ];
 ---
+
 <header class="site-header" id="siteHeader">
-  <head>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&display=swap" rel="stylesheet">
-  </head>
-  <div class="header-inner">
-    <a href="/" class="site-logo"><span class="logo-prompt">&gt;</span> <span class="logo-mono">PwnFuzz</span><span> Labs</span></a>
+  <div class="header-inner container">
+    <a href="/" class="site-logo">
+      <span class="logo-text">PwnFuzz</span>
+      <span class="logo-suffix">Labs</span>
+    </a>
     <nav class="main-nav">
       <ul>
         {navLinks.map(link => (
-          <li><a href={link.href} class={Astro.url.pathname.startsWith(link.href) && link.href !== '/' ? 'active' : (Astro.url.pathname === link.href ? 'active' : '')} target={link.external ? '_blank' : undefined} rel={link.external ? 'noopener' : undefined}>{link.label}</a></li>
+          <li>
+            <a 
+              href={link.href} 
+              class={Astro.url.pathname.startsWith(link.href) && link.href !== '/' ? 'active' : (Astro.url.pathname === link.href ? 'active' : '')} 
+              target={link.external ? '_blank' : undefined} 
+              rel={link.external ? 'noopener' : undefined}
+            >
+              {link.label}
+            </a>
+          </li>
         ))}
       </ul>
     </nav>
   </div>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@600;700&display=swap');
-    .site-header {
-      font-family: 'Inter', sans-serif;
-      background: var(--drac-bg-alt);
-      box-shadow: 0 2px 8px rgba(40,42,54,0.10);
-      border-bottom: 2px solid var(--drac-selection);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .header-inner {
-      max-width: 1550px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.7rem 1.5rem;
-    }
-    .site-logo {
-      font-weight: 700;
-      font-size: 1.4rem;
-      color: var(--drac-pink);
-      letter-spacing: 1px;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 0.2em;
-    }
-    .logo-prompt {
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--accent);
-      font-size: 1.3rem;
-      font-weight: 700;
-      margin-right: 0.1em;
-      user-select: none;
-    }
-    .logo-mono {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 1.35rem;
-      color: var(--drac-pink);
-      font-weight: 700;
-      letter-spacing: 0.5px;
-    }
-    .site-logo span {
-      font-weight: 600;
-      color: var(--drac-fg);
-    }
-    .main-nav ul {
-      display: flex;
-      gap: 2rem;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-    .main-nav a {
-      color: var(--drac-cyan);
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 1rem;
-      padding-bottom: 2px;
-      border-bottom: 2px solid transparent;
-      transition: border 0.2s, color 0.2s;
-    }
-    .main-nav a.active {
-      color: var(--accent);
-      border-bottom: 2px solid var(--accent);
-    }
-    @media (max-width: 700px) {
-      .header-inner {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 0.7rem 1rem;
-      }
-      .main-nav ul {
-        gap: 1.2rem;
-        flex-wrap: wrap;
-      }
-      .site-logo {
-        margin-bottom: 0.5rem;
-      }
-    }
-    .site-header.hide-on-scroll {
-      transform: translateY(-100%);
-      transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
-    }
-    .site-header {
-      transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
-    }
-  </style>
-  <script is:inline>
-    function onScroll() {
-      const header = document.getElementById('siteHeader');
-      if (window.scrollY === 0) {
-        header.classList.remove('hide-on-scroll');
-      } else {
-        header.classList.add('hide-on-scroll');
-      }
-    }
-    window.addEventListener('scroll', onScroll);
-    // Run once on load in case not at top
-    onScroll();
-  </script>
 </header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.7); /* Light Glassy */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.6); /* Subtle border */
+    transition: transform 0.3s ease;
+  }
+
+  .site-header.hide {
+    transform: translateY(-100%);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+  }
+
+  .site-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--fg-primary);
+    text-decoration: none;
+    letter-spacing: -0.03em;
+  }
+
+  .logo-text {
+    color: var(--fg-primary); /* Clean dark text */
+  }
+
+  .logo-suffix {
+    color: var(--fg-muted);
+    font-size: 0.9em;
+    font-weight: 500;
+  }
+
+  .main-nav ul {
+    display: flex;
+    gap: 0.5rem; /* Reduced gap for pill spacing */
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .main-nav a {
+    color: var(--fg-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 20px; /* Pill shape */
+    transition: all 0.2s ease;
+    text-decoration: none;
+    border: none;
+  }
+
+  .main-nav a:hover {
+    color: var(--fg-primary);
+    background: rgba(0, 0, 0, 0.05); /* Subtle hover bg */
+  }
+
+  .main-nav a.active {
+    color: var(--fg-primary);
+    background: rgba(0, 0, 0, 0.08); /* Active pill */
+    font-weight: 600;
+  }
+
+  /* Remove old underline styles */
+  .main-nav a.active::after {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .header-inner {
+      flex-direction: column;
+      height: auto;
+      padding: 1rem;
+      gap: 1rem;
+    }
+    
+    .main-nav ul {
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
+</style>
+
+<script>
+  let lastScroll = 0;
+  const header = document.getElementById('siteHeader');
+
+  window.addEventListener('scroll', () => {
+    const currentScroll = window.scrollY;
+    
+    if (currentScroll <= 0) {
+      header?.classList.remove('hide');
+      return;
+    }
+
+    if (currentScroll > lastScroll && currentScroll > 80) {
+      // Scrolling down
+      header?.classList.add('hide');
+    } else {
+      // Scrolling up
+      header?.classList.remove('hide');
+    }
+    
+    lastScroll = currentScroll;
+  });
+</script>
