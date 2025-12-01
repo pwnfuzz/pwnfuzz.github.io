@@ -115,8 +115,28 @@ const totalPages = Math.ceil(breakdowns.length / BREAKDOWNS_PER_PAGE);
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
-        transition: transform 0.2s ease;
-        width: 100%; /* Ensure full width */
+        padding: 2rem 0;
+        border-bottom: 1px solid var(--border-subtle);
+        transition: all 0.3s ease;
+        width: 100%;
+        position: relative;
+      }
+
+      .post-item:last-child {
+        border-bottom: none;
+      }
+
+      .post-item::before {
+        content: '';
+        position: absolute;
+        left: -1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 0;
+        background: var(--accent-primary);
+        transition: height 0.3s ease;
+        border-radius: 2px;
       }
       
       .post-meta-top {
@@ -146,14 +166,20 @@ const totalPages = Math.ceil(breakdowns.length / BREAKDOWNS_PER_PAGE);
       }
 
       .post-item:hover {
-        transform: translateY(-2px);
+        transform: translateX(8px);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .post-item:hover::before {
+        height: 60%;
       }
 
       .post-summary {
         font-size: 1rem;
         color: var(--fg-secondary);
-        line-height: 1.6;
+        line-height: 1.7;
         margin: 0.2rem 0 0.8rem 0;
+        letter-spacing: 0.01em;
         max-width: 100%; /* Allow full width */
         overflow-wrap: break-word;
       }
@@ -179,14 +205,20 @@ const totalPages = Math.ceil(breakdowns.length / BREAKDOWNS_PER_PAGE);
       }
 
       .tag {
-        background: rgba(255, 255, 255, 0.5); /* Glassy */
+        background: rgba(255, 255, 255, 0.5);
         backdrop-filter: blur(4px);
-        padding: 0.1rem 0.4rem;
-        border-radius: 4px;
+        padding: 0.25rem 0.6rem;
+        border-radius: 12px;
         color: var(--fg-secondary);
         font-size: 0.8rem;
         font-weight: 500;
+        transition: all 0.2s ease;
         border: 1px solid var(--border-subtle);
+      }
+
+      .tag:hover {
+        transform: scale(1.05);
+        background: rgba(0, 0, 0, 0.05);
       }
 
       .pagination {

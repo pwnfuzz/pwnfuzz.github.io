@@ -17,6 +17,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
   </head>
 
   <body>
+    <div class="reading-progress" id="readingProgress"></div>
     <Header />
     <main class="container">
       <article class="post-article">
@@ -100,7 +101,34 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
       }
     </script>
 
+    <script>
+      // Reading Progress Indicator
+      const progressBar = document.getElementById('readingProgress');
+      
+      window.addEventListener('scroll', () => {
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
+        const scrollTop = window.scrollY;
+        const scrollPercent = (scrollTop / (documentHeight - windowHeight)) * 100;
+        
+        if (progressBar) {
+          progressBar.style.width = `${Math.min(scrollPercent, 100)}%`;
+        }
+      });
+    </script>
+
     <style>
+      .reading-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+        z-index: 1001;
+        transition: width 0.1s ease;
+        width: 0;
+      }
+
       .post-article {
         padding: 4rem 0;
       }

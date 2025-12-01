@@ -52,8 +52,9 @@
 }
 
 html {
-  background-color: transparent;
-  /* Ensure html doesn't block body::before */
+  background-color: #ffffff;
+  /* White base for pseudo-elements */
+  scroll-behavior: smooth;
 }
 
 body {
@@ -61,18 +62,30 @@ body {
   padding: 0;
   font-family: var(--font-sans);
   background-color: transparent;
+  /* Transparent to show html background and pseudo-elements */
   color: var(--fg-primary);
   line-height: 1.6;
   font-size: 16px;
-  /* Standard readable size */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   position: relative;
   min-height: 100vh;
   overflow-x: hidden;
 }
 
-/* Robust Animated Background */
+/* Focus states for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+a:focus-visible {
+  outline-color: var(--accent-link);
+}
+
+/* Subtle Animated Dot Grid Background */
 body::before {
   content: '';
   position: fixed;
@@ -81,47 +94,49 @@ body::before {
   width: 100%;
   height: 100%;
   z-index: -1;
-  background:
-    radial-gradient(circle at 15% 50%, rgba(241, 245, 249, 0.8), transparent 25%),
-    radial-gradient(circle at 85% 30%, rgba(226, 232, 240, 0.8), transparent 25%);
   background-color: #ffffff;
-  /* Fallback/Base */
-  filter: blur(40px);
-  animation: backgroundMove 15s ease-in-out infinite alternate;
+  background-image:
+    radial-gradient(circle, rgba(148, 163, 184, 0.15) 1px, transparent 1px);
+  background-size: 30px 30px;
+  animation: dotPulse 8s ease-in-out infinite;
+  pointer-events: none;
 }
 
-/* Floating Orbs for extra dynamic feel */
+/* Animated overlay for depth */
 body::after {
   content: '';
   position: fixed;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  z-index: -2;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
   background:
-    radial-gradient(circle at 50% 50%, rgba(203, 213, 225, 0.15), transparent 40%),
-    radial-gradient(circle at 80% 20%, rgba(148, 163, 184, 0.1), transparent 30%);
-  animation: orbFloat 30s linear infinite;
+    radial-gradient(circle at 20% 30%, rgba(241, 245, 249, 0.4), transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(226, 232, 240, 0.3), transparent 50%);
+  animation: overlayFloat 15s ease-in-out infinite alternate;
+  pointer-events: none;
 }
 
-@keyframes backgroundMove {
+@keyframes dotPulse {
+
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes overlayFloat {
   0% {
-    transform: scale(1);
+    transform: translate(0, 0);
   }
 
   100% {
-    transform: scale(1.05);
-  }
-}
-
-@keyframes orbFloat {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
+    transform: translate(20px, -20px);
   }
 }
 
@@ -197,24 +212,21 @@ a:hover {
 code {
   font-family: var(--font-mono);
   font-size: 0.85em;
-  background: #f1f5f9;
+  background: #f8fafc;
   padding: 0.2em 0.4em;
   border-radius: 4px;
-  color: #0f172a;
-  border: 1px solid #e2e8f0;
 }
 
 pre {
-  background: #0f172a;
-  /* Dark background */
+  background: #f8fafc !important;
+  /* Light professional background - override Shiki */
   padding: 3rem 1.5rem 1.5rem 1.5rem;
-  /* Top padding for window controls */
   border-radius: 12px;
   overflow-x: auto;
   margin: 2rem 0;
-  border: 1px solid #1e293b;
+  border: 1px solid #e2e8f0 !important;
   position: relative;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
 }
 
 /* Window Controls (Red, Yellow, Green dots) */
@@ -227,28 +239,45 @@ pre::before {
   height: 12px;
   border-radius: 50%;
   background: #ff5f56;
-  /* Red */
   box-shadow: 20px 0 0 #ffbd2e, 40px 0 0 #27c93f;
-  /* Yellow, Green */
 }
 
 pre code {
-  background: none;
+  background: none !important;
   padding: 0;
-  color: #e2e8f0;
   border: none;
   font-size: 0.85em;
-  /* Crisp small size */
   line-height: 1.7;
 }
 
+/* Let Shiki handle syntax highlighting colors - just ensure they work on light bg */
+
 /* Blockquotes */
 blockquote {
-  border-left: 3px solid #cbd5e1;
-  margin: 1.5rem 0;
-  padding-left: 1.25rem;
-  color: var(--fg-muted);
+  border-left: 4px solid var(--accent-primary);
+  margin: 2rem 0;
+  padding: 1rem 1.5rem;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 0 8px 8px 0;
+  color: var(--fg-secondary);
   font-style: italic;
+  position: relative;
+}
+
+blockquote::before {
+  content: '"';
+  position: absolute;
+  top: -0.5rem;
+  left: 1rem;
+  font-size: 3rem;
+  color: var(--border-subtle);
+  font-family: Georgia, serif;
+  line-height: 1;
+}
+
+blockquote p {
+  margin: 0;
+  padding-left: 1.5rem;
 }
 
 /* Images */
