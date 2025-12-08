@@ -27,7 +27,22 @@ const navLinks = [
           </li>
         ))}
       </ul>
-    </nav>
+    <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+      <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      </svg>
+      <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+    </button>
   </div>
 </header>
 
@@ -37,11 +52,11 @@ const navLinks = [
     top: 0;
     z-index: 1000;
     width: 100%;
-    background: rgba(255, 255, 255, 0.7); /* Light Glassy */
+    background: var(--bg-header); /* Use variable for theme support */
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(226, 232, 240, 0.6); /* Subtle border */
-    transition: transform 0.3s ease;
+    border-bottom: 1px solid var(--border-subtle); /* Use variable */
+    transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
   }
 
   .site-header.hide {
@@ -68,7 +83,7 @@ const navLinks = [
   }
 
   .logo-text {
-    color: var(--fg-primary); /* Clean dark text */
+    color: var(--fg-primary);
   }
 
   .logo-suffix {
@@ -77,9 +92,15 @@ const navLinks = [
     font-weight: 500;
   }
 
+  .main-nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
   .main-nav ul {
     display: flex;
-    gap: 0.5rem; /* Reduced gap for pill spacing */
+    gap: 0.5rem;
     list-style: none;
     margin: 0;
     padding: 0;
@@ -90,25 +111,71 @@ const navLinks = [
     font-size: 0.9rem;
     font-weight: 500;
     padding: 0.5rem 1rem;
-    border-radius: 20px; /* Pill shape */
-    transition: all 0.2s ease;
+    border-radius: 20px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-decoration: none;
     border: none;
+    position: relative;
+  }
+
+  .main-nav a::after {
+    display: none; /* Disable the global link underline */
   }
 
   .main-nav a:hover {
     color: var(--fg-primary);
-    background: rgba(0, 0, 0, 0.05); /* Subtle hover bg */
+    background: var(--bg-card-hover);
+    transform: translateY(-1px);
   }
 
   .main-nav a.active {
-    color: var(--fg-primary);
-    background: rgba(0, 0, 0, 0.08); /* Active pill */
+    color: var(--accent-primary);
+    background: rgba(255, 158, 100, 0.12);
     font-weight: 600;
   }
 
   /* Remove old underline styles */
   .main-nav a.active::after {
+    display: none;
+  }
+
+  /* Theme Toggle */
+  .theme-toggle {
+    background: none;
+    border: 1px solid var(--border-subtle);
+    cursor: pointer;
+    color: var(--fg-secondary);
+    padding: 0.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-left: 0.5rem;
+  }
+
+  .theme-toggle:hover {
+    color: var(--accent-primary);
+    background-color: var(--bg-card-hover);
+    border-color: var(--accent-primary);
+    transform: scale(1.1);
+    box-shadow: 0 0 12px rgba(255, 158, 100, 0.3);
+  }
+
+  .sun-icon {
+    display: none;
+  }
+
+  .moon-icon {
+    display: block;
+  }
+
+  /* Show sun icon in dark mode */
+  :global([data-theme="dark"]) .sun-icon {
+    display: block;
+  }
+
+  :global([data-theme="dark"]) .moon-icon {
     display: none;
   }
 
@@ -120,6 +187,12 @@ const navLinks = [
       gap: 1rem;
     }
     
+    .main-nav {
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+    }
+
     .main-nav ul {
       gap: 0.5rem;
       flex-wrap: wrap;
@@ -128,7 +201,46 @@ const navLinks = [
   }
 </style>
 
+<script is:inline>
+  // Initialize theme immediately to prevent flash
+  const theme = (() => {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+      return localStorage.getItem('theme');
+    }
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  })();
+
+  if (theme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+  }
+
+  window.localStorage.setItem('theme', theme);
+</script>
+
 <script>
+  // Toggle Logic
+  const handleToggleClick = () => {
+    const element = document.documentElement;
+    const currentTheme = element.getAttribute('data-theme');
+    const isDark = currentTheme === 'dark';
+
+    if (isDark) {
+      element.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'light');
+    } else {
+      element.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+    }
+  };
+
+  document.getElementById('themeToggle')?.addEventListener('click', handleToggleClick);
+
+  // Header Scroll Logic
   let lastScroll = 0;
   const header = document.getElementById('siteHeader');
 

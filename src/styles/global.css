@@ -43,6 +43,54 @@
   /* Typography */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+
+  /* Header Background Variable */
+  --bg-header: rgba(255, 255, 255, 0.7);
+
+  /* Code Block Background Variable - Always Dark for GitHub Dark Theme */
+  --bg-code: #0d1117;
+}
+
+/* Dark Theme Variables - Warm, Inviting Palette */
+[data-theme="dark"] {
+  --bg-main: #1a1b26;
+  /* Warmer dark background */
+  --bg-secondary: #24283b;
+  /* Slightly lighter for depth */
+  --bg-card: #1f2335;
+  --bg-card-hover: #292e42;
+  /* Subtle hover state */
+
+  --fg-primary: #c0caf5;
+  /* Softer white with blue tint */
+  --fg-secondary: #a9b1d6;
+  /* Medium gray-blue */
+  --fg-muted: #565f89;
+  /* Muted accent */
+
+  --accent-primary: #ff9e64;
+  /* Warm orange */
+  --accent-secondary: #e0af68;
+  /* Golden amber */
+  --accent-link: #73daca;
+  /* Soft teal/cyan for links */
+
+  --border-subtle: #2a2f44;
+  /* Subtle border */
+  --border-active: #3b4261;
+  /* Active border */
+
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 12px 0 rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 10px 24px 0 rgb(0 0 0 / 0.5);
+  --shadow-glow: 0 0 20px rgba(255, 158, 100, 0.15);
+  /* Warm orange glow */
+
+  --bg-header: rgba(26, 27, 38, 0.85);
+  /* Dark glassy */
+
+  --bg-code: #1f2335;
+  /* Distinct code block background */
 }
 
 *,
@@ -52,8 +100,7 @@
 }
 
 html {
-  background-color: #ffffff;
-  /* White base for pseudo-elements */
+  background-color: transparent;
   scroll-behavior: smooth;
 }
 
@@ -62,7 +109,6 @@ body {
   padding: 0;
   font-family: var(--font-sans);
   background-color: transparent;
-  /* Transparent to show html background and pseudo-elements */
   color: var(--fg-primary);
   line-height: 1.6;
   font-size: 16px;
@@ -72,6 +118,7 @@ body {
   position: relative;
   min-height: 100vh;
   overflow-x: hidden;
+  transition: color 0.3s ease, background-color 0.3s ease;
 }
 
 /* Focus states for accessibility */
@@ -85,7 +132,7 @@ a:focus-visible {
   outline-color: var(--accent-link);
 }
 
-/* Subtle Animated Dot Grid Background */
+/* Sophisticated Network Pattern Background - Light Theme Only */
 body::before {
   content: '';
   position: fixed;
@@ -93,16 +140,20 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: -1;
-  background-color: #ffffff;
-  background-image:
-    radial-gradient(circle, rgba(148, 163, 184, 0.15) 1px, transparent 1px);
-  background-size: 30px 30px;
-  animation: dotPulse 8s ease-in-out infinite;
+  z-index: -2;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(226, 232, 240, 0.3), transparent 20%),
+    radial-gradient(circle at 85% 80%, rgba(203, 213, 225, 0.3), transparent 20%),
+    radial-gradient(circle at 50% 50%, rgba(241, 245, 249, 0.2), transparent 25%),
+    radial-gradient(circle at 30% 70%, rgba(226, 232, 240, 0.25), transparent 18%),
+    radial-gradient(circle at 70% 30%, rgba(203, 213, 225, 0.25), transparent 18%);
+  background-color: #fafbfc;
+  animation: networkPulse 15s ease-in-out infinite;
   pointer-events: none;
+  transition: opacity 0.5s ease;
 }
 
-/* Animated overlay for depth */
+/* Floating overlay with subtle movement - Light Theme Only */
 body::after {
   content: '';
   position: fixed;
@@ -112,31 +163,52 @@ body::after {
   height: 100%;
   z-index: -1;
   background:
-    radial-gradient(circle at 20% 30%, rgba(241, 245, 249, 0.4), transparent 50%),
-    radial-gradient(circle at 80% 70%, rgba(226, 232, 240, 0.3), transparent 50%);
-  animation: overlayFloat 15s ease-in-out infinite alternate;
+    linear-gradient(135deg, transparent 0%, rgba(248, 250, 252, 0.5) 50%, transparent 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 20s ease infinite;
   pointer-events: none;
+  transition: opacity 0.5s ease;
 }
 
-@keyframes dotPulse {
+/* Dark Theme Background Overrides - Solid Clean Background */
+[data-theme="dark"] body::before {
+  background: none;
+  background-color: #0d1117;
+  /* Solid GitHub Dark Background */
+  animation: none;
+}
+
+[data-theme="dark"] body::after {
+  background: none;
+  opacity: 0;
+  animation: none;
+}
+
+@keyframes networkPulse {
 
   0%,
   100% {
-    opacity: 0.6;
+    opacity: 1;
+    transform: scale(1);
   }
 
   50% {
-    opacity: 0.3;
+    opacity: 0.8;
+    transform: scale(1.02);
   }
 }
 
-@keyframes overlayFloat {
+@keyframes gradientShift {
   0% {
-    transform: translate(0, 0);
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
   }
 
   100% {
-    transform: translate(20px, -20px);
+    background-position: 0% 50%;
   }
 }
 
@@ -198,33 +270,67 @@ a {
   color: var(--accent-link);
   text-decoration: none;
   font-weight: 500;
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.15s ease;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--accent-link);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 a:hover {
-  color: #000;
-  text-decoration: none;
-  border-bottom-color: #000;
+  color: var(--accent-primary);
+  transform: translateY(-1px);
+}
+
+a:hover::after {
+  width: 100%;
+}
+
+[data-theme="dark"] a:hover {
+  color: var(--accent-link);
+  text-shadow: 0 0 8px rgba(115, 218, 202, 0.3);
 }
 
 /* Code Blocks - Mac Style */
 code {
   font-family: var(--font-mono);
   font-size: 0.85em;
-  background: #f8fafc;
   padding: 0.2em 0.4em;
   border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+}
+
+/* Light theme inline code */
+:root:not([data-theme="dark"]) code {
+  background: #f6f8fa;
+  color: #24292f;
+  border-color: #d0d7de;
+}
+
+/* Dark theme inline code */
+[data-theme="dark"] code {
+  background: var(--bg-code);
+  color: var(--fg-primary);
+  border-color: var(--border-subtle);
 }
 
 pre {
-  background: #f8fafc !important;
-  /* Light professional background - override Shiki */
+  background: var(--bg-code) !important;
+  /* Use variable for theme support */
   padding: 3rem 1.5rem 1.5rem 1.5rem;
   border-radius: 12px;
   overflow-x: auto;
   margin: 2rem 0;
-  border: 1px solid #e2e8f0 !important;
+  border: 1px solid var(--border-subtle) !important;
   position: relative;
   box-shadow: var(--shadow-md);
 }

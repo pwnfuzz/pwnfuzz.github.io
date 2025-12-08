@@ -6,7 +6,7 @@ export default defineConfig({
   site: 'https://pwnfuzz.github.io',
   markdown: {
     shikiConfig: {
-      theme: 'github-light', // Use GitHub's light theme for syntax highlighting
+      theme: 'github-dark',
       wrap: true,
     },
   },
