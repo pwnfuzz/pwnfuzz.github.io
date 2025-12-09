@@ -16,10 +16,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
 const { title, description, image } = Astro.props;
 
-// Use custom OG image from public folder, or provided image, or fallback
+// Generate dynamic OG image URL with title as parameter, or use provided image
 const ogImageUrl = image 
   ? new URL(image.src, Astro.url) 
-  : new URL('/og-image.png', Astro.url);
+  : new URL(`/og/image.png?title=${encodeURIComponent(title)}`, Astro.url);
 ---
 
 <!-- Global Metadata -->
