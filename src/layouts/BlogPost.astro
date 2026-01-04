@@ -115,7 +115,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
       const desktopTocList = document.querySelector('.toc-list-desktop');
       
       if (content) {
-        const headings = Array.from(content.querySelectorAll('h2, h3'));
+        const headings = Array.from(content.querySelectorAll('h1, h2, h3'));
         
         if (headings.length > 0) {
           headings.forEach(h => {
