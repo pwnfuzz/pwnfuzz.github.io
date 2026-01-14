@@ -2,6 +2,7 @@
 import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
+import GlobalCanvas from '../../components/GlobalCanvas.astro';
 import { SITE_TITLE } from '../../consts';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import FormattedDate from '../../components/FormattedDate.astro';
@@ -216,6 +217,7 @@ const allTags = Array.from(new Set(posts.flatMap(post => post.data.tags || [])))
     </style>
   </head>
   <body>
+    <GlobalCanvas />
     <Header />
     <main>
       <div class="main-content">

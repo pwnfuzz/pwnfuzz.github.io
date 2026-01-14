@@ -2,6 +2,7 @@
 import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
+import GlobalCanvas from '../../components/GlobalCanvas.astro';
 import { SITE_TITLE } from '../../consts';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import FormattedDate from '../../components/FormattedDate.astro';
@@ -32,6 +33,7 @@ const totalPages = Math.ceil(breakdowns.length / BREAKDOWNS_PER_PAGE);
     <BaseHead title={`1Day Breakdowns | ${SITE_TITLE}`} description="Quick technical breakdowns and analyses of recent 1Day vulnerabilities and exploits." />
   </head>
   <body>
+    <GlobalCanvas />
     <Header />
     <main class="container">
       <section class="intro-section animate-fade-in">
