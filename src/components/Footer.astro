@@ -5,75 +5,119 @@ const today = new Date();
 <footer class="site-footer">
   <div class="container footer-inner">
     <div class="footer-brand">
-      <span class="brand-text">PwnFuzz Labs</span>
-      <p class="copyright">
-        &copy; {today.getFullYear()} All rights reserved.
+      <div class="footer-logo">
+        <span class="logo-text">pwnfuzz</span>
+        <span class="logo-suffix">labs</span>
+      </div>
+      <p class="brand-sub">
+        &copy; {today.getFullYear()} PWNFUZZ LABS. <br/>
+        FORENSIC LEDGER METHODOLOGY. <br/>
+        ALL RIGHTS RESERVED.
       </p>
     </div>
     
-    <div class="footer-links">
-      <a href="https://twitter.com/pwnfuzz" target="_blank" rel="noopener noreferrer">
-        Twitter
-      </a>
-      <a href="https://github.com/pwnfuzz" target="_blank" rel="noopener noreferrer">
-        GitHub
-      </a>
-      <a href="/rss.xml">
-        RSS
-      </a>
+    <div class="footer-columns">
+      <div class="footer-col">
+        <h5 class="col-title">LEGAL</h5>
+        <ul class="footer-links">
+          <li><a href="/privacy/">Security Policy</a></li>
+          <li><a href="/pgp/">PGP Key</a></li>
+          <li><a href="/legal/">Legal Disclaimer</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-col">
+        <h5 class="col-title">CONNECT</h5>
+        <ul class="footer-links">
+          <li><a href="https://twitter.com/pwnfuzz" target="_blank">X / Twitter</a></li>
+          <li><a href="https://github.com/pwnfuzz" target="_blank">GitHub</a></li>
+          <li><a href="/rss.xml">RSS Feed</a></li>
+        </ul>
+      </div>
     </div>
   </div>
 </footer>
 
 <style>
   footer {
-    padding: 2em 1em 6em 1em;
-    background: transparent; /* Transparent to show global background */
-    color: var(--fg-secondary);
-    text-align: center;
-    border-top: 1px solid var(--border-subtle);
-    margin-top: 4rem;
-  }
-  .social-links {
-    display: flex;
-    justify-content: center;
-    gap: 1em;
-    margin-top: 1em;
-  }
-  .social-links a {
-    text-decoration: none;
-    color: var(--fg-secondary);
-  }
-  .social-links a:hover {
-    color: var(--fg-primary);
+    padding: 8rem 0 4rem 0;
+    background: var(--surface);
+    color: var(--on-surface-variant);
+    border-top: 1px solid var(--surface-low);
+    margin-top: 8rem;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
   }
 
-  .copyright {
-    margin: 0;
-    font-size: 0.9rem;
-    color: var(--fg-muted);
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--primary-accent);
+    margin-bottom: 1.5rem;
+  }
+
+  .logo-suffix {
+    color: var(--on-surface);
+  }
+
+  .brand-sub {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    line-height: 1.8;
+    color: var(--on-surface-muted);
+    letter-spacing: 0.05em;
+  }
+
+  .footer-columns {
+    display: flex;
+    gap: 6rem;
+  }
+
+  .col-title {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--on-surface);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.1em;
   }
 
   .footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
     display: flex;
-    gap: 1.5rem;
+    flex-direction: column;
+    gap: 0.75rem;
   }
 
   .footer-links a {
-    color: var(--fg-secondary);
-    font-size: 0.95rem;
+    color: var(--on-surface-variant);
+    font-size: 0.85rem;
     transition: color 0.2s ease;
   }
 
   .footer-links a:hover {
-    color: var(--accent-primary);
+    color: var(--primary-accent);
   }
 
-  @media (max-width: 600px) {
+  @media (max-width: 768px) {
     .footer-inner {
       flex-direction: column;
-      align-items: flex-start;
-      gap: 2rem;
+      gap: 4rem;
+    }
+    
+    .footer-columns {
+      gap: 4rem;
     }
   }
 </style>

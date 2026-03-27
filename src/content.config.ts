@@ -15,6 +15,9 @@ const blog = defineCollection({
 		tags: z.array(z.string()).optional(),
 		author: z.string().optional(),
 		summary: z.string().optional(),
+		cve: z.string().optional(),
+		cvss: z.number().optional(),
+		severity: z.string().optional(), // e.g. "CRITICAL", "HIGH"
 	}),
 });
 
@@ -30,6 +33,9 @@ const breakdowns = defineCollection({
 		tags: z.array(z.string()).optional(),
 		author: z.string().optional(),
 		summary: z.string().optional(),
+		cve: z.string().optional(),
+		cvss: z.number().optional(),
+		severity: z.string().optional(),
 	}),
 });
 

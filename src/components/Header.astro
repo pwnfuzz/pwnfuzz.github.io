@@ -1,16 +1,15 @@
 ---
 const navLinks = [
-  { href: '/', label: 'Home' },
-  { href: '/breakdowns/', label: '1Day Breakdowns' },
-  { href: 'https://www.pwnfuzz.com', label: 'About', external: true },
+  { href: '/', label: 'Research' },
+  { href: '/breakdowns/', label: 'Breakdowns' },
 ];
 ---
 
 <header class="site-header" id="siteHeader">
   <div class="header-inner container">
     <a href="/" class="site-logo">
-      <span class="logo-text">PwnFuzz</span>
-      <span class="logo-suffix">Labs</span>
+      <span class="logo-text">pwnfuzz</span>
+      <span class="logo-suffix">labs</span>
     </a>
     <nav class="main-nav">
       <ul>
@@ -18,31 +17,25 @@ const navLinks = [
           <li>
             <a 
               href={link.href} 
-              class={Astro.url.pathname.startsWith(link.href) && link.href !== '/' ? 'active' : (Astro.url.pathname === link.href ? 'active' : '')} 
-              target={link.external ? '_blank' : undefined} 
-              rel={link.external ? 'noopener' : undefined}
+              class={Astro.url.pathname === link.href ? 'active' : ''} 
             >
               {link.label}
             </a>
           </li>
         ))}
       </ul>
-    <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">
-      <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="5"></circle>
-        <line x1="12" y1="1" x2="12" y2="3"></line>
-        <line x1="12" y1="21" x2="12" y2="23"></line>
-        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-        <line x1="1" y1="12" x2="3" y2="12"></line>
-        <line x1="21" y1="12" x2="23" y2="12"></line>
-        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-      </svg>
-      <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-      </svg>
-    </button>
+    </nav>
+    <div class="header-actions">
+      <div class="search-bar">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" placeholder="Search findings..." />
+      </div>
+      <button class="btn-subscribe">Subscribe</button>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle Theme">
+        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+      </button>
+    </div>
   </div>
 </header>
 
@@ -52,11 +45,14 @@ const navLinks = [
     top: 0;
     z-index: 1000;
     width: 100%;
-    background: var(--bg-header); /* Use variable for theme support */
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border-subtle); /* Use variable */
-    transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+    background: rgba(247, 249, 255, 0.8); /* surface at 80% */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: transform 0.3s ease, background-color 0.3s ease;
+  }
+
+  :global([data-theme="dark"]) .site-header {
+    background: rgba(14, 15, 22, 0.8);
   }
 
   .site-header.hide {
@@ -74,12 +70,12 @@ const navLinks = [
     display: flex;
     align-items: center;
     gap: 0.3rem;
-    font-family: var(--font-mono);
+    font-family: var(--font-display);
     font-weight: 700;
-    font-size: 1.25rem;
-    color: var(--fg-primary);
+    font-size: 1.5rem;
+    color: var(--on-surface);
     text-decoration: none;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.04em;
   }
 
   .logo-text {
@@ -107,31 +103,72 @@ const navLinks = [
   }
 
   .main-nav a {
-    color: var(--fg-secondary);
-    font-size: 0.9rem;
+    color: var(--on-surface-variant);
+    font-size: 0.85rem;
     font-weight: 500;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0.5rem 0.5rem;
+    transition: all 0.3s ease;
     text-decoration: none;
-    border: none;
     position: relative;
   }
 
-  .main-nav a::after {
-    display: none; /* Disable the global link underline */
-  }
-
   .main-nav a:hover {
-    color: var(--fg-primary);
-    background: var(--bg-card-hover);
-    transform: translateY(-1px);
+    color: var(--on-surface);
   }
 
   .main-nav a.active {
-    color: var(--accent-primary);
-    background: rgba(255, 158, 100, 0.12);
+    color: var(--primary-accent);
+  }
+
+  .main-nav a.active::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0.5rem;
+    right: 0.5rem;
+    height: 2px;
+    background-color: var(--primary-accent);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--surface-low);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    color: var(--on-surface-muted);
+  }
+
+  .search-bar input {
+    background: none;
+    border: none;
+    font-size: 0.85rem;
+    color: var(--on-surface);
+    outline: none;
+    width: 15rem;
+  }
+
+  .btn-subscribe {
+    background-color: var(--primary-accent);
+    color: #ffffff;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
     font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+
+  .btn-subscribe:hover {
+    opacity: 0.9;
   }
 
   /* Remove old underline styles */
@@ -238,28 +275,48 @@ const navLinks = [
     }
   };
 
-  document.getElementById('themeToggle')?.addEventListener('click', handleToggleClick);
-
-  // Header Scroll Logic
-  let lastScroll = 0;
-  const header = document.getElementById('siteHeader');
-
-  window.addEventListener('scroll', () => {
-    const currentScroll = window.scrollY;
-    
-    if (currentScroll <= 0) {
-      header?.classList.remove('hide');
-      return;
+    const toggleBtn = document.getElementById('themeToggle');
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', handleToggleClick);
     }
 
-    if (currentScroll > lastScroll && currentScroll > 80) {
-      // Scrolling down
-      header?.classList.add('hide');
-    } else {
-      // Scrolling up
-      header?.classList.remove('hide');
-    }
-    
-    lastScroll = currentScroll;
-  });
+    // Header Scroll Logic
+    let lastScroll = 0;
+    const header = document.getElementById('siteHeader');
+
+    // Only add if not already added by previous load
+    window.addEventListener('scroll', () => {
+      const currentScroll = window.scrollY;
+      
+      if (currentScroll <= 0) {
+        header?.classList.remove('hide');
+        return;
+      }
+
+      if (currentScroll > lastScroll && currentScroll > 80) {
+        // Scrolling down
+        header?.classList.add('hide');
+      } else {
+        // Scrolling up
+        header?.classList.remove('hide');
+      }
+      
+      lastScroll = currentScroll;
+    });
+
+    // Search Logic
+    const searchInput = document.querySelector('.search-bar input');
+    searchInput?.addEventListener('input', (e) => {
+      const query = (e.target as HTMLInputElement).value.toLowerCase();
+      const cards = document.querySelectorAll('.research-card');
+      
+      cards.forEach(card => {
+        const title = card.getAttribute('data-title') || '';
+        const summary = card.getAttribute('data-summary') || '';
+        const tags = card.getAttribute('data-tags') || '';
+        
+        const isVisible = title.includes(query) || summary.includes(query) || tags.includes(query);
+        (card as HTMLElement).style.display = isVisible ? 'flex' : 'none';
+      });
+    });
 </script>

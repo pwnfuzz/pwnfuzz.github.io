@@ -3,75 +3,76 @@
   Deep Navy, Vibrant Orange, Electric Cyan
 */
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 :root {
-  /* Core Colors */
-  --bg-main: #ffffff;
-  --bg-secondary: #f8fafc;
-  --bg-card: #ffffff;
-  --bg-card-hover: #f1f5f9;
+  /* The Forensic Ledger - High Fidelity Palette */
+  --surface: #f7f9ff;
+  --surface-low: #f1f4f9;
+  --surface-container: #eaeef5;
+  --surface-high: #e0e5ed;
+  --surface-highest: #d6dce7;
+  --surface-white: #ffffff;
 
-  --fg-primary: #0f172a;
-  --fg-secondary: #475569;
-  --fg-muted: #64748b;
+  --inverse-surface: #171c21; /* Dark background from reference lab notes */
 
-  /* Accents - MoltBot Orange & Cyan */
-  --accent-primary: #e65f2a;
-  /* MoltBot Orange */
-  --accent-secondary: #00c5ce;
-  /* MoltBot Cyan */
-  --accent-link: #e65f2a;
+  --primary: #171c21; /* Dark titles */
+  --primary-accent: #ff6b6b; /* The pink/red accent */
+  --primary-container: #a63646; /* Deep red */
+  --on-primary: #ffffff;
 
-  /* Borders */
-  --border-subtle: #e2e8f0;
-  --border-active: #cbd5e1;
+  --on-surface: #171c21;
+  --on-surface-variant: #4a5568;
+  --on-surface-muted: #718096;
 
-  /* Typography */
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-heading: 'Space Grotesk', var(--font-sans);
-  --font-mono: 'IBM Plex Mono', monospace;
+  --error: #ba1a1a;
+  --outline-variant: rgba(221, 191, 192, 0.15); /* Ghost Border */
 
-  --bg-code: #0d1117;
-  --bg-header: rgba(255, 255, 255, 0.8);
+  /* Pure Legibility Typography */
+  --font-display: 'Atkinson Hyperlegible', system-ui, sans-serif;
+  --font-body: 'Atkinson Hyperlegible', system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
 
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  /* Elevation & Depth - Ambient Shadows */
+  --shadow-ambient: 0 4px 20px rgba(0, 0, 0, 0.04);
+  --shadow-ambient-lg: 0 20px 40px rgba(0, 0, 0, 0.06);
+
+  /* Spacing Scale */
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-4: 1rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-10: 2.5rem;
+  --spacing-12: 3rem;
+  --spacing-20: 5rem;
+  
+  /* Radii */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
 }
 
-/* Dark Theme - The "MoltBot" Look */
+/* 
+   The Forensic Ledger is primarily a Light-First experience.
+   We maintain a "Deep Technical" dark mode that preserves the editorial feel.
+*/
 [data-theme="dark"] {
-  /* Moltbot Dark - Deep Navy */
-  --bg-main: #0e0f16;
-  /* Slightly lighter navy for contrast */
-  --bg-secondary: #161822;
-  /* Card backgrounds */
-  --bg-card: #1c1e29;
-  --bg-card-hover: #252836;
+  --surface: #0e0f16;
+  --surface-low: #161822;
+  --surface-container: #1c1e29;
+  --surface-high: #252836;
+  --surface-highest: #2e3140;
+  
+  --on-surface: #f0f0f5;
+  --on-surface-variant: #94a3b8;
+  --on-surface-muted: #64748b;
+  
+  --primary: #fe8674;
+  --primary-container: #a63646;
 
-  --fg-primary: #f0f0f5;
-  --fg-secondary: #94a3b8;
-  --fg-muted: #64748b;
-
-  /* Vibrant Accents */
-  --accent-primary: #fe8674;
-  /* Lighter Orange for dark mode */
-  --accent-secondary: #2ec4b6;
-  /* Spirit Teal/Cyan */
-  --accent-link: #fe8674;
-
-  --border-subtle: #2e3040;
-  --border-active: #e65f2a;
-  /* Orange border on active */
-
-  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 20px rgba(230, 95, 42, 0.15);
-  /* Orange Glow */
-
-  --bg-header: rgba(14, 15, 22, 0.8);
-  --bg-code: #0a0b10;
+  --shadow-ambient: 0 24px 48px -12px rgba(0, 0, 0, 0.5);
 }
 
 *,
@@ -88,10 +89,10 @@ html {
 body {
   margin: 0;
   padding: 0;
-  font-family: var(--font-sans);
-  background-color: transparent;
-  color: var(--fg-primary);
-  line-height: 1.6;
+  font-family: var(--font-body);
+  background-color: var(--surface);
+  color: var(--on-surface);
+  line-height: 1.65;
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -113,42 +114,26 @@ a:focus-visible {
   outline-color: var(--accent-link);
 }
 
-/* Sophisticated Network Pattern Background - Light Theme Only */
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -2;
-  background:
-    radial-gradient(circle at 15% 20%, rgba(226, 232, 240, 0.3), transparent 20%),
-    radial-gradient(circle at 85% 80%, rgba(203, 213, 225, 0.3), transparent 20%),
-    radial-gradient(circle at 50% 50%, rgba(241, 245, 249, 0.2), transparent 25%),
-    radial-gradient(circle at 30% 70%, rgba(226, 232, 240, 0.25), transparent 18%),
-    radial-gradient(circle at 70% 30%, rgba(203, 213, 225, 0.25), transparent 18%);
-  background-color: #fafbfc;
-  animation: networkPulse 15s ease-in-out infinite;
-  pointer-events: none;
-  transition: opacity 0.5s ease;
+/* Hero & Section Gradients */
+.hero-gradient {
+  background: linear-gradient(45deg, var(--primary) 0%, var(--primary-container) 100%);
 }
 
-/* Floating overlay with subtle movement - Light Theme Only */
-body::after {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  background:
-    linear-gradient(135deg, transparent 0%, rgba(248, 250, 252, 0.5) 50%, transparent 100%);
-  background-size: 400% 400%;
-  animation: gradientShift 20s ease infinite;
-  pointer-events: none;
-  transition: opacity 0.5s ease;
+/* Base Level Surface */
+.surface-base {
+  background-color: var(--surface);
+}
+
+/* Secondary Surface - Lifted Cards */
+.surface-lifted {
+  background-color: var(--surface-white);
+  box-shadow: var(--shadow-ambient);
+  border-radius: var(--radius-lg);
+}
+
+/* Sidebar / Metadata Anchors */
+.surface-anchor {
+  background-color: var(--surface-container);
 }
 
 /* Dark Theme Background Overrides - Solid Clean Background */
@@ -219,39 +204,72 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-heading);
-  color: var(--fg-primary);
+  font-family: var(--font-display);
+  color: var(--on-surface);
   margin-top: 0;
-  line-height: 1.25;
+  line-height: 1.1;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.04em;
 }
 
 h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.1;
+  font-size: 3.5rem; /* display-lg */
 }
 
 h2 {
-  font-size: 1.75rem;
-  margin-bottom: 1rem;
+  font-size: 2.25rem;
+  margin-bottom: var(--spacing-4);
 }
 
 h3 {
-  font-size: 1.35rem;
-  margin-bottom: 0.75rem;
+  font-size: 1.5rem;
+  margin-bottom: var(--spacing-3);
 }
 
 p {
-  margin-bottom: 1.5rem;
-  color: var(--fg-secondary);
+  margin-bottom: var(--spacing-6);
+  color: var(--on-surface-variant);
+  font-size: 1.05rem; 
+  line-height: 1.8;
+  letter-spacing: -0.01em;
 }
 
 /* MoltBot Gradient Text Utilities */
-.text-gradient-orange {
-  background: linear-gradient(135deg, #e65f2a 0%, #ff8674 100%);
+.text-accent {
+  font-style: italic;
+  color: var(--primary-accent);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: var(--radius-sm);
+  line-height: 1;
+}
+
+.badge-primary {
+  background-color: var(--primary-accent);
+  color: #ffffff;
+}
+
+.drop-cap::first-letter {
+  float: left;
+  font-size: 4.5rem;
+  line-height: 1;
+  margin: 0.1em 0.1em 0 0;
+  font-weight: 700;
+  color: var(--primary);
+  font-family: var(--font-display);
+}
+
+.text-gradient-primary {
+  background: linear-gradient(135deg, var(--primary-accent) 0%, var(--primary-container) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -267,43 +285,21 @@ p {
 }
 
 a {
-  color: var(--accent-link);
+  color: var(--primary);
   text-decoration: none;
   font-weight: 500;
-  border-bottom: 2px solid transparent;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-}
-
-a::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: var(--accent-link);
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 a:hover {
-  color: var(--accent-primary);
+  color: var(--primary-container);
   transform: translateY(-1px);
-}
-
-a:hover::after {
-  width: 100%;
-}
-
-[data-theme="dark"] a:hover {
-  color: var(--accent-link);
-  text-shadow: var(--shadow-glow);
 }
 
 /* Code Blocks - Mac Style */
 code {
   font-family: var(--font-mono);
-  font-size: 0.85em;
+  font-size: 0.75rem;
   padding: 0.2em 0.4em;
   border-radius: 4px;
   border: 1px solid var(--border-subtle);
@@ -324,15 +320,14 @@ code {
 }
 
 pre {
-  background: var(--bg-code) !important;
-  /* Use variable for theme support */
-  padding: 3rem 1.5rem 1.5rem 1.5rem;
-  border-radius: 12px;
+  background: var(--inverse-surface) !important;
+  padding: 3.5rem 2rem 2rem 2rem;
+  border-radius: 4px;
   overflow-x: auto;
-  margin: 2rem 0;
-  border: 1px solid var(--border-subtle) !important;
+  margin: 3rem 0;
+  border: 1px solid var(--surface-highest) !important;
   position: relative;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-ambient-lg);
 }
 
 /* Window Controls (Red, Yellow, Green dots) */
@@ -352,7 +347,7 @@ pre code {
   background: none !important;
   padding: 0;
   border: none;
-  font-size: 0.85em;
+  font-size: 0.8rem;
   line-height: 1.7;
 }
 
@@ -396,10 +391,9 @@ img {
 
 /* Utilities */
 .container {
-  max-width: 1000px;
-  /* Tighter container for reading */
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 2rem;
 }
 
 .sr-only {
@@ -429,6 +423,51 @@ img {
 
 .animate-fade-in {
   animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Post Visibility Utility */
+.post-item.hidden {
+  display: none !important;
+}
+
+/* Load More Button Styling */
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  margin: 3rem 0 6rem 0;
+}
+
+#load-more {
+  background: var(--bg-card);
+  color: var(--fg-primary);
+  border: 1px solid var(--border-subtle);
+  padding: 0.85rem 2.5rem;
+  border-radius: 8px;
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+#load-more:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md), 0 0 15px rgba(230, 95, 42, 0.1);
+}
+
+#load-more:active {
+  transform: translateY(0);
+}
+
+#load-more.loading {
+  opacity: 0.7;
+  cursor: wait;
 }
 
 /* Selection */
