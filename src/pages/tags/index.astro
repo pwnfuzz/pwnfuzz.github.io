@@ -6,53 +6,120 @@ import Footer from '../../components/Footer.astro';
 import { SITE_TITLE } from '../../consts';
 
 const posts: CollectionEntry<'blog'>[] = await getCollection('blog');
-const allTags = Array.from(new Set(posts.flatMap(post => post.data.tags || [])));
+const allTags = Array.from(new Set(posts.flatMap(post => post.data.tags || []))).sort();
 ---
+
 <!doctype html>
 <html lang="en">
 <head>
-  <BaseHead title={`Tags | ${SITE_TITLE}`} description="All tags used in blog posts." />
-  <style>
-    body {
-      background: #f8fafc;
-    }
-    .tags-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5em;
-      margin-top: 1em;
-      padding: 2rem;
-    }
-    .tags-list a {
-      display: inline-block;
-      background: #ede9fe;
-      color: #7c3aed;
-      border-radius: 6px;
-      padding: 0.2em 0.7em;
-      font-size: 0.95em;
-      text-decoration: none;
-      font-weight: 600;
-      transition: background 0.2s, color 0.2s;
-    }
-    .tags-list a:hover {
-      background: #7c3aed;
-      color: #fff;
-    }
-    h1 {
-      padding: 2rem 2rem 0;
-    }
-  </style> 
+  <BaseHead title={`Tags | ${SITE_TITLE}`} description="Browse all security research tags on PWNFUZZ LABS." />
 </head>
 <body>
   <Header />
-  <main>
-    <h1>Tags</h1>
-    <div class="tags-list">
-      {allTags.map((tag) => (
-        <a href={`/posts/${tag}/`}>{tag}</a>
-      ))}
+  
+  <main class="container tags-main">
+    <div class="tags-header animate-fade-in">
+      <h1 class="tags-title">Tags Archive</h1>
+      <p class="tags-subtitle">Browse finding categories and security writeups.</p>
+    </div>
+    
+    <div class="tags-list-container animate-fade-in">
+      {allTags.length > 0 ? (
+        <div class="tags-list">
+          {allTags.map((tag) => {
+            const count = posts.filter(p => (p.data.tags || []).includes(tag)).length;
+            return (
+              <a href={`/tags/${tag}/`} class="tag-row">
+                <span class="tag-name">#{tag.toLowerCase()}</span>
+                <span class="tag-count">{count} {count === 1 ? 'post' : 'posts'}</span>
+              </a>
+            );
+          })}
+        </div>
+      ) : (
+        <p class="no-tags">No tags found.</p>
+      )}
     </div>
   </main>
+  
   <Footer />
 </body>
-</html> 
+</html>
+
+<style>
+  .tags-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-12) 1.5rem;
+  }
+
+  .tags-header {
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: var(--spacing-6);
+    margin-bottom: var(--spacing-10);
+  }
+
+  .tags-title {
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-family: var(--font-display);
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    color: var(--on-surface);
+    letter-spacing: -0.02em;
+  }
+
+  .tags-subtitle {
+    font-size: 1.05rem;
+    color: var(--on-surface-muted);
+    margin: 0;
+  }
+
+  .tags-list {
+    display: flex;
+    flex-direction: column;
+    max-width: 760px;
+  }
+
+  .tag-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 1rem 0;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .tag-row:hover {
+    border-bottom-color: var(--primary-accent);
+  }
+
+  .tag-name {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--on-surface);
+    transition: color 0.15s ease;
+  }
+
+  .tag-row:hover .tag-name {
+    color: var(--primary-accent);
+  }
+
+  .tag-count {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    color: var(--on-surface-muted);
+    background: var(--surface-low);
+    border: 1px solid var(--border-subtle);
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .no-tags {
+    text-align: center;
+    padding: 4rem 0;
+    color: var(--on-surface-muted);
+    font-style: italic;
+  }
+</style>

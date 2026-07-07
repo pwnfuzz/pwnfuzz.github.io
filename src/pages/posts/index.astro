@@ -6,256 +6,216 @@ import { SITE_TITLE } from '../../consts';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import FormattedDate from '../../components/FormattedDate.astro';
 
-const posts: CollectionEntry<'blog'>[] = (await getCollection('blog')).filter(
-  post => post.data.summary || post.data.description
-).sort(
+const postsUnprocessed = (await getCollection('blog')).sort(
   (a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
-const allTags = Array.from(new Set(posts.flatMap(post => post.data.tags || [])));
+
+const posts = await Promise.all(
+  postsUnprocessed.map(async (post) => {
+    const wordCount = (post.body || '').split(/\s+/).length;
+    const readingTime = `${Math.max(1, Math.ceil(wordCount / 200))} min read`;
+    return {
+      ...post,
+      readingTime,
+    };
+  })
+);
 ---
+
 <!doctype html>
 <html lang="en">
   <head>
-    <BaseHead title={`Blog | ${SITE_TITLE}`} description="All technical writeups and deep dives." />
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;600;700&display=swap');
-      body { font-family: 'Google Sans', 'Inter', Arial, sans-serif; background: #f8fafc; color: #1e293b; }
-      body {
-        background-image: url("data:image/svg+xml,%3csvg width='32' height='32' viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cline x1='0' y1='32' x2='32' y2='0' stroke='rgba(0,0,0,0.04)' stroke-width='1'/%3e%3c/svg%3e");
-        background-repeat: repeat;
-        background-size: 32px 32px;
-      }
-      main {
-        max-width: 1300px;
-        margin: 0 auto;
-        display: flex;
-        align-items: flex-start;
-        gap: 3rem;
-        padding: 2.5rem 2.5rem 2rem 2.5rem;
-        background: #f8fafc;
-      }
-      main[data-astro-cid-j7pv25f6] {
-        width: 100%;
-        max-width: 1000px;
-        margin: 0 auto;
-      }
-      .main-content {
-        padding: 2rem 2.5rem;
-        flex: 1 1 0;
-        min-width: 0;
-        font-size: 16px;
-        /* No background, border-radius, or box-shadow */
-      }
-      .sidebar {
-        border-left: 1.5px solid #e5e7eb;
-        padding-left: 2.2rem;
-        flex: 0 0 280px;
-        max-width: 320px;
-        min-width: 220px;
-        font-size: 14px;
-        padding-top: 0.5rem;
-        color: #64748b;
-      }
-      .section-title {
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--accent);
-        margin-bottom: 1.5rem;
-        letter-spacing: 1px;
-      }
-      .post-list {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-      }
-      .post-row {
-        padding: 1.2rem 0;
-        border-bottom: 1px solid #e5e7eb;
-        position: relative;
-        /* No background, border-radius, or box-shadow */
-      }
-      .post-title {
-        font-size: 1.7rem;
-        font-weight: 800;
-        color: #111;
-        text-decoration: underline;
-        transition: color 0.2s;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5em;
-        /* No background, border-radius, or box-shadow */
-      }
-      .post-title .hash {
-        color: var(--accent);
-        text-decoration: underline;
-        font-weight: 900;
-        margin-right: 0.18em;
-      }
-      .post-title::after {
-        content: '\203A'; /* chevron */
-        font-size: 1.2em;
-        color: var(--accent);
-        margin-left: 0.2em;
-        transition: color 0.2s;
-      }
-      .post-row:hover .post-title {
-        color: var(--accent);
-        text-decoration: underline;
-      }
-      .post-row:hover .post-title::after {
-        color: var(--accent);
-      }
-      .post-meta {
-        color: #64748b;
-        font-size: 1.06rem;
-        margin: 0.2rem 0 0.7rem 0;
-        letter-spacing: 0.01em;
-        display: flex;
-        gap: 0.7em;
-        align-items: center;
-      }
-      .post-meta .author {
-        font-weight: 600;
-        color: var(--accent);
-      }
-      .post-meta .reading-time {
-        background: #e0e7ff;
-        color: #2563eb;
-        border-radius: 999px;
-        padding: 0.13em 0.8em;
-        font-size: 0.98em;
-        font-weight: 600;
-        margin-left: 0.2em;
-        letter-spacing: 0.01em;
-      }
-      .post-summary {
-        color: #6b7280;
-        font-size: 0.98rem;
-        margin-bottom: 0.7rem;
-        line-height: 1.6;
-        font-weight: 400;
-        /* No background, border-radius, or box-shadow */
-      }
-      code {
-        background: #f1f5f9;
-        color: #0f172a;
-        border-radius: 4px;
-        padding: 2px 6px;
-        font-size: 0.97em;
-      }
-      pre {
-        background: #f1f5f9;
-        color: #0f172a;
-        border-radius: 8px;
-        padding: 1.2em;
-        font-size: 0.97em;
-        overflow-x: auto;
-      }
-      @keyframes fadein {
-        from { opacity: 0; transform: translateY(16px); }
-        to { opacity: 1; transform: none; }
-      }
-      .sidebar-section {
-        margin-bottom: 2.2rem;
-        background: none;
-        border-radius: 0;
-        box-shadow: none;
-        padding: 0 0 1.5rem 0;
-        border: none;
-      }
-      .sidebar-section h3 {
-        font-size: 1.08rem;
-        color: var(--accent);
-        font-weight: 700;
-        margin-bottom: 0.7rem;
-        letter-spacing: 0.01em;
-      }
-      .sidebar-section ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-      }
-      .sidebar-section li {
-        margin-bottom: 1.2em;
-      }
-      .sidebar-section a {
-        color: #111;
-        text-decoration: underline;
-        font-weight: 600;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4em;
-      }
-      .sidebar-section a .hash {
-        color: var(--accent);
-        text-decoration: underline;
-        font-weight: 900;
-        margin-right: 0.18em;
-      }
-      .sidebar-tags a {
-        display: inline-block;
-        background: #fee2e2;
-        color: var(--accent);
-        border-radius: 6px;
-        padding: 0.2em 0.7em;
-        font-size: 0.93em;
-        margin-right: 0.5em;
-        text-decoration: none;
-        margin-bottom: 0.2em;
-        font-weight: 600;
-      }
-      @media (max-width: 900px) {
-        main { flex-direction: column; }
-        .sidebar { max-width: 100%; min-width: 0; margin-top: 2rem; }
-      }
-      @media (max-width: 600px) {
-        .section-title { font-size: 1.3rem; }
-        .card { padding: 1.1rem 1rem 1rem 1rem; }
-        main { padding: 1.2rem 0.5rem 1rem 0.5rem; }
-      }
-    </style>
+    <BaseHead title={`Research Archive | ${SITE_TITLE}`} description="Browse all security research findings and deep dives from PWNFUZZ LABS." />
   </head>
   <body>
     <Header />
-    <main>
-      <div class="main-content">
-        <div class="section-title">All Blog Posts</div>
-        <ul class="post-list">
-          {posts.length === 0 ? (
-            <div style="color:#888; font-size:1.1rem;">No blog posts found. Please add posts to <code>src/content/blog/</code> with the correct frontmatter.</div>
-          ) : (
-            posts.map((post) => (
-              <li class="post-row">
-                <a href={`/posts/${post.id}/`} class="post-title"><span class="hash">#</span>{post.data.title}</a>
-                <div class="post-meta">
-                  <FormattedDate date={post.data.pubDate} />
-                  {post.data.author && <span class="author">{post.data.author}</span>}
-                  {/* <span class="reading-time">10 min read</span> */}
-                </div>
-                <div class="post-summary">{(post.data.summary || post.data.description).split(' ').slice(0, 50).join(' ') + ((post.data.summary || post.data.description).split(' ').length > 50 ? '...' : '')}</div>
-              </li>
-            ))
-          )}
-        </ul>
-      </div>
-      <aside class="sidebar">
-        <div class="sidebar-section">
-          <h3>Recent Posts</h3>
-          <ul>
-            {posts.slice(0, 5).map((post) => (
-              <li style="margin-bottom:1.2em;">
-                <a href={`/posts/${post.id}/`}><span class="hash">#</span>{post.data.title}</a>
-                <div style="font-size:0.97em;color:#1e293b;margin-top:0.2em;">
-                  {post.data.summary ? post.data.summary.split(' ').slice(0,7).join(' ') + (post.data.summary.split(' ').length > 7 ? '...' : '') :
-                   post.data.description ? post.data.description.split(' ').slice(0,7).join(' ') + (post.data.description.split(' ').length > 7 ? '...' : '') :
-                   (post.data.pubDate ? (new Date(post.data.pubDate)).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '')}
-                </div>
-              </li>
-            ))}
-          </ul>
+    
+    <main class="container index-main animate-fade-in">
+      <section class="latest-research">
+        <div class="section-header">
+          <h1 class="section-title">Research Archive</h1>
         </div>
-      </aside>
+        
+        {posts.length > 0 ? (
+          <div class="research-list">
+            {posts.map((post) => (
+              <article 
+                class="research-card" 
+                data-title={post.data.title.toLowerCase()} 
+                data-summary={(post.data.summary || post.data.description || "").toLowerCase()} 
+                data-tags={(post.data.tags || []).join(' ').toLowerCase()}
+              >
+                <div class="card-meta">
+                  <span class="card-date"><FormattedDate date={post.data.pubDate} /></span>
+                  <span class="card-read">{post.readingTime}</span>
+                </div>
+                <div class="card-inner">
+                  <a href={`/posts/${post.id}/`} class="card-title-link">
+                    <h3 class="card-title">{post.data.title}</h3>
+                  </a>
+                  <p class="card-summary">{post.data.summary || post.data.description}</p>
+                  <div class="card-tags">
+                    {post.data.tags?.map(tag => (
+                      <a href={`/tags/${tag}/`} class="tag-link">#{tag.toLowerCase()}</a>
+                    ))}
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div class="no-posts">
+            <p>No research findings found.</p>
+          </div>
+        )}
+      </section>
     </main>
+
     <Footer />
   </body>
-</html> 
+</html>
+
+<style>
+  .index-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-12) 1.5rem;
+  }
+
+  .latest-research {
+    margin-top: var(--spacing-4);
+  }
+
+  .section-header {
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: var(--spacing-6);
+    margin-bottom: var(--spacing-8);
+  }
+
+  .section-title {
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 700;
+    margin: 0;
+    font-family: var(--font-display);
+    color: var(--on-surface);
+    letter-spacing: -0.02em;
+  }
+
+  /* Premium Ledger list layout (replacing cards) */
+  .research-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .research-card {
+    transition: opacity 0.2s ease;
+  }
+
+  article.research-card {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 2rem;
+    padding: 1.75rem 0.75rem;
+    border-bottom: 1px solid var(--border-subtle);
+    border-left: 3px solid transparent;
+    background: transparent;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  article.research-card:hover {
+    border-left-color: var(--primary-accent);
+    padding-left: 1.25rem;
+    background-color: var(--surface-low);
+  }
+
+  .card-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .card-meta {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--on-surface-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    justify-content: flex-start;
+    padding-top: 0.25rem;
+  }
+
+  .card-title-link {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .card-title {
+    font-size: 1.5rem;
+    line-height: 1.2;
+    margin: 0;
+    font-family: var(--font-display);
+    color: var(--on-surface);
+    font-weight: 700;
+    transition: color 0.15s ease;
+  }
+
+  .card-title-link:hover .card-title {
+    color: var(--primary-accent);
+  }
+
+  .card-summary {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--on-surface-variant);
+    margin: 0;
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 0.25rem;
+  }
+
+  .tag-link {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--on-surface-muted);
+    text-decoration: none;
+    transition: color 0.15s ease;
+    border: 1px solid var(--border-subtle);
+    padding: 0.25rem 0.6rem;
+    background: var(--surface-low);
+    border-radius: var(--radius-sm);
+  }
+
+  .tag-link:hover {
+    color: var(--primary-accent);
+    border-color: var(--primary-accent);
+  }
+
+  .no-posts {
+    text-align: center;
+    padding: 4rem 0;
+    color: var(--on-surface-muted);
+    font-style: italic;
+  }
+
+  @media (max-width: 768px) {
+    article.research-card {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+      padding: 1.5rem 0.5rem;
+    }
+
+    article.research-card:hover {
+      padding-left: 0.75rem;
+    }
+
+    .card-meta {
+      flex-direction: row;
+      gap: 0.5rem;
+    }
+  }
+</style>

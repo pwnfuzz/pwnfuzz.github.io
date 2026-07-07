@@ -13,90 +13,221 @@ export async function getStaticPaths() {
 }
 
 const { tag } = Astro.params;
-const posts: CollectionEntry<'blog'>[] = (await getCollection('blog')).filter(post => (post.data.tags || []).includes(tag));
+const postsUnprocessed: CollectionEntry<'blog'>[] = (await getCollection('blog')).filter(post => (post.data.tags || []).includes(tag));
+
+const posts = await Promise.all(
+  postsUnprocessed.map(async (post) => {
+    const wordCount = (post.body || '').split(/\s+/).length;
+    const readingTime = `${Math.max(1, Math.ceil(wordCount / 200))} min read`;
+    return {
+      ...post,
+      readingTime,
+    };
+  })
+);
 ---
+
 <!doctype html>
 <html lang="en">
 <head>
-  <BaseHead title={`Posts tagged: ${tag} | ${SITE_TITLE}`} description={`All posts tagged with "${tag}".`} />
-  <style>
-    body {
-      background: #f8fafc;
-    }
-    .card-list {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-      margin-top: 2rem;
-      padding: 2rem;
-    }
-    .card {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-      padding: 1.5rem 2rem;
-      transition: box-shadow 0.2s;
-      border: 1px solid #eee;
-    }
-    .card:hover {
-      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-    }
-    .card-title {
-      margin: 0 0 0.5rem 0;
-      font-size: 1.5rem;
-    }
-    .card-meta {
-      color: #888;
-      font-size: 0.95rem;
-      margin-bottom: 0.5rem;
-    }
-    .card-tags {
-      margin-top: 0.5rem;
-    }
-    .card-tags a {
-      display: inline-block;
-      background: #ede9fe;
-      color: #7c3aed;
-      border-radius: 6px;
-      padding: 0.2em 0.7em;
-      font-size: 0.85em;
-      margin-right: 0.5em;
-      text-decoration: none;
-      margin-bottom: 0.2em;
-      font-weight: 600;
-      transition: background 0.2s, color 0.2s;
-    }
-    .card-tags a:hover {
-      background: #7c3aed;
-      color: #fff;
-    }
-    h1 {
-      padding: 2rem 2rem 0;
-    }
-  </style> 
+  <BaseHead title={`Posts tagged: ${tag} | ${SITE_TITLE}`} description={`Browse all technical articles tagged with "${tag}" on PWNFUZZ LABS.`} />
 </head>
 <body>
   <Header />
-  <main>
-    <h1>Posts tagged: {tag}</h1>
-    <div class="card-list">
+  
+  <main class="container tags-main">
+    <div class="tags-header animate-fade-in">
+      <div class="back-link-wrapper">
+        <a href="/tags/" class="back-link">&larr; Back to all tags</a>
+      </div>
+      <h1 class="tags-title">Category: #{tag.toLowerCase()}</h1>
+      <p class="tags-subtitle">Found {posts.length} {posts.length === 1 ? 'finding' : 'findings'} tagged with this category.</p>
+    </div>
+    
+    <div class="card-list animate-fade-in">
       {posts.map((post) => (
-        <div class="card">
-          <a href={`/posts/${post.id}/`}><h2 class="card-title">{post.data.title}</h2></a>
+        <article class="research-card">
           <div class="card-meta">
-            <FormattedDate date={post.data.pubDate} />
-            {post.data.author && ` • ${post.data.author}`}
+            <span class="card-date"><FormattedDate date={post.data.pubDate} /></span>
+            <span class="card-read">{post.readingTime}</span>
+            {post.data.author && (
+              <span class="card-author">{post.data.author}</span>
+            )}
           </div>
-          <div>{post.data.summary || post.data.description}</div>
-          <div class="card-tags">
-            {(post.data.tags || []).map((t) => (
-              <a href={`/tags/${t}/`}>{t}</a>
-            ))}
+          <div class="card-inner">
+            <a href={`/posts/${post.id}/`} class="card-title-link">
+              <h2 class="card-title">{post.data.title}</h2>
+            </a>
+            <p class="card-summary">{post.data.summary || post.data.description}</p>
+            <div class="card-tags">
+              {(post.data.tags || []).map((t) => (
+                <a href={`/tags/${t}/`} class={`tag-link ${t === tag ? 'active' : ''}`}>#{t.toLowerCase()}</a>
+              ))}
+            </div>
           </div>
-        </div>
+        </article>
       ))}
     </div>
   </main>
+  
   <Footer />
 </body>
-</html> 
+</html>
+
+<style>
+  .tags-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-12) 1.5rem;
+  }
+
+  .tags-header {
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: var(--spacing-6);
+    margin-bottom: var(--spacing-10);
+  }
+
+  .back-link-wrapper {
+    margin-bottom: 1rem;
+  }
+
+  .back-link {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--on-surface-muted);
+    text-decoration: none;
+  }
+
+  .back-link:hover {
+    color: var(--primary-accent);
+    text-decoration: underline;
+  }
+
+  .tags-title {
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-family: var(--font-display);
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    color: var(--on-surface);
+    letter-spacing: -0.02em;
+  }
+
+  .tags-subtitle {
+    font-size: 1.05rem;
+    color: var(--on-surface-muted);
+    margin: 0;
+  }
+
+  .card-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .research-card {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 2rem;
+    padding: 1.75rem 0.75rem;
+    border-bottom: 1px solid var(--border-subtle);
+    border-left: 3px solid transparent;
+    background: transparent;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .research-card:hover {
+    border-left-color: var(--primary-accent);
+    padding-left: 1.25rem;
+    background-color: var(--surface-low);
+  }
+
+  .card-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .card-meta {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--on-surface-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    justify-content: flex-start;
+    padding-top: 0.25rem;
+  }
+
+  .card-title-link {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .card-title {
+    font-size: 1.5rem;
+    line-height: 1.2;
+    margin: 0;
+    font-family: var(--font-display);
+    color: var(--on-surface);
+    font-weight: 700;
+    transition: color 0.15s ease;
+  }
+
+  .card-title-link:hover .card-title {
+    color: var(--primary-accent);
+  }
+
+  .card-summary {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--on-surface-variant);
+    margin: 0;
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 0.25rem;
+  }
+
+  .tag-link {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--on-surface-muted);
+    text-decoration: none;
+    transition: color 0.15s ease;
+    border: 1px solid var(--border-subtle);
+    padding: 0.25rem 0.6rem;
+    background: var(--surface-low);
+    border-radius: var(--radius-sm);
+  }
+
+  .tag-link:hover {
+    color: var(--primary-accent);
+    border-color: var(--primary-accent);
+  }
+
+  .tag-link.active {
+    color: var(--primary-accent);
+    border-color: var(--primary-accent);
+    background: var(--surface-container);
+  }
+
+  @media (max-width: 768px) {
+    .research-card {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+      padding: 1.5rem 0.5rem;
+    }
+
+    .research-card:hover {
+      padding-left: 0.75rem;
+    }
+
+    .card-meta {
+      flex-direction: row;
+      gap: 0.5rem;
+    }
+  }
+</style>
