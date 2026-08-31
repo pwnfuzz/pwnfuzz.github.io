@@ -1,0 +1,62 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { SITE_TITLE } from '../../consts';
+import { getCollection } from 'astro:content';
+import FormattedDate from '../../components/FormattedDate.astro';
+
+export async function getStaticPaths({ paginate }) {
+  const breakdownsUnprocessed = (await getCollection('breakdowns')).sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+  );
+
+  const breakdowns = await Promise.all(
+    breakdownsUnprocessed.map(async (breakdown) => {
+      const wordCount = (breakdown.body || '').split(/\s+/).length;
+      const readingTime = `${Math.max(1, Math.ceil(wordCount / 200))} min read`;
+      return { ...breakdown, readingTime };
+    })
+  );
+
+  return paginate(breakdowns, { pageSize: 7 });
+}
+
+const { page } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={`1Day Breakdowns | ${SITE_TITLE}`} description="Quick technical breakdowns and analyses of recent 1Day vulnerabilities and exploits." />
+  </head>
+  <body>
+    <div class="wrapper">
+      <Header />
+      
+      <section>
+        <h2>All Breakdowns</h2>
+        <ul class="post-list">
+          {
+            page.data.map((breakdown) => (
+              <li>
+                <a href={`/breakdowns/${breakdown.id}/`} class="post-title">{breakdown.data.title}</a>
+                <br />
+                <small style="color: #777; display: block; margin-bottom: 4px;">{breakdown.data.author ? `By ${breakdown.data.author} · ` : ''}<FormattedDate date={breakdown.data.pubDate} /> &middot; {breakdown.readingTime}</small>
+                <p class="post-summary">{breakdown.data.description || breakdown.data.summary}</p>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div style="margin-top: 30px; display: flex; justify-content: space-between; font-weight: bold;">
+          {page.url.prev ? <a href={page.url.prev}>&larr; Previous</a> : <span style="color:#ccc">&larr; Previous</span>}
+          <span>Page {page.currentPage} of {page.lastPage}</span>
+          {page.url.next ? <a href={page.url.next}>Next &rarr;</a> : <span style="color:#ccc">Next &rarr;</span>}
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  </body>
+</html>

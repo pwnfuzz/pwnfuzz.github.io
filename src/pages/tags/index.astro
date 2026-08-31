@@ -1,11 +1,11 @@
 ---
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
 import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { SITE_TITLE } from '../../consts';
 
-const posts: CollectionEntry<'blog'>[] = await getCollection('blog');
+const posts = await getCollection('blog');
 const allTags = Array.from(new Set(posts.flatMap(post => post.data.tags || []))).sort();
 ---
 
@@ -15,111 +15,26 @@ const allTags = Array.from(new Set(posts.flatMap(post => post.data.tags || [])))
   <BaseHead title={`Tags | ${SITE_TITLE}`} description="Browse all security research tags on PWNFUZZ LABS." />
 </head>
 <body>
-  <Header />
-  
-  <main class="container tags-main">
-    <div class="tags-header animate-fade-in">
-      <h1 class="tags-title">Tags Archive</h1>
-      <p class="tags-subtitle">Browse finding categories and security writeups.</p>
-    </div>
+  <div class="wrapper">
+    <Header />
     
-    <div class="tags-list-container animate-fade-in">
-      {allTags.length > 0 ? (
-        <div class="tags-list">
-          {allTags.map((tag) => {
-            const count = posts.filter(p => (p.data.tags || []).includes(tag)).length;
-            return (
-              <a href={`/tags/${tag}/`} class="tag-row">
-                <span class="tag-name">#{tag.toLowerCase()}</span>
-                <span class="tag-count">{count} {count === 1 ? 'post' : 'posts'}</span>
-              </a>
-            );
-          })}
-        </div>
-      ) : (
-        <p class="no-tags">No tags found.</p>
-      )}
-    </div>
-  </main>
-  
-  <Footer />
+    <section>
+      <h2>Tags Archive</h2>
+      <p>Browse finding categories and security writeups.</p>
+      
+      <ul>
+        {allTags.map((tag) => {
+          const count = posts.filter(p => (p.data.tags || []).includes(tag)).length;
+          return (
+            <li>
+              <a href={`/tags/${tag}/`}>{tag}</a> ({count})
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+    
+    <Footer />
+  </div>
 </body>
 </html>
-
-<style>
-  .tags-main {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: var(--spacing-12) 1.5rem;
-  }
-
-  .tags-header {
-    border-bottom: 1px solid var(--border-subtle);
-    padding-bottom: var(--spacing-6);
-    margin-bottom: var(--spacing-10);
-  }
-
-  .tags-title {
-    font-size: clamp(2.5rem, 5vw, 3.5rem);
-    font-family: var(--font-display);
-    font-weight: 700;
-    margin: 0 0 0.5rem 0;
-    color: var(--on-surface);
-    letter-spacing: -0.02em;
-  }
-
-  .tags-subtitle {
-    font-size: 1.05rem;
-    color: var(--on-surface-muted);
-    margin: 0;
-  }
-
-  .tags-list {
-    display: flex;
-    flex-direction: column;
-    max-width: 760px;
-  }
-
-  .tag-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--border-subtle);
-    padding: 1rem 0;
-    text-decoration: none;
-    transition: all 0.2s ease;
-  }
-
-  .tag-row:hover {
-    border-bottom-color: var(--primary-accent);
-  }
-
-  .tag-name {
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--on-surface);
-    transition: color 0.15s ease;
-  }
-
-  .tag-row:hover .tag-name {
-    color: var(--primary-accent);
-  }
-
-  .tag-count {
-    font-family: var(--font-sans);
-    font-size: 0.75rem;
-    color: var(--on-surface-muted);
-    background: var(--surface-low);
-    border: 1px solid var(--border-subtle);
-    padding: 0.15rem 0.5rem;
-    border-radius: var(--radius-sm);
-  }
-
-  .no-tags {
-    text-align: center;
-    padding: 4rem 0;
-    color: var(--on-surface-muted);
-    font-style: italic;
-  }
-</style>

@@ -1,0 +1,62 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE } from '../consts';
+import { getCollection } from 'astro:content';
+import FormattedDate from '../components/FormattedDate.astro';
+
+export async function getStaticPaths({ paginate }) {
+  const postsUnprocessed = (await getCollection('blog')).sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+  );
+
+  const posts = await Promise.all(
+    postsUnprocessed.map(async (post) => {
+      const wordCount = (post.body || '').split(/\s+/).length;
+      const readingTime = `${Math.max(1, Math.ceil(wordCount / 200))} min read`;
+      return { ...post, readingTime };
+    })
+  );
+
+  return paginate(posts, { pageSize: 7 });
+}
+
+const { page } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={`Research | ${SITE_TITLE}`} description="Technical writeups and security research from PWNFUZZ LABS." />
+  </head>
+  <body>
+    <div class="wrapper">
+      <Header />
+      
+      <section>
+        <h2>Latest Research</h2>
+        <ul class="post-list">
+          {
+            page.data.map((post) => (
+              <li>
+                <a href={`/posts/${post.id}/`} class="post-title">{post.data.title}</a>
+                <br />
+                <small style="color: #777; display: block; margin-bottom: 4px;">{post.data.author ? `By ${post.data.author} · ` : ''}<FormattedDate date={post.data.pubDate} /> &middot; {post.readingTime}</small>
+                <p class="post-summary">{post.data.description || post.data.summary}</p>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div style="margin-top: 30px; display: flex; justify-content: space-between; font-weight: bold;">
+          {page.url.prev ? <a href={page.url.prev}>&larr; Previous</a> : <span style="color:#ccc">&larr; Previous</span>}
+          <span>Page {page.currentPage} of {page.lastPage}</span>
+          {page.url.next ? <a href={page.url.next}>Next &rarr;</a> : <span style="color:#ccc">Next &rarr;</span>}
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  </body>
+</html>
